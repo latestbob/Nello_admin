@@ -1,0 +1,173 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Cart;
+use App\Models\Order;
+use App\Traits\FileUpload;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
+class DrugOrderController extends Controller
+{
+
+    use FileUpload;
+
+    public function index(Request $request)
+    {
+
+        $size = empty($request->size) ? 10 : $request->size;
+
+        $orders = Order::query()->join('carts', 'orders.cart_uuid', '=', 'carts.cart_uuid', 'INNER');
+
+        if (!empty($search = $request->search)) {
+
+            $orders = $orders->whereRaw(
+                "(orders.firstname like ? or orders.lastname like ? or
+                orders.phone like ? or orders.email like ? or
+                orders.company like ? or orders.city = ? or
+                orders.state = ? or orders.order_ref = ? or
+                orders.cart_uuid = ?)",
+                [
+                    "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%",
+                    "%{$search}%", $search, $search, $search, $search
+                ]
+            );
+        }
+
+        if (!empty($payment = $request->payment) && ($payment == 'paid' || $payment == 'unpaid')) {
+            $orders = $orders->where('orders.payment_confirmed', '=', ($payment == 'paid' ? 1 : 0));
+        }
+
+        $dateEnd = null;
+
+        if (!empty($dateStart = $request->dateStart)) {
+
+            $dateEnd = $request->dateEnd ?? date('Y-m-d');
+
+            $orders = $orders->whereRaw(
+                "(orders.created_at between ? and ?)",
+                ["{$dateStart} 00:00:00", "{$dateEnd} 23:59:59"]
+            );
+        }
+
+        $orders = $orders->where('carts.vendor_id', $request->user()->vendor_id);
+
+        $orders = $orders->select(['*', 'orders.created_at'])->selectRaw("ROUND(SUM(carts.price), 2) as amount");
+
+        $orders = $orders->groupBy('carts.cart_uuid')->orderByDesc('orders.id');
+
+        $orders = $orders->paginate($size);
+
+        $total = [
+
+            'paid' => Order::query()->join('carts', 'orders.cart_uuid', '=',
+                'carts.cart_uuid', 'INNER')->where(['carts.vendor_id' => $request->user()->vendor_id,
+                'orders.payment_confirmed' => 1])->distinct()->count('orders.id'),
+
+            'unpaid' => Order::query()->join('carts', 'orders.cart_uuid', '=',
+                'carts.cart_uuid', 'INNER')->where(['carts.vendor_id' => $request->user()->vendor_id,
+                'orders.payment_confirmed' => 0])->distinct()->count('orders.id')
+
+        ];
+
+        return view('drugs-order', compact('orders', 'size', 'total', 'search', 'payment', 'dateStart', 'dateEnd'));
+    }
+
+    public function orderItems(Request $request)
+    {
+        if (empty($request->uuid)) {
+            return redirect('/drugs-order')->with('error', "Cart ID is missing.");
+        }
+
+        $orderItems = Cart::with(['drug', 'order'])->where(['cart_uuid' => $request->uuid,
+            'vendor_id' => $request->user()->vendor_id])->orderByDesc('id');
+
+        if (empty($orderItems->first())) {
+            return redirect('/drugs-order')->with('error', "Sorry, that Cart ID either does not exist or has been deleted");
+        }
+
+        $size = empty($request->size) ? 10 : $request->size;
+
+        $orderItems = $orderItems->paginate($size);
+
+        return view('drug-order-items', compact('orderItems', 'size'));
+    }
+
+
+    public function drugOrderItemAction(Request $request) {
+
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric|exists:carts,id',
+            'status' => 'required|string|in:approved,disapproved,cancelled',
+        ]);
+
+        if ($validator->fails()) {
+            return response([
+                'status' => false,
+                'message' => $validator->errors()
+            ]);
+        }
+
+        $item = Cart::where(['id' => $request->id, 'vendor_id' => $request->user()->vendor_id])->first();
+
+        if (empty($item)) {
+            return response([
+                'status' => false,
+                'message' => 'Sorry, that item was not found'
+            ]);
+        }
+
+        $item->status = $request->status;
+        $item->save();
+
+        return response([
+            'status' => true,
+            'message' => "That order item has been {$request->status} successfully"
+        ]);
+    }
+
+    public function addPrescription(Request $request) {
+
+        $validator = Validator::make($request->all(), [
+            'uuid' => 'required|string',
+            'id' => 'required|integer',
+            'file' => 'required|image|mimes:jpeg,jpg,png',
+        ]);
+
+        if ($validator->fails()) {
+            return response([
+                'status' => false,
+                'message' => $validator->errors()
+            ]);
+        }
+
+        $item = Cart::where(['cart_uuid' => $request->uuid, 'drug_id' => $request->id, 'vendor_id' => $request->user()->vendor_id])->first();
+
+        if (empty($item)) {
+
+            return response([
+                'status' => false,
+                'message' => "Failed to add prescription, item not found"
+            ]);
+        }
+
+        if ($request->hasFile('file')) {
+
+            $item->prescription = $prescription = $this->uploadFile($request, 'file');
+//            $item->prescription = $prescription = 'http://nelloadmin.com/images/drug-placeholder.png';
+            $item->prescribed_by = 'vendor';
+            $item->save();
+
+            return response([
+                'status' => true,
+                'message' => "Prescription uploaded and added successfully",
+                'prescription' => $prescription
+            ]);
+
+        } else return response([
+            'status' => false,
+            'message' => "No prescription file uploaded"
+        ]);
+    }
+}
