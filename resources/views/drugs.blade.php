@@ -9,10 +9,10 @@
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
                         <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Drug Order Items</li>
+                        <li class="breadcrumb-item active">Drugs</li>
                     </ol>
                 </div>
-                <h4 class="page-title">Drug Order Items</h4>
+                <h4 class="page-title">Drugs</h4>
             </div>
         </div>
     </div>
@@ -26,45 +26,49 @@
                     <div class="row">
 
                         <div class="col-md-12 mt-2">
-                            <div class="row">
-                                <div class="col-md-4">
+                            <form method="get" class="row" id="filter-form">
+                                <div class="col-md-4 mb-3">
 
-                                    <h4 class="header-title">Drug Order Items</h4>
+                                    <h4 class="header-title">Drugs</h4>
                                     <p class="text-muted font-14">
-                                        Here's a list of drugs ordered by a Nello user
+                                        Here's a list of all drugs on the Nello platform
                                     </p>
 
                                 </div>
 
-                                <div class="col-md-4 offset-md-4 mb-3">
-                                    <label>Show entries</label>
-                                    <select name="size" class="form-control">
-                                        <option value="5" @if($size == '5') selected @endif>5 records</option>
-                                        <option value="10" @if($size == '10') selected @endif>10 records</option>
-                                        <option value="25" @if($size == '25') selected @endif>25 records</option>
-                                        <option value="50" @if($size == '50') selected @endif>50 records</option>
-                                        <option value="100" @if($size == '100') selected @endif>100 records</option>
-                                    </select>
+                                <div class="col-md-6 offset-md-2">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label>Show entries</label>
+                                            <select name="size" class="form-control">
+                                                <option value="5" @if($size == '5') selected @endif>5 records</option>
+                                                <option value="10" @if($size == '10') selected @endif>10 records</option>
+                                                <option value="25" @if($size == '25') selected @endif>25 records</option>
+                                                <option value="50" @if($size == '50') selected @endif>50 records</option>
+                                                <option value="100" @if($size == '100') selected @endif>100 records</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label>Filter by Keyword</label>
+                                            <input class="form-control" name="search" value="{{ $search }}"
+                                                   placeholder="Enter Keyword"/>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
 
                     <div class="table-responsive">
-
                         <table class="table dataTable w-100">
                             <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Image</th>
-                                <th>Drug Name</th>
-                                <th>Drug Category</th>
-                                <th>Drug Brand</th>
-                                <th>Quantity</th>
-                                <th>Price</th>
-                                <th>Total Price</th>
-                                <th>Status</th>
-                                <th>Date Ordered</th>
+                                <th>Name</th>
+                                <th>Brand</th>
+                                <th>Category</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -72,20 +76,13 @@
 
                             <tbody>
 
-                            @foreach($orderItems as $key => $items)
+                            @foreach($drugs as $key => $drug)
                                 <tr>
                                     <td>{{ ($key + 1) }}</td>
-                                    <td><img src="{{ $items->drug->image ?? asset('images/drug-placeholder.png') }}" class="img-thumbnail" width="80"/></td>
-                                    <td>{{ $items->drug->name }}</td>
-                                    <td>{{ $items->drug->category }}</td>
-                                    <td>{{ $items->drug->brand }}</td>
-                                    <td>{{ $items->quantity }}</td>
-                                    <td>{{ $items->drug->price }}</td>
-                                    <td>{{ $items->price }}</td>
-                                    <td><label
-                                            class="badge {{ $items->status == 'approved' ? 'badge-success' : ($items->status == 'cancelled' ? 'badge-danger' : 'badge-warning') }}">{{ $items->status }}</label>
-                                    </td>
-                                    <td>{{ \Carbon\Carbon::parse($items->created_at)->format('h:ia F dS, Y') }}</td>
+                                    <td><img src="{{ $drug->image ?? asset('images/drug-placeholder.png') }}" class="img-thumbnail" width="80"/></td>
+                                    <td>{{ $drug->name }}</td>
+                                    <td>{{ $drug->brand ?: 'Unavailable' }}</td>
+                                    <td>{{ $drug->category ?: 'Unavailable' }}</td>
                                     <td>
                                         <div class="dropdown float-right">
                                             <button class="btn btn-secondary dropdown-toggle" type="button"
@@ -94,22 +91,11 @@
                                                 Action
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <button class="dropdown-item status-toggle" data-id="{{ $items->id }}"
-                                                        data-status="approved">Approve
+                                                <a class="dropdown-item" href="{{ route("drug-view", ['uuid' => $drug->uuid]) }}">Edit drug</a>
+                                                <button class="dropdown-item status-toggle" data-id="{{ $drug->uuid }}"
+                                                        data-status="cancelled">
+                                                    Delete drug
                                                 </button>
-                                                <button class="dropdown-item status-toggle" data-id="{{ $items->id }}"
-                                                        data-status="disapproved">Disapprove
-                                                </button>
-                                                <button class="dropdown-item status-toggle" data-id="{{ $items->id }}"
-                                                        data-status="cancelled">Cancel
-                                                </button>
-                                                @if(!empty($items->prescription))
-                                                    <a class="dropdown-item" href="{{ $items->prescription }}"
-                                                       target="_blank">View Prescription</a>
-                                                @else
-                                                    <button class="dropdown-item add-prescription">Add Prescription</button>
-                                                    <input type="file" onchange="uploadPrescription(event.target.files[0], '{{ $items->drug_id }}', '{{ $items->cart_uuid }}')" hidden/>
-                                                @endif
                                             </div>
                                         </div>
                                     </td>
@@ -118,11 +104,10 @@
 
                             </tbody>
                         </table>
-
                     </div>
 
                     <div class="table-responsive mt-3">
-                        {{ $orderItems->links() }}
+                        {{ $drugs->links() }}
                     </div>
 
                 </div> <!-- end card body-->
@@ -157,15 +142,25 @@
 
         });
 
+        $("form[id='filter-form']").submit(function (e) {
+            e.preventDefault();
+
+            let search = $("input[name='search']").val();
+
+            if (search !== '') params.search = search;
+            else delete params.search;
+            delete params.page;
+            window.location.href = (window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + serialize(params));
+
+        });
+
         const instance = NetBridge.getInstance();
 
         $('.status-toggle').click(function (e) {
 
-            let self = $(this), status = self.data('status'), timeout;
+            let self = $(this), uuid = self.data('id'), timeout;
 
-            let title = status === 'approved' ? 'Approve ' : (status === 'disapproved' ? 'Disapprove ' : 'Cancel ');
-
-            successMsg(title + 'Order', "This order will be " + status + ", do you want proceed?",
+            successMsg('Delete Drug', "This drug will be deleted, once done it cannot be undone, do you want proceed?",
                 'Yes, proceed', 'No, cancel', function ({value}) {
 
                     if (!value) return;
@@ -173,13 +168,12 @@
                     timeout = setTimeout(() => {
 
                         instance.addToRequestQueue({
-                            url: "{{ url('/drugs-order/item/action') }}",
+                            url: "{{ route('drug-delete') }}",
                             method: 'post',
                             timeout: 10000,
                             dataType: 'json',
                             data: {
-                                id: parseInt(self.data('id')),
-                                status: status,
+                                uuid,
                                 '_token': "{{ csrf_token() }}"
                             },
                             beforeSend: () => {
@@ -190,27 +184,26 @@
                                 swal.hideLoading();
 
                                 if (data.status !== true) {
-                                    errorMsg(title + 'Failed', Array.isArray(data.message) ? serializeMessage(data.message) : data.message, 'Ok');
+                                    errorMsg('Drug Delete Failed', Array.isArray(data.message) ? serializeMessage(data.message) : data.message, 'Ok');
                                     return false;
                                 }
 
-                                successMsg(title + 'Successful', data.message);
+                                successMsg('Drug Delete Successful', data.message);
 
-                                timeout = setTimeout(() => {
-                                    window.location.reload();
-                                    clearTimeout(timeout);
-                                }, 2000);
+                                self.closest('tr').fadeOut(600, function () {
+                                    $(this).detact();
+                                });
 
                             },
                             ontimeout: () => {
                                 swal.hideLoading();
-                                errorMsg(title + 'Failed', 'Failed to ' + type + ' this order at this time as the request timed out', 'Ok');
+                                errorMsg('Drug Delete Failed', 'Failed to delete this drug at this time as the request timed out', 'Ok');
                             },
                             error: (data, xhr, status, statusText) => {
 
                                 swal.hideLoading();
 
-                                errorMsg(title + 'Failed', Array.isArray(data.message) ? serializeMessage(data.message) : data.message, 'Ok');
+                                errorMsg('Drug Delete Failed', Array.isArray(data.message) ? serializeMessage(data.message) : data.message, 'Ok');
                             }
                         });
 

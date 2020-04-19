@@ -37,7 +37,7 @@ class DoctorController extends Controller
         return view('doctors', compact('doctors', 'search', 'gender', 'size'));
     }
 
-    public function editDoctor(Request $request) {
+    public function doctorView(Request $request) {
 
         if (empty($uuid = $request->uuid)) {
             return redirect('/doctors')->with('error', "Doctor ID missing");
@@ -46,7 +46,7 @@ class DoctorController extends Controller
         $doctor = User::where(['user_type' => 'doctor', 'uuid' => $request->uuid])->first();
 
         if (empty($doctor)) {
-            return redirect('/doctors')->with('error', "Sorry, the ID '{$request->uuid}' is associated with any doctor account");
+            return redirect('/doctors')->with('error', "Sorry, the ID '{$request->uuid}' is not associated with any doctor account");
         }
 
         if (strtolower($request->method()) == "post") {
@@ -80,6 +80,6 @@ class DoctorController extends Controller
 
         }
 
-        return view('doctor', compact('doctor', 'uuid'));
+        return view('doctor-view', compact('doctor', 'uuid'));
     }
 }

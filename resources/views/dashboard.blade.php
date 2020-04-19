@@ -123,41 +123,45 @@
                         </div>
                     </div>
 
-                    <table id="selection-datatable" class="table dt-responsive table-responsive-md nowrap w-100">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Contact</th>
-                            <th>Amount</th>
-                            <th>Payment Status</th>
-                            <th>Order Ref</th>
-                            <th>Date Ordered</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
+                    <div class="table-responsive">
 
-
-                        <tbody>
-
-                        @foreach($orders as $key => $order)
+                        <table class="table dataTable w-100">
+                            <thead>
                             <tr>
-                                <td>{{ ($key + 1) }}</td>
-                                <td>{{ $order->firstname }} {{ $order->lastname }}</td>
-                                <td>{{ $order->phone }}, {{ $order->email }}</td>
-                                <td>{{ $order->amount }}</td>
-                                <td><label
-                                        class="badge {{ $order->payment_confirmed == 1 ? 'badge-success' : 'badge-warning' }}">{{ $order->payment_confirmed == 1 ? 'Paid' : 'Unpaid' }}</label>
-                                </td>
-                                <td>{{ $order->order_ref }}</td>
-                                <td>{{ \Carbon\Carbon::parse($order->created_at)->format('h:ia F dS, Y') }}</td>
-                                <td><a href="{{ url("/drugs-order/items/{$order->cart_uuid}") }}"
-                                       class="btn btn-primary">View Items</a></td>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Contact</th>
+                                <th>Amount</th>
+                                <th>Payment Status</th>
+                                <th>Order Ref</th>
+                                <th>Date Ordered</th>
+                                <th>Action</th>
                             </tr>
-                        @endforeach
+                            </thead>
 
-                        </tbody>
-                    </table>
+
+                            <tbody>
+
+                            @foreach($orders as $key => $order)
+                                <tr>
+                                    <td>{{ ($key + 1) }}</td>
+                                    <td>{{ $order->firstname }} {{ $order->lastname }}</td>
+                                    <td>{{ $order->phone }}, {{ $order->email }}</td>
+                                    <td>{{ $order->amount }}</td>
+                                    <td><label
+                                            class="badge {{ $order->payment_confirmed == 1 ? 'badge-success' : 'badge-warning' }}">{{ $order->payment_confirmed == 1 ? 'Paid' : 'Unpaid' }}</label>
+                                    </td>
+                                    <td>{{ $order->order_ref }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($order->created_at)->format('h:ia F dS, Y') }}</td>
+                                    <td><a href="{{ url("/drugs-order/items/{$order->cart_uuid}") }}"
+                                           class="btn btn-primary">View Items</a></td>
+                                </tr>
+                            @endforeach
+
+                            </tbody>
+                        </table>
+
+                    </div>
 
                     <div class="col-md-2 offset-md-5 text-center">
                         <a href="{{ url('/drugs-order') }}" class="btn btn-primary btn-rounded btn-block">View All</a>
@@ -189,32 +193,36 @@
                         </div>
                     </div>
 
-                    <table id="selection-datatable" class="table dt-responsive table-responsive-md nowrap w-100">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Experience</th>
-                            <th>Feedback</th>
-                            <th>Phone</th>
-                            <th>Date Added</th>
-                        </tr>
-                        </thead>
+                    <div class="table-responsive">
 
-
-                        <tbody>
-
-                        @foreach($feedbacks as $key => $feedback)
+                        <table class="table dataTable w-100">
+                            <thead>
                             <tr>
-                                <td>{{ ($key + 1) }}</td>
-                                <td>{{ \Illuminate\Support\Str::ucfirst($feedback->experience) }}</td>
-                                <td>{{ $feedback->feedback }}</td>
-                                <td>{{ $feedback->phone }}</td>
-                                <td>{{ \Carbon\Carbon::parse($feedback->created_at)->format('h:ia F dS, Y') }}</td>
+                                <th>#</th>
+                                <th>Experience</th>
+                                <th>Feedback</th>
+                                <th>Phone</th>
+                                <th>Date Added</th>
                             </tr>
-                        @endforeach
+                            </thead>
 
-                        </tbody>
-                    </table>
+
+                            <tbody>
+
+                            @foreach($feedbacks as $key => $feedback)
+                                <tr>
+                                    <td>{{ ($key + 1) }}</td>
+                                    <td>{{ \Illuminate\Support\Str::ucfirst($feedback->experience) }}</td>
+                                    <td>{{ $feedback->feedback }}</td>
+                                    <td>{{ $feedback->phone }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($feedback->created_at)->format('h:ia F dS, Y') }}</td>
+                                </tr>
+                            @endforeach
+
+                            </tbody>
+                        </table>
+
+                    </div>
 
                     <div class="col-md-2 offset-md-5 text-center">
                         <a href="{{ url('/feedbacks') }}" class="btn btn-primary btn-rounded btn-block">View All</a>

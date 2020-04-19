@@ -32,10 +32,22 @@
         </li>
 
         <li class="side-nav-item">
-            <a href="{{ route('drugs-order') }}" class="side-nav-link">
+            <a href="javascript: void(0);" class="side-nav-link">
                 <i class="uil-medical"></i>
-                <span> Drugs Order </span>
+                <span> Drugs </span>
+                <span class="menu-arrow"></span>
             </a>
+            <ul class="side-nav-second-level" aria-expanded="false">
+                <li>
+                    <a href="{{ route('drug-add') }}">Add</a>
+                </li>
+                <li>
+                    <a href="{{ route('drugs') }}">View</a>
+                </li>
+                <li>
+                    <a href="{{ route('drugs-order') }}">Orders</a>
+                </li>
+            </ul>
         </li>
 
         <li class="side-nav-item">

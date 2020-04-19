@@ -130,45 +130,50 @@
                         </div>
                     </div>
 
-                    <table id="selection-datatable" class="table dt-responsive table-responsive-md nowrap w-100">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Contact</th>
-                            <th>Amount</th>
-                            <th>Payment Status</th>
-                            <th>Order Ref</th>
-                            <th>Date Ordered</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
+                    <div class="table-responsive">
 
-
-                        <tbody>
-
-                        @foreach($orders as $key => $order)
+                        <table class="table dataTable w-100">
+                            <thead>
                             <tr>
-                                <td>{{ ($key + 1) }}</td>
-                                <td>{{ $order->firstname }} {{ $order->lastname }}</td>
-                                <td>{{ $order->phone }}, {{ $order->email }}</td>
-                                <td>{{ $order->amount }}</td>
-                                <td><label
-                                        class="badge {{ $order->payment_confirmed == 1 ? 'badge-success' : 'badge-warning' }}">{{ $order->payment_confirmed == 1 ? 'Paid' : 'Unpaid' }}</label>
-                                </td>
-                                <td>{{ $order->order_ref }}</td>
-                                <td>{{ \Carbon\Carbon::parse($order->created_at)->format('h:ia F dS, Y') }}</td>
-                                <td><a href="{{ url("/drugs-order/items/{$order->cart_uuid}") }}"
-                                       class="btn btn-primary">View Items</a></td>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Contact</th>
+                                <th>Amount</th>
+                                <th>Payment Status</th>
+                                <th>Order Ref</th>
+                                <th>Date Ordered</th>
+                                <th>Action</th>
                             </tr>
-                        @endforeach
+                            </thead>
 
-                        </tbody>
-                    </table>
 
-                    <div class="float-right">
+                            <tbody>
+
+                            @foreach($orders as $key => $order)
+                                <tr>
+                                    <td>{{ ($key + 1) }}</td>
+                                    <td>{{ $order->firstname }} {{ $order->lastname }}</td>
+                                    <td>{{ $order->phone }}, {{ $order->email }}</td>
+                                    <td>{{ $order->amount }}</td>
+                                    <td><label
+                                            class="badge {{ $order->payment_confirmed == 1 ? 'badge-success' : 'badge-warning' }}">{{ $order->payment_confirmed == 1 ? 'Paid' : 'Unpaid' }}</label>
+                                    </td>
+                                    <td>{{ $order->order_ref }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($order->created_at)->format('h:ia F dS, Y') }}</td>
+                                    <td><a href="{{ url("/drugs-order/{$order->cart_uuid}/items") }}"
+                                           class="btn btn-primary">View Items</a></td>
+                                </tr>
+                            @endforeach
+
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                    <div class="table-responsive mt-3">
                         {{ $orders->links() }}
                     </div>
+
                 </div> <!-- end card body-->
             </div> <!-- end card -->
         </div><!-- end col-->

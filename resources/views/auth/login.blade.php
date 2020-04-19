@@ -62,10 +62,11 @@
                                 </div>
                             </div>
 
+                            @csrf
+
                             <div class="form-group mb-0 text-center">
                                 <button class="btn btn-primary" type="submit"> Log In </button>
                             </div>
-                            @csrf
                         </form>
                     </div> <!-- end card-body -->
                 </div>

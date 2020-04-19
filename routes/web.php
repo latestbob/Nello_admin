@@ -21,17 +21,25 @@ Route::prefix('/')->middleware('auth')->group(function () {
 
     Route::get('/feedbacks', 'FeedbackController@index')->name('feedbacks');
 
-    Route::get('/drugs-order', 'DrugOrderController@index')->name('drugs-order');
+    Route::get('/drugs', 'DrugController@drugs')->name('drugs');
 
-    Route::get('/drugs-order/items/{uuid}', 'DrugOrderController@orderItems')->name('drugs-order-items');
+    Route::match(['post', 'get'],'/drug/{uuid}/view', 'DrugController@drugView')->name('drug-view');
 
-    Route::post('/drugs-order/item/action', 'DrugOrderController@drugOrderItemAction');
+    Route::post('/drug/delete', 'DrugController@drugDelete')->name('drug-delete');
 
-    Route::post('/drugs-order/item/add-prescription', 'DrugOrderController@addPrescription');
+    Route::match(['post', 'get'],'/drug/add', 'DrugController@drugAdd')->name('drug-add');
+
+    Route::get('/drugs-order', 'DrugController@drugOrders')->name('drugs-order');
+
+    Route::get('/drugs-order/{uuid}/items', 'DrugController@drugOrderItems')->name('drugs-order-items');
+
+    Route::post('/drugs-order/item/action', 'DrugController@drugOrderItemAction');
+
+    Route::post('/drugs-order/item/add-prescription', 'DrugController@addPrescription');
 
     Route::get('/doctors', 'DoctorController@index')->name('doctors');
 
-    Route::match(['post', 'get'],'/doctor/{uuid}/view', 'DoctorController@editDoctor')->name('doctor-view');
+    Route::match(['post', 'get'],'/doctor/{uuid}/view', 'DoctorController@doctorView')->name('doctor-view');
 
 //    Route::post('/doctor/{uuid}/update', 'DoctorController@updateDoctor')->name('doctor-update');
 

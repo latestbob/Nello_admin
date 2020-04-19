@@ -65,83 +65,88 @@
                         </div>
                     </div>
 
-                    <table class="table table-responsive w-100">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Picture</th>
-                            <th>Name</th>
-                            <th>Specialization</th>
-                            <th>Phone</th>
-                            <th>Email</th>
-                            <th>Address</th>
-                            <th>Gender</th>
-                            <th>Dob</th>
-                            <th>State</th>
-                            <th>City</th>
-                            <th>Religion</th>
-                            <th>Height</th>
-                            <th>Weight</th>
-                            <th>Sponsor</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
+                    <div class="table-responsive">
 
-
-                        <tbody>
-
-                        @foreach($doctors as $key => $doctor)
+                        <table class="table dataTable w-100">
+                            <thead>
                             <tr>
-                                <td>{{ ($key + 1) }}</td>
-                                <td><img src="{{ $doctor->image ?: ($doctor->gender == 'Male' ? asset('images/male_doc.png') : ($doctor->gender == 'Female' ? asset('images/female_doc.png') : asset('images/neutral_doc.png'))) }}"
-                                         class="img-thumbnail" width="80"/></td>
-                                <td>{{ $doctor->firstname }} {{ $doctor->lastname }}</td>
-                                <td>{{ $doctor->aos ?: 'Unavailable' }}</td>
-                                <td>{{ $doctor->phone }}</td>
-                                <td>{{ $doctor->email }}</td>
-                                <td>{{ $doctor->address ?: 'Unavailable' }}</td>
-                                <td>{{ $doctor->gender ?: 'Unavailable' }}</td>
-                                <td>{{ $doctor->dob ? \Carbon\Carbon::parse($doctor->dob)->format('F dS, Y') : 'Unavailable' }}</td>
-                                <td>{{ $doctor->state ?: 'Unavailable' }}</td>
-                                <td>{{ $doctor->city ?: 'Unavailable' }}</td>
-                                <td>{{ $doctor->religion ?: 'Unavailable' }}</td>
-                                <td>{{ $doctor->height ?: 'Unavailable' }}</td>
-                                <td>{{ $doctor->weight ?: 'Unavailable' }}</td>
-                                <td>{{ $doctor->sponsor ?: 'Unavailable' }}</td>
-                                <td>
-                                    <label class="badge {{ $doctor->active == 1 ? 'badge-success' : 'badge-warning' }}">{{ $doctor->active ? 'active' : 'inactive' }}</label>
-                                </td>
-                                <td>
-                                    <div class="dropdown float-right">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button"
-                                                id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                                                aria-expanded="false">
-                                            Action
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item" href="{{ url("/doctor/{$doctor->uuid}/view") }}">Edit Account</a>
-                                            @if(!empty($doctor->active == 1))
-                                                <button class="dropdown-item status-toggle" data-id="{{ $doctor->id }}"
-                                                        data-status="cancelled">Deactivate Account
-                                                </button>
-                                            @else
-                                                <button class="dropdown-item status-toggle" data-id="{{ $doctor->id }}"
-                                                        data-status="cancelled">Activate Account
-                                                </button>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </td>
+                                <th>#</th>
+                                <th>Picture</th>
+                                <th>Name</th>
+                                <th>Specialization</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>Address</th>
+                                <th>Gender</th>
+                                <th>Dob</th>
+                                <th>State</th>
+                                <th>City</th>
+                                <th>Religion</th>
+                                <th>Height</th>
+                                <th>Weight</th>
+                                <th>Sponsor</th>
+                                <th>Status</th>
+                                <th>Action</th>
                             </tr>
-                        @endforeach
+                            </thead>
 
-                        </tbody>
-                    </table>
 
-                    <div class="float-right">
+                            <tbody>
+
+                            @foreach($doctors as $key => $doctor)
+                                <tr>
+                                    <td>{{ ($key + 1) }}</td>
+                                    <td><img src="{{ $doctor->image ?: ($doctor->gender == 'Male' ? asset('images/male_doc.png') : ($doctor->gender == 'Female' ? asset('images/female_doc.png') : asset('images/neutral_doc.png'))) }}"
+                                             class="img-thumbnail" width="80"/></td>
+                                    <td>{{ $doctor->firstname }} {{ $doctor->lastname }}</td>
+                                    <td>{{ $doctor->aos ?: 'Unavailable' }}</td>
+                                    <td>{{ $doctor->phone }}</td>
+                                    <td>{{ $doctor->email }}</td>
+                                    <td>{{ $doctor->address ?: 'Unavailable' }}</td>
+                                    <td>{{ $doctor->gender ?: 'Unavailable' }}</td>
+                                    <td>{{ $doctor->dob ? \Carbon\Carbon::parse($doctor->dob)->format('F dS, Y') : 'Unavailable' }}</td>
+                                    <td>{{ $doctor->state ?: 'Unavailable' }}</td>
+                                    <td>{{ $doctor->city ?: 'Unavailable' }}</td>
+                                    <td>{{ $doctor->religion ?: 'Unavailable' }}</td>
+                                    <td>{{ $doctor->height ?: 'Unavailable' }}</td>
+                                    <td>{{ $doctor->weight ?: 'Unavailable' }}</td>
+                                    <td>{{ $doctor->sponsor ?: 'Unavailable' }}</td>
+                                    <td>
+                                        <label class="badge {{ $doctor->active == 1 ? 'badge-success' : 'badge-warning' }}">{{ $doctor->active ? 'active' : 'inactive' }}</label>
+                                    </td>
+                                    <td>
+                                        <div class="dropdown float-right">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button"
+                                                    id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                                    aria-expanded="false">
+                                                Action
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <a class="dropdown-item" href="{{ url("/doctor/{$doctor->uuid}/view") }}">Edit Account</a>
+                                                @if(!empty($doctor->active == 1))
+                                                    <button class="dropdown-item status-toggle" data-id="{{ $doctor->id }}"
+                                                            data-status="cancelled">Deactivate Account
+                                                    </button>
+                                                @else
+                                                    <button class="dropdown-item status-toggle" data-id="{{ $doctor->id }}"
+                                                            data-status="cancelled">Activate Account
+                                                    </button>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                    <div class="table-responsive mt-3">
                         {{ $doctors->links() }}
                     </div>
+
                 </div> <!-- end card body-->
             </div> <!-- end card -->
         </div><!-- end col-->
@@ -196,121 +201,67 @@
 
         });
 
-        const instance = NetBridge.getInstance();
+        {{--const instance = NetBridge.getInstance();--}}
 
-        $('.status-toggle').click(function (e) {
+        {{--$('.status-toggle').click(function (e) {--}}
 
-            let self = $(this), status = self.data('status'), timeout;
+        {{--    let self = $(this), status = self.data('status'), timeout;--}}
 
-            let title = status === 'approved' ? 'Approve ' : (status === 'disapproved' ? 'Disapprove ' : 'Cancel ');
+        {{--    let title = status === 'approved' ? 'Approve ' : (status === 'disapproved' ? 'Disapprove ' : 'Cancel ');--}}
 
-            successMsg(title + 'Order', "This order will be " + status + ", do you want proceed?",
-                'Yes, proceed', 'No, cancel', function ({value}) {
+        {{--    successMsg(title + 'Order', "This order will be " + status + ", do you want proceed?",--}}
+        {{--        'Yes, proceed', 'No, cancel', function ({value}) {--}}
 
-                    if (!value) return;
+        {{--            if (!value) return;--}}
 
-                    timeout = setTimeout(() => {
+        {{--            timeout = setTimeout(() => {--}}
 
-                        instance.addToRequestQueue({
-                            url: "{{ url('/drugs-order/item/action') }}",
-                            method: 'post',
-                            timeout: 10000,
-                            dataType: 'json',
-                            data: {
-                                id: parseInt(self.data('id')),
-                                status: status,
-                                '_token': "{{ csrf_token() }}"
-                            },
-                            beforeSend: () => {
-                                swal.showLoading();
-                            },
-                            success: (data, status, xhr) => {
+        {{--                instance.addToRequestQueue({--}}
+        {{--                    url: "{{ url('/drugs-order/item/action') }}",--}}
+        {{--                    method: 'post',--}}
+        {{--                    timeout: 10000,--}}
+        {{--                    dataType: 'json',--}}
+        {{--                    data: {--}}
+        {{--                        id: parseInt(self.data('id')),--}}
+        {{--                        status: status,--}}
+        {{--                        '_token': "{{ csrf_token() }}"--}}
+        {{--                    },--}}
+        {{--                    beforeSend: () => {--}}
+        {{--                        swal.showLoading();--}}
+        {{--                    },--}}
+        {{--                    success: (data, status, xhr) => {--}}
 
-                                swal.hideLoading();
+        {{--                        swal.hideLoading();--}}
 
-                                if (data.status !== true) {
-                                    errorMsg(title + 'Failed', Array.isArray(data.message) ? serializeMessage(data.message) : data.message, 'Ok');
-                                    return false;
-                                }
+        {{--                        if (data.status !== true) {--}}
+        {{--                            errorMsg(title + 'Failed', Array.isArray(data.message) ? serializeMessage(data.message) : data.message, 'Ok');--}}
+        {{--                            return false;--}}
+        {{--                        }--}}
 
-                                successMsg(title + 'Successful', data.message);
+        {{--                        successMsg(title + 'Successful', data.message);--}}
 
-                                timeout = setTimeout(() => {
-                                    window.location.reload();
-                                    clearTimeout(timeout);
-                                }, 2000);
+        {{--                        timeout = setTimeout(() => {--}}
+        {{--                            window.location.reload();--}}
+        {{--                            clearTimeout(timeout);--}}
+        {{--                        }, 2000);--}}
 
-                            },
-                            ontimeout: () => {
-                                swal.hideLoading();
-                                errorMsg(title + 'Failed', 'Failed to ' + type + ' this order at this time as the request timed out', 'Ok');
-                            },
-                            error: (data, xhr, status, statusText) => {
+        {{--                    },--}}
+        {{--                    ontimeout: () => {--}}
+        {{--                        swal.hideLoading();--}}
+        {{--                        errorMsg(title + 'Failed', 'Failed to ' + type + ' this order at this time as the request timed out', 'Ok');--}}
+        {{--                    },--}}
+        {{--                    error: (data, xhr, status, statusText) => {--}}
 
-                                swal.hideLoading();
+        {{--                        swal.hideLoading();--}}
 
-                                errorMsg(title + 'Failed', Array.isArray(data.message) ? serializeMessage(data.message) : data.message, 'Ok');
-                            }
-                        });
+        {{--                        errorMsg(title + 'Failed', Array.isArray(data.message) ? serializeMessage(data.message) : data.message, 'Ok');--}}
+        {{--                    }--}}
+        {{--                });--}}
 
-                        clearTimeout(timeout);
-                    }, 500);
-                })
-        });
-
-        $('.add-prescription').click(function () {
-            $(this).siblings("input[type='file']").click();
-        });
-
-        const uploadPrescription = (file, id, uuid) => {
-
-            let formData = new FormData(), timeout;
-            formData.append('_token', "{{ csrf_token() }}");
-            formData.append('file', file);
-            formData.append('uuid', uuid);
-            formData.append('id', id);
-
-            instance.addToRequestQueue({
-                url: "{{ url('/drugs-order/item/add-prescription') }}",
-                method: 'POST',
-                timeout: 20000,
-                cache: false,
-                contentType: false,
-                processData: false,
-                dataType: 'json',
-                data: formData,
-                beforeSend: function () {
-                    swal.showLoading();
-                },
-                success: (data, status, xhr) => {
-
-                    swal.hideLoading();
-
-                    if (data.status !== true) {
-                        errorMsg('Prescription Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
-                        return false;
-                    }
-
-                    successMsg('Prescription Successful', data.message);
-
-                    timeout = setTimeout(() => {
-                        window.location.reload();
-                        clearTimeout(timeout);
-                    }, 2000);
-
-                },
-                ontimeout: () => {
-                    swal.hideLoading();
-                    errorMsg('Prescription Failed', 'Failed to ' + type + ' this order at this time as the request timed out', 'Ok');
-                },
-                error: (data, xhr, status, statusText) => {
-
-                    swal.hideLoading();
-
-                    errorMsg('Prescription Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
-                }
-            });
-        }
+        {{--                clearTimeout(timeout);--}}
+        {{--            }, 500);--}}
+        {{--        })--}}
+        {{--});--}}
 
     </script>
 @endsection

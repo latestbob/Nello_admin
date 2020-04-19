@@ -4,16 +4,136 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Order;
+use App\Models\PharmacyDrug;
 use App\Traits\FileUpload;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
-class DrugOrderController extends Controller
+class DrugController extends Controller
 {
 
     use FileUpload;
 
-    public function index(Request $request)
+    public function drugs(Request $request) {
+
+        $size = empty($request->size) ? 10 : $request->size;
+        $search = $request->search;
+
+        $drugs = PharmacyDrug::when($search, function ($query, $search) {
+
+            $query->whereRaw(
+                "(name like ? or brand like ? or category like ? or uuid = ?)",
+                [
+                    "%{$search}%", "%{$search}%", "%{$search}%", $search
+                ]
+            );
+
+        })->where('vendor_id', $request->user()->vendor_id)->orderBy('name')->paginate($size);
+
+        return view('drugs', compact('drugs', 'search', 'size'));
+    }
+
+    public function drugView(Request $request) {
+
+        if (empty($uuid = $request->uuid)) {
+            return redirect('/drugs')->with('error', "Drug ID missing");
+        }
+
+        $drug = PharmacyDrug::where(['uuid' => $request->uuid, 'vendor_id' => $request->user()->vendor_id])->first();
+
+        if (empty($drug)) {
+            return redirect('/drugs')->with('error', "Sorry, the ID '{$request->uuid}' is associated with any drug");
+        }
+
+        if (strtolower($request->method()) == "post") {
+
+            Validator::make($data = $request->all(), [
+                'name' => 'required|string|max:50',
+                'brand'  => 'required|string|max:50',
+                'category' => 'required|string|max:50',
+                'price' => 'required|numeric',
+                'image' => 'nullable|image|mimes:jpeg,jpg,png'
+            ])->validate();
+
+            if ($request->hasFile('image')) {
+
+                $data['image'] = $this->uploadFile($request, 'image');
+//            $data['image'] = 'http://www.famacare.com/img/famacare.png';
+
+            }
+
+            $drug->update($data);
+
+            session()->put('success', "Drug has been updated successfully");
+
+        }
+
+        return view('drug-view', compact('drug', 'uuid'));
+    }
+
+    public function drugAdd(Request $request) {
+
+        if (strtolower($request->method()) == "post") {
+
+            Validator::make($data = $request->all(), [
+                'name' => 'required|string|max:50',
+                'brand'  => 'required|string|max:50',
+                'category' => 'required|string|max:50',
+                'price' => 'required|numeric',
+                'image' => 'nullable|image|mimes:jpeg,jpg,png'
+            ])->validate();
+
+            if ($request->hasFile('image')) {
+
+                $data['image'] = $this->uploadFile($request, 'image');
+//            $data['image'] = 'http://www.famacare.com/img/famacare.png';
+
+            }
+
+            $data['uuid'] = Str::uuid()->toString();
+
+            $data['vendor_id'] = $request->user()->vendor_id;
+
+            $drug = PharmacyDrug::create($data);
+
+            return redirect("drug/{$drug->uuid}/view")->with('success', "Drug has been added successfully");
+
+        }
+
+        return view('drug-add');
+    }
+
+    public function drugDelete(Request $request) {
+
+        if (empty($uuid = $request->uuid)) {
+            return response([
+                'status' => false,
+                'message' => "Drug ID missing"
+            ]);
+        }
+
+        $drug = PharmacyDrug::where(['uuid' => $request->uuid, 'vendor_id' => $request->user()->vendor_id])->first();
+
+        if (empty($drug)) {
+            return response([
+                'status' => false,
+                'message' => "Sorry, the ID '{$request->uuid}' is associated with any drug"
+            ]);
+        }
+
+        $drug->delete();
+
+        return response([
+            'status' => true,
+            'message' => "Drug deleted successfully"
+        ]);
+
+    }
+
+    public function drugOrders(Request $request)
     {
 
         $size = empty($request->size) ? 10 : $request->size;
@@ -74,7 +194,7 @@ class DrugOrderController extends Controller
         return view('drugs-order', compact('orders', 'size', 'total', 'search', 'payment', 'dateStart', 'dateEnd'));
     }
 
-    public function orderItems(Request $request)
+    public function drugOrderItems(Request $request)
     {
         if (empty($request->uuid)) {
             return redirect('/drugs-order')->with('error', "Cart ID is missing.");
@@ -93,7 +213,6 @@ class DrugOrderController extends Controller
 
         return view('drug-order-items', compact('orderItems', 'size'));
     }
-
 
     public function drugOrderItemAction(Request $request) {
 

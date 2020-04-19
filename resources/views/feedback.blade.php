@@ -124,34 +124,39 @@
                         </div>
                     </div>
 
-                    <table id="selection-datatable" class="table dt-responsive table-responsive-md nowrap w-100">
-                        <thead>
-                        <tr>
-                            <th>Experience</th>
-                            <th>Feedback</th>
-                            <th>Phone</th>
-                            <th>Date Added</th>
-                        </tr>
-                        </thead>
+                    <div class="table-responsive">
 
-
-                        <tbody>
-
-                        @foreach($feedbacks as $feedback)
+                        <table class="table dataTable w-100">
+                            <thead>
                             <tr>
-                                <td>{{ \Illuminate\Support\Str::ucfirst($feedback->experience) }}</td>
-                                <td>{{ $feedback->feedback }}</td>
-                                <td>{{ $feedback->phone }}</td>
-                                <td>{{ \Carbon\Carbon::parse($feedback->created_at)->format('h:ia F dS, Y') }}</td>
+                                <th>Experience</th>
+                                <th>Feedback</th>
+                                <th>Phone</th>
+                                <th>Date Added</th>
                             </tr>
-                        @endforeach
+                            </thead>
 
-                        </tbody>
-                    </table>
 
-                    <div class="float-right">
+                            <tbody>
+
+                            @foreach($feedbacks as $feedback)
+                                <tr>
+                                    <td>{{ \Illuminate\Support\Str::ucfirst($feedback->experience) }}</td>
+                                    <td>{{ $feedback->feedback }}</td>
+                                    <td>{{ $feedback->phone }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($feedback->created_at)->format('h:ia F dS, Y') }}</td>
+                                </tr>
+                            @endforeach
+
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                    <div class="table-responsive mt-3">
                         {{ $feedbacks->links() }}
                     </div>
+
                 </div> <!-- end card body-->
             </div> <!-- end card -->
         </div><!-- end col-->
