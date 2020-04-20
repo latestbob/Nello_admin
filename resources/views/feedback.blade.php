@@ -112,9 +112,9 @@
                                         </div>
 
                                         <div class="col-md-4 mb-3">
-                                            <label>Filter by Phone</label>
-                                            <input class="form-control" name="phone" value="{{ $phone }}"
-                                                   placeholder="Enter Phone"/>
+                                            <label>Filter by Keyword</label>
+                                            <input class="form-control" name="search" value="{{ $search }}"
+                                                   placeholder="Enter keyword"/>
                                         </div>
 
                                     </form>
@@ -201,9 +201,9 @@
 
         $("form[id='phone-filter']").submit(function (e) {
             e.preventDefault();
-            let phone = $("input[name='phone']").val();
-            if (phone !== '') params.phone = phone;
-            else delete params.phone;
+            let search = $("input[name='search']").val();
+            if (search !== '') params.search = search;
+            else delete params.search;
             delete params.page;
             window.location.href = (window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + serialize(params));
 

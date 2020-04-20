@@ -17,8 +17,14 @@ class FeedbackController extends Controller
             $feedbacks = $feedbacks->where('experience', $experience);
         }
 
-        if (!empty($phone = $request->phone)) {
-            $feedbacks = $feedbacks->where('phone', 'like', "%{$phone}%");
+        if (!empty($search = $request->search)) {
+
+            $feedbacks = $feedbacks->whereRaw(
+                "(phone like ? or feedback like ?)",
+                [
+                    "%{$search}%", "%{$search}%"
+                ]
+            );
         }
 
         $feedbacks = $feedbacks->paginate($size);
@@ -29,6 +35,6 @@ class FeedbackController extends Controller
             'neutral' => Feedbacks::where(['vendor_id' => $request->user()->vendor_id, 'experience' => 'neutral'])->count('id')
         ];
 
-        return view('feedback', compact('feedbacks', 'total', 'size', 'experience', 'phone'));
+        return view('feedback', compact('feedbacks', 'total', 'size', 'experience', 'search'));
     }
 }
