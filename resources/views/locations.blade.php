@@ -9,56 +9,14 @@
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
                         <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Feedbacks</li>
+                        <li class="breadcrumb-item active">Locations</li>
                     </ol>
                 </div>
-                <h4 class="page-title">Feedbacks</h4>
+                <h4 class="page-title">Locations</h4>
             </div>
         </div>
     </div>
     <!-- end page title -->
-
-    <div class="row">
-        <div class="col-xl-4 col-lg-12">
-            <div class="card tilebox-one">
-                <div class="card-body">
-                    <i class="mdi mdi-emoticon-happy float-right"></i>
-                    <h6 class="text-uppercase mt-0">Happy</h6>
-                    <h2 class="my-2" id="active-users-count">{{ $total['happy'] }}</h2>
-                    <p class="mb-0 text-muted">
-                        <span class="text-nowrap">Total Happy Experience</span>
-                    </p>
-                </div> <!-- end card-body-->
-            </div>
-            <!--end card-->
-        </div>
-        <div class="col-xl-4 col-lg-12">
-            <div class="card tilebox-one">
-                <div class="card-body">
-                    <i class="mdi mdi-emoticon-neutral float-right"></i>
-                    <h6 class="text-uppercase mt-0">Neutral</h6>
-                    <h2 class="my-2" id="active-users-count">{{ $total['neutral'] }}</h2>
-                    <p class="mb-0 text-muted">
-                        <span class="text-nowrap">Total Neutral Experience</span>
-                    </p>
-                </div> <!-- end card-body-->
-            </div>
-            <!--end card-->
-        </div>
-        <div class="col-xl-4 col-lg-12">
-            <div class="card tilebox-one">
-                <div class="card-body">
-                    <i class="mdi mdi-emoticon-sad float-right"></i>
-                    <h6 class="text-uppercase mt-0">Sad</h6>
-                    <h2 class="my-2" id="active-users-count">{{ $total['sad'] }}</h2>
-                    <p class="mb-0 text-muted">
-                        <span class="text-nowrap">Total Sad Experience</span>
-                    </p>
-                </div> <!-- end card-body-->
-            </div>
-            <!--end card-->
-        </div>
-    </div>
 
     <div class="row">
         <div class="col-12">
@@ -71,17 +29,17 @@
                             <div class="row">
                                 <div class="col-md-6">
 
-                                    <h4 class="header-title">Feedbacks</h4>
+                                    <h4 class="header-title">Locations</h4>
                                     <p class="text-muted font-14">
-                                        Here's a list of feedbacks from Nello users
+                                        Here's a list of locations from which Nello users can place an order
                                     </p>
 
                                 </div>
                                 <div class="col-md-6">
 
-                                    <form method="get" id="phone-filter" class="row">
+                                    <form method="get" id="form-filter" class="row">
 
-                                        <div class="col-md-4 mb-3">
+                                        <div class="col-md-6 mb-3">
                                             <label>Show entries</label>
                                             <select name="size" class="form-control">
                                                 <option value="5" @if($size == '5') selected @endif>5 records</option>
@@ -96,22 +54,7 @@
                                             </select>
                                         </div>
 
-                                        <div class="col-md-4 mb-3">
-                                            <label>Filter by Experience</label>
-                                            <select class="form-control" name="experience">
-                                                <option value="">Select experience</option>
-                                                <option value="happy" @if($experience == 'happy') selected @endif>
-                                                    Happy
-                                                </option>
-                                                <option value="neutral"
-                                                        @if($experience == 'neutral') selected @endif>Neutral
-                                                </option>
-                                                <option value="sad" @if($experience == 'sad') selected @endif>Sad
-                                                </option>
-                                            </select>
-                                        </div>
-
-                                        <div class="col-md-4 mb-3">
+                                        <div class="col-md-6 mb-3">
                                             <label>Filter by Keyword</label>
                                             <input class="form-control" name="search" value="{{ $search }}"
                                                    placeholder="Enter keyword"/>
@@ -130,23 +73,37 @@
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Experience</th>
-                                <th>Feedback</th>
-                                <th>Phone</th>
+                                <th>Location</th>
+                                <th>Price</th>
                                 <th>Date Added</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
 
 
                             <tbody>
 
-                            @foreach($feedbacks as $key => $feedback)
+                            @foreach($locations as $key => $location)
                                 <tr>
                                     <td>{{ ($key + 1) }}</td>
-                                    <td>{{ \Illuminate\Support\Str::ucfirst($feedback->experience) }}</td>
-                                    <td>{{ $feedback->feedback }}</td>
-                                    <td>{{ $feedback->phone }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($feedback->created_at)->format('h:ia F dS, Y') }}</td>
+                                    <td>{{ $location->name }}</td>
+                                    <td>{{ $location->price }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($location->created_at)->format('h:ia F dS, Y') }}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button"
+                                                    id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                                    aria-expanded="false">
+                                                Action
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <a class="dropdown-item" href="{{ route("location-view", ['uuid' => $location->uuid]) }}">Edit Location</a>
+                                                <button class="dropdown-item status-toggle" data-id="{{ $location->uuid }}"
+                                                        data-status="cancelled">Delete Location
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
                             @endforeach
 
@@ -156,7 +113,7 @@
                     </div>
 
                     <div class="table-responsive mt-3">
-                        {{ $feedbacks->links() }}
+                        {{ $locations->links() }}
                     </div>
 
                 </div> <!-- end card body-->
@@ -168,6 +125,8 @@
 @endsection
 
 @section('js')
+
+    <script src="{{ asset('js/net-bridge/net-bridge.js') }}" type="application/javascript"></script>
 
     <script type="application/javascript">
 
@@ -191,17 +150,7 @@
 
         });
 
-        $("select[name='experience']").change(function (e) {
-
-            let experience = $(this).val();
-            if (experience !== '') params.experience = experience;
-            else delete params.experience;
-            delete params.page;
-            window.location.href = (window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + serialize(params));
-
-        });
-
-        $("form[id='phone-filter']").submit(function (e) {
+        $("form[id='form-filter']").submit(function (e) {
             e.preventDefault();
             let search = $("input[name='search']").val();
             if (search !== '') params.search = search;
@@ -209,6 +158,64 @@
             delete params.page;
             window.location.href = (window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + serialize(params));
 
+        });
+
+        const instance = NetBridge.getInstance();
+
+        $('.status-toggle').click(function (e) {
+
+            let self = $(this), uuid = self.data('id'), timeout;
+
+            successMsg('Delete Location', "This location will be deleted, once done it cannot be undone, do you want proceed?",
+                'Yes, proceed', 'No, cancel', function ({value}) {
+
+                    if (!value) return;
+
+                    timeout = setTimeout(() => {
+
+                        instance.addToRequestQueue({
+                            url: "{{ route('location-delete') }}",
+                            method: 'post',
+                            timeout: 10000,
+                            dataType: 'json',
+                            data: {
+                                uuid,
+                                '_token': "{{ csrf_token() }}"
+                            },
+                            beforeSend: () => {
+                                swal.showLoading();
+                            },
+                            success: (data, status, xhr) => {
+
+                                swal.hideLoading();
+
+                                if (data.status !== true) {
+                                    errorMsg('Location Delete Failed', Array.isArray(data.message) ? serializeMessage(data.message) : data.message, 'Ok');
+                                    return false;
+                                }
+
+                                successMsg('Location Delete Successful', data.message);
+
+                                self.closest('tr').fadeOut(600, function () {
+                                    $(this).detact();
+                                });
+
+                            },
+                            ontimeout: () => {
+                                swal.hideLoading();
+                                errorMsg('Location Delete Failed', 'Failed to delete this location at this time as the request timed out', 'Ok');
+                            },
+                            error: (data, xhr, status, statusText) => {
+
+                                swal.hideLoading();
+
+                                errorMsg('Location Delete Failed', Array.isArray(data.message) ? serializeMessage(data.message) : data.message, 'Ok');
+                            }
+                        });
+
+                        clearTimeout(timeout);
+                    }, 500);
+                })
         });
     </script>
 @endsection

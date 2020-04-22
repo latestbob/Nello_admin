@@ -76,7 +76,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="price">Price</label>
-                                    <input type="tel" class="form-control @error('price') is-invalid @enderror" id="price"
+                                    <input type="number" class="form-control @error('price') is-invalid @enderror" id="price"
                                            value="{{ old('price')  }}" name="price" placeholder="Enter price">
 
                                     @error('price')

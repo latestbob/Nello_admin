@@ -41,6 +41,12 @@ Route::prefix('/')->middleware('auth')->group(function () {
 
     Route::match(['post', 'get'],'/doctor/{uuid}/view', 'DoctorController@doctorView')->name('doctor-view');
 
-//    Route::post('/doctor/{uuid}/update', 'DoctorController@updateDoctor')->name('doctor-update');
+    Route::get('/locations', 'LocationController@index')->name('locations');
+
+    Route::match(['post', 'get'],'/location/add', 'LocationController@addLocation')->name('location-add');
+
+    Route::match(['post', 'get'],'/location/{uuid}/view', 'LocationController@viewLocation')->name('location-view');
+
+    Route::post('/location/delete', 'LocationController@locationDelete')->name('location-delete');
 
 });

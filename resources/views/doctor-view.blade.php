@@ -33,7 +33,7 @@
                         <h4 class="font-13 text-uppercase">About {{ $doctor->firstname }}:</h4>
 
                         <p class="text-muted mb-2 font-13">
-                            <strong>Full Name :</strong> <span class="ml-2">{{ $doctor->lastname }} {{ $doctor->middlename }} {{ $doctor->firstname }}</span></p>
+                            <strong>Full Name :</strong> <span class="ml-2">{{ $doctor->lastname }} {{ $doctor->firstname }} {{ $doctor->middlename }}</span></p>
 
                         <p class="text-muted mb-2 font-13"><strong>Specialization :</strong><span class="ml-2">{{ $doctor->aos ?: 'Unavailable' }}</span></p>
 

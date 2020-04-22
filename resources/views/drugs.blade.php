@@ -84,7 +84,7 @@
                                     <td>{{ $drug->brand ?: 'Unavailable' }}</td>
                                     <td>{{ $drug->category ?: 'Unavailable' }}</td>
                                     <td>
-                                        <div class="dropdown float-right">
+                                        <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button"
                                                     id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
                                                     aria-expanded="false">

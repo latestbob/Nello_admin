@@ -115,7 +115,7 @@
                                         <label class="badge {{ $doctor->active == 1 ? 'badge-success' : 'badge-warning' }}">{{ $doctor->active ? 'active' : 'inactive' }}</label>
                                     </td>
                                     <td>
-                                        <div class="dropdown float-right">
+                                        <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button"
                                                     id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
                                                     aria-expanded="false">
