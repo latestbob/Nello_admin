@@ -10,7 +10,7 @@ class Order extends Model
     protected $fillable = [
         'payment_method', 'customer_id', 'cart_uuid',
         'amount', 'firstname', 'lastname', 'email', 'phone',
-        'order_ref', 'company', 'address1', 'address2',
+        'order_ref', 'company', 'address1', 'address2', 'location_id',
         'city', 'state', 'postal_code', 'payment_confirmed'
     ];
 
@@ -23,6 +23,11 @@ class Order extends Model
     public function customer()
     {
         return $this->belongsTo('App\Models\User', 'customer_id');
+    }
+
+    public function location()
+    {
+        return $this->belongsTo('App\Models\Location', 'location_id', 'id');
     }
 
 

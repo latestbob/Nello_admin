@@ -141,11 +141,10 @@
                                 <th>Amount</th>
                                 <th>Payment Status</th>
                                 <th>Order Ref</th>
-                                <th>Address One</th>
-                                <th>Address Two</th>
+                                <th>Address</th>
+                                <th>Location</th>
                                 <th>City</th>
                                 <th>State</th>
-                                <th>Postal Code</th>
                                 <th>Date Ordered</th>
                                 <th>Action</th>
                             </tr>
@@ -163,10 +162,9 @@
                                     <td><label class="badge {{ $order->payment_confirmed == 1 ? 'badge-success' : 'badge-warning' }}">{{ $order->payment_confirmed == 1 ? 'Paid' : 'Unpaid' }}</label></td>
                                     <td>{{ $order->order_ref }}</td>
                                     <td>{{ $order->address1 ?? 'Unavailable' }}</td>
-                                    <td>{{ $order->address2 ?? 'Unavailable' }}</td>
+                                    <td>{{ $order->location->name ?? 'Unavailable' }}</td>
                                     <td>{{ $order->city ?? 'Unavailable' }}</td>
                                     <td>{{ $order->state ?? 'Unavailable' }}</td>
-                                    <td>{{ $order->postal_code ?? 'Unavailable' }}</td>
                                     <td>{{ \Carbon\Carbon::parse($order->created_at)->format('h:ia F dS, Y') }}</td>
                                     <td><a href="{{ url("/drugs-order/{$order->cart_uuid}/items") }}" class="btn btn-primary">View Items</a></td>
                                 </tr>
