@@ -65,6 +65,8 @@ class DrugController extends Controller
 
             }
 
+            $data['require_prescription'] = $request->has('prescription') ? 1 : 0;
+
             $drug->update($data);
 
             session()->put('success', "Drug has been updated successfully");
@@ -92,6 +94,8 @@ class DrugController extends Controller
 //            $data['image'] = 'http://www.famacare.com/img/famacare.png';
 
             }
+
+            $data['require_prescription'] = $request->has('prescription') ? 1 : 0;
 
             $data['uuid'] = Str::uuid()->toString();
 

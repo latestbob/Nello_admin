@@ -137,6 +137,17 @@
                             </div>
                         </div> <!-- end row -->
 
+                        <div class="row mt-2">
+                            <div class="col-md-12">
+                                <div class="form-group mb-3">
+                                    <div class="custom-control custom-checkbox">
+                                        <input @if(old('prescription', $drug->require_prescription) == 1) checked @endif type="checkbox" class="custom-control-input" id="prescription" name="prescription">
+                                        <label class="custom-control-label" for="prescription">Require prescription?</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> <!-- end row -->
+
                         @csrf
 
                         <div class="col-md-2 offset-md-5 text-center mt-2">

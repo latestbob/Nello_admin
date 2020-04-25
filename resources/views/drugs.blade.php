@@ -69,6 +69,7 @@
                                 <th>Name</th>
                                 <th>Brand</th>
                                 <th>Category</th>
+                                <th>Prescription</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -83,6 +84,7 @@
                                     <td>{{ $drug->name }}</td>
                                     <td>{{ $drug->brand ?: 'Unavailable' }}</td>
                                     <td>{{ $drug->category ?: 'Unavailable' }}</td>
+                                    <td>{{ $drug->require_prescription == 1 ? 'Required' : 'Not required' }}</td>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button"
