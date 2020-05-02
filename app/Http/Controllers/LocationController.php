@@ -40,9 +40,10 @@ class LocationController extends Controller
 
             $validated = Validator::make($request->all(), [
                 'name' => 'required|string|min:2|max:255|unique:locations,name',
-                'price' => 'required|numeric'
+                'price' => $request->action != 'pickup' ? 'required|numeric' : 'nullable|numeric'
             ])->validate();
 
+            $validated['price'] = $validated['price'] ?? 0;
             $validated['uuid'] = Str::uuid()->toString();
             $validated['vendor_id'] = $request->user()->vendor_id;
 
@@ -68,13 +69,14 @@ class LocationController extends Controller
 
         if (strtolower($request->method()) == "post") {
 
-            Validator::make($data = $request->all(), [
+            $validated = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'min:2', 'max:255',
                     Rule::unique('locations', 'id')->ignore($location->id)],
-                'price' => 'required|numeric'
+                'price' => $request->action != 'pickup' ? 'required|numeric' : 'nullable|numeric'
             ])->validate();
 
-            $location->update($data);
+            $validated['price'] = $validated['price'] ?? 0;
+            $location->update($validated);
 
             return redirect('/locations')->with('success', "Location has been updated successfully");
 

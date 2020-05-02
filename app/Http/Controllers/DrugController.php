@@ -177,8 +177,6 @@ class DrugController extends Controller
 
         $orders = $orders->where('carts.vendor_id', $request->user()->vendor_id);
 
-        $orders = $orders->select(['*', 'orders.created_at'])->selectRaw("ROUND(SUM(carts.price), 2) as amount");
-
         $orders = $orders->groupBy('carts.cart_uuid')->orderByDesc('orders.id');
 
         $orders = $orders->paginate($size);

@@ -74,6 +74,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Location</th>
+                                <th>Type</th>
                                 <th>Price</th>
                                 <th>Date Added</th>
                                 <th>Action</th>
@@ -87,6 +88,7 @@
                                 <tr>
                                     <td>{{ ($key + 1) }}</td>
                                     <td>{{ $location->name }}</td>
+                                    <td>{{ $location->price == 0 ? 'Pickup' : 'Delivery' }}</td>
                                     <td>{{ $location->price }}</td>
                                     <td>{{ \Carbon\Carbon::parse($location->created_at)->format('h:ia F dS, Y') }}</td>
                                     <td>
