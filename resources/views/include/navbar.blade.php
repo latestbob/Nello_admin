@@ -73,6 +73,13 @@
             </ul>
         </li>
 
+        <li class="side-nav-item">
+            <a href="{{ route('point-rule') }}" class="side-nav-link">
+                <i class="dripicons-gear"></i>
+                <span> Customer Point Rules </span>
+            </a>
+        </li>
+
     </ul>
 
     <!-- End Sidebar -->

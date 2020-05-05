@@ -49,4 +49,6 @@ Route::prefix('/')->middleware('auth')->group(function () {
 
     Route::post('/location/delete', 'LocationController@locationDelete')->name('location-delete');
 
+    Route::match(['post', 'get'],'/point/rule', 'CustomerPointController@index')->name('point-rule');
+
 });
