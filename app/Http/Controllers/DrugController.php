@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\DrugCategory;
 use App\Models\Order;
 use App\Models\PharmacyDrug;
 use App\Traits\FileUpload;
@@ -20,20 +21,27 @@ class DrugController extends Controller
     public function drugs(Request $request) {
 
         $size = empty($request->size) ? 10 : $request->size;
+        $category = $request->category;
         $search = $request->search;
 
         $drugs = PharmacyDrug::when($search, function ($query, $search) {
 
             $query->whereRaw(
-                "(name like ? or brand like ? or category like ? or uuid = ?)",
+                "(name like ? or brand like ? or uuid = ?)",
                 [
-                    "%{$search}%", "%{$search}%", "%{$search}%", $search
+                    "%{$search}%", "%{$search}%", $search
                 ]
             );
 
+        })->when($category, function ($query, $category) {
+
+            $query->where('category_id', $category);
+
         })->where('vendor_id', $request->user()->vendor_id)->orderBy('name')->paginate($size);
 
-        return view('drugs', compact('drugs', 'search', 'size'));
+        $categories = DrugCategory::groupBy('name')->get();
+
+        return view('drugs', compact('drugs', 'search', 'size', 'categories', 'category'));
     }
 
     public function drugView(Request $request) {
@@ -44,6 +52,8 @@ class DrugController extends Controller
 
         $drug = PharmacyDrug::where(['uuid' => $request->uuid, 'vendor_id' => $request->user()->vendor_id])->first();
 
+        $categories = DrugCategory::groupBy('name')->get();
+
         if (empty($drug)) {
             return redirect('/drugs')->with('error', "Sorry, the ID '{$request->uuid}' is associated with any drug");
         }
@@ -53,7 +63,9 @@ class DrugController extends Controller
             Validator::make($data = $request->all(), [
                 'name' => 'required|string|max:50',
                 'brand'  => 'required|string|max:50',
-                'category' => 'required|string|max:50',
+                'category' => 'required|numeric|exists:drug_categories,id',
+                'description' => 'required|string|max:255',
+                'dosage_type' => 'required|string|max:50',
                 'price' => 'required|numeric',
                 'image' => 'nullable|image|mimes:jpeg,jpg,png'
             ])->validate();
@@ -67,13 +79,16 @@ class DrugController extends Controller
 
             $data['require_prescription'] = $request->has('prescription') ? 1 : 0;
 
+            $data['category_id'] = $data['category'];
+            unset($data['category']);
+
             $drug->update($data);
 
             session()->put('success', "Drug has been updated successfully");
 
         }
 
-        return view('drug-view', compact('drug', 'uuid'));
+        return view('drug-view', compact('drug', 'uuid', 'categories'));
     }
 
     public function drugAdd(Request $request) {
@@ -83,7 +98,9 @@ class DrugController extends Controller
             Validator::make($data = $request->all(), [
                 'name' => 'required|string|max:50',
                 'brand'  => 'required|string|max:50',
-                'category' => 'required|string|max:50',
+                'category' => 'required|numeric|exists:drug_categories,id',
+                'description' => 'required|string|max:255',
+                'dosage_type' => 'required|string|max:50',
                 'price' => 'required|numeric',
                 'image' => 'nullable|image|mimes:jpeg,jpg,png'
             ])->validate();
@@ -101,13 +118,18 @@ class DrugController extends Controller
 
             $data['vendor_id'] = $request->user()->vendor_id;
 
+            $data['category_id'] = $data['category'];
+            unset($data['category']);
+
             $drug = PharmacyDrug::create($data);
 
             return redirect("drug/{$drug->uuid}/view")->with('success', "Drug has been added successfully");
 
         }
 
-        return view('drug-add');
+        $categories = DrugCategory::groupBy('name')->get();
+
+        return view('drug-add', compact('categories'));
     }
 
     public function drugDelete(Request $request) {

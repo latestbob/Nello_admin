@@ -37,7 +37,7 @@
 
                         <p class="text-muted mb-2 font-13"><strong>Brand :</strong><span class="ml-2">{{ $drug->brand ?: 'Unavailable' }}</span></p>
 
-                        <p class="text-muted mb-2 font-13"><strong>Category :</strong><span class="ml-2">{{ $drug->category ?: 'Unavailable' }}</span></p>
+                        <p class="text-muted mb-2 font-13"><strong>Category :</strong><span class="ml-2">{{ $drug->category->name ?: 'Unavailable' }}</span></p>
 
                         <p class="text-muted mb-2 font-13"><strong>Price :</strong> <span class="ml-2 ">N{{ number_format($drug->price ?: 0) }}</span></p>
 
@@ -86,8 +86,12 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="category">Category</label>
-                                    <input type="text" class="form-control @error('category') is-invalid @enderror" id="category"
-                                           value="{{ old('category', $drug->category) }}" name="category" placeholder="Enter category">
+
+                                    <select class="form-control @error('category') is-invalid @enderror" id="category" name="category">
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category->id }}" {{ $category->id == $drug->category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                        @endforeach
+                                    </select>
 
                                     @error('category')
                                     <span class="invalid-feedback" role="alert">
@@ -102,8 +106,39 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
+                                    <label for="description">Description</label>
+                                    <textarea class="form-control @error('description') is-invalid @enderror" id="description"
+                                              name="description" placeholder="Enter description">{{ old('description', $drug->description)  }}</textarea>
+
+                                    @error('description')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+                        </div> <!-- end row -->
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="price">Dosage Type</label>
+                                    <input type="text" class="form-control @error('dosage_type') is-invalid @enderror" id="dosage_type"
+                                           value="{{ old('dosage_type', $drug->dosage_type)  }}" name="dosage_type" placeholder="Enter dosage type">
+
+                                    @error('price')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
                                     <label for="price">Price</label>
-                                    <input type="tel" class="form-control @error('price') is-invalid @enderror" id="price"
+                                    <input type="number" class="form-control @error('price') is-invalid @enderror" id="price"
                                            value="{{ old('price', $drug->price)  }}" name="price" placeholder="Enter price">
 
                                     @error('price')

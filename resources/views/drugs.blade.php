@@ -38,7 +38,7 @@
 
                                 <div class="col-md-6 offset-md-2">
                                     <div class="row">
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-4 mb-3">
                                             <label>Show entries</label>
                                             <select name="size" class="form-control">
                                                 <option value="5" @if($size == '5') selected @endif>5 records</option>
@@ -48,8 +48,17 @@
                                                 <option value="100" @if($size == '100') selected @endif>100 records</option>
                                             </select>
                                         </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label>Category</label>
+                                            <select class="form-control @error('category') is-invalid @enderror" id="category" name="category">
+                                                <option value="">Select category</option>
+                                                @foreach($categories as $cate)
+                                                    <option value="{{ $cate->id }}" {{ $cate->id == $category ? 'selected' : '' }}>{{ $cate->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
 
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-4 mb-3">
                                             <label>Filter by Keyword</label>
                                             <input class="form-control" name="search" value="{{ $search }}"
                                                    placeholder="Enter Keyword"/>
@@ -69,6 +78,8 @@
                                 <th>Name</th>
                                 <th>Brand</th>
                                 <th>Category</th>
+                                <th>Description</th>
+                                <th>Dosage Type</th>
                                 <th>Prescription</th>
                                 <th>Action</th>
                             </tr>
@@ -83,7 +94,9 @@
                                     <td><img src="{{ $drug->image ?? asset('images/drug-placeholder.png') }}" class="img-thumbnail" width="80"/></td>
                                     <td>{{ $drug->name }}</td>
                                     <td>{{ $drug->brand ?: 'Unavailable' }}</td>
-                                    <td>{{ $drug->category ?: 'Unavailable' }}</td>
+                                    <td>{{ $drug->category->name ?: 'Unavailable' }}</td>
+                                    <td>{{ $drug->description ?: 'Unavailable' }}</td>
+                                    <td>{{ $drug->dosage_type ?: 'Unavailable' }}</td>
                                     <td>{{ $drug->require_prescription == 1 ? 'Required' : 'Not required' }}</td>
                                     <td>
                                         <div class="dropdown">
@@ -144,6 +157,16 @@
 
         });
 
+        $("select[name='category']").change(function (e) {
+
+            let category = $(this).val();
+            if (category !== '') params.category = category;
+            else delete params.category;
+            delete params.page;
+            window.location.href = (window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + serialize(params));
+
+        });
+
         $("form[id='filter-form']").submit(function (e) {
             e.preventDefault();
 
@@ -151,6 +174,7 @@
 
             if (search !== '') params.search = search;
             else delete params.search;
+
             delete params.page;
             window.location.href = (window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + serialize(params));
 

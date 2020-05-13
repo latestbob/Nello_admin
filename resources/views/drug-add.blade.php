@@ -31,7 +31,8 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="name">Name</label>
-                                    <input type="text" class="form-control @error('name') is-invalid @enderror" id="name"
+                                    <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                           id="name"
                                            value="{{ old('name') }}" name="name" placeholder="Enter name">
 
                                     @error('name')
@@ -45,7 +46,8 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="brand">Brand</label>
-                                    <input type="text" class="form-control @error('brand') is-invalid @enderror" id="brand"
+                                    <input type="text" class="form-control @error('brand') is-invalid @enderror"
+                                           id="brand"
                                            value="{{ old('brand') }}" name="brand" placeholder="Enter brand">
 
                                     @error('brand')
@@ -59,8 +61,12 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="category">Category</label>
-                                    <input type="text" class="form-control @error('category') is-invalid @enderror" id="category"
-                                           value="{{ old('category') }}" name="category" placeholder="Enter category">
+                                    <select class="form-control @error('category') is-invalid @enderror" id="category" name="category">
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category->id }}"
+                                                {{ $category->id == old('category') ? 'selected' : '' }}>{{ $category->name }}</option>
+                                        @endforeach
+                                    </select>
 
                                     @error('category')
                                     <span class="invalid-feedback" role="alert">
@@ -75,8 +81,44 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
+                                    <label for="description">Description</label>
+                                    <textarea class="form-control @error('description') is-invalid @enderror"
+                                              id="description"
+                                              name="description"
+                                              placeholder="Enter description">{{ old('description')  }}</textarea>
+
+                                    @error('description')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+                        </div> <!-- end row -->
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="price">Dosage Type</label>
+                                    <input type="text" class="form-control @error('dosage_type') is-invalid @enderror"
+                                           id="dosage_type"
+                                           value="{{ old('dosage_type')  }}" name="dosage_type"
+                                           placeholder="Enter dosage type">
+
+                                    @error('price')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
                                     <label for="price">Price</label>
-                                    <input type="number" class="form-control @error('price') is-invalid @enderror" id="price"
+                                    <input type="number" class="form-control @error('price') is-invalid @enderror"
+                                           id="price"
                                            value="{{ old('price')  }}" name="price" placeholder="Enter price">
 
                                     @error('price')
@@ -95,7 +137,8 @@
                                     <label for="image">Image</label>
 
                                     <div class="custom-file">
-                                        <input type="file" class="custom-file-input @error('image') is-invalid @enderror"
+                                        <input type="file"
+                                               class="custom-file-input @error('image') is-invalid @enderror"
                                                name="image" id="inputGroupFile04">
                                         <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
 
@@ -114,7 +157,8 @@
                             <div class="col-md-12">
                                 <div class="form-group mb-3">
                                     <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="prescription" name="prescription">
+                                        <input type="checkbox" class="custom-control-input" id="prescription"
+                                               name="prescription" @if(old('prescription') == 1) checked @endif>
                                         <label class="custom-control-label" for="prescription">Require prescription?</label>
                                     </div>
                                 </div>
