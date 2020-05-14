@@ -114,12 +114,24 @@
                                         </div>
 
                                         <div class="col-md-12 mb-3">
-                                            <label>Filter by Date: (Start - End)</label>
-
-                                            <div class="form-control" data-toggle="date-picker-range" data-date-start="{{ $dateStart }}" data-date-end="{{ $dateEnd }}"
-                                                 data-target-display="#selectedValue" onchange="getDateRange(event)" data-cancel-class="btn-light">
-                                                <i class="mdi mdi-calendar"></i>&nbsp;
-                                                <span id="selectedValue"></span> <i class="mdi mdi-menu-down"></i>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label>Filter by Location</label>
+                                                    <select class="form-control" name="location">
+                                                        <option value="">Select location</option>
+                                                        @foreach($locations as $loc)
+                                                            <option value="{{ $loc->id }}" {{ $loc->id == $location ? 'selected' : '' }}>{{ $loc->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label>Filter by Date: (Start - End)</label>
+                                                    <div class="form-control" data-toggle="date-picker-range" data-date-start="{{ $dateStart }}" data-date-end="{{ $dateEnd }}"
+                                                         data-target-display="#selectedValue" onchange="getDateRange(event)" data-cancel-class="btn-light">
+                                                        <i class="mdi mdi-calendar"></i>&nbsp;
+                                                        <span id="selectedValue"></span> <i class="mdi mdi-menu-down"></i>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -166,7 +178,25 @@
                                     <td>{{ $order->city ?? 'Unavailable' }}</td>
                                     <td>{{ $order->state ?? 'Unavailable' }}</td>
                                     <td>{{ \Carbon\Carbon::parse($order->created_at)->format('h:ia F dS, Y') }}</td>
-                                    <td><a href="{{ url("/drugs-order/{$order->cart_uuid}/items") }}" class="btn btn-primary">View Items</a></td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button"
+                                                    id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                                    aria-expanded="false">
+                                                Action
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+                                                <a href="{{ url("/drugs-order/{$order->cart_uuid}/items") }}" class="dropdown-item">View Items</a>
+
+                                                @if(($order->location->id ?? 0) == \Illuminate\Support\Facades\Auth::user()->location_id)
+                                                    <button class="dropdown-item status-toggle" data-id="{{ $order->id }}"
+                                                            data-status="cancelled">Notify Order Ready
+                                                    </button>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
                             @endforeach
 
@@ -216,6 +246,16 @@
             let payment = $(this).val();
             if (payment !== '') params.payment = payment;
             else delete params.payment;
+            delete params.page;
+            window.location.href = (window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + serialize(params));
+
+        });
+
+        $("select[name='location']").change(function (e) {
+
+            let location = $(this).val();
+            if (location !== '') params.location = location;
+            else delete params.location;
             delete params.page;
             window.location.href = (window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + serialize(params));
 

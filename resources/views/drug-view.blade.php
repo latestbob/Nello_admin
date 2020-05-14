@@ -123,11 +123,11 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="price">Dosage Type</label>
+                                    <label for="dosage_type">Dosage Type</label>
                                     <input type="text" class="form-control @error('dosage_type') is-invalid @enderror" id="dosage_type"
                                            value="{{ old('dosage_type', $drug->dosage_type)  }}" name="dosage_type" placeholder="Enter dosage type">
 
-                                    @error('price')
+                                    @error('dosage_type')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>

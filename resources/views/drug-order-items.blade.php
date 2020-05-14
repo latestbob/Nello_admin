@@ -77,7 +77,7 @@
                                     <td>{{ ($key + 1) }}</td>
                                     <td><img src="{{ $items->drug->image ?? asset('images/drug-placeholder.png') }}" class="img-thumbnail" width="80"/></td>
                                     <td>{{ $items->drug->name }}</td>
-                                    <td>{{ $items->drug->category }}</td>
+                                    <td>{{ $items->drug->category->name }}</td>
                                     <td>{{ $items->drug->brand }}</td>
                                     <td>{{ $items->quantity }}</td>
                                     <td>{{ $items->drug->price }}</td>

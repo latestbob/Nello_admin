@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\DrugCategory;
+use App\Models\Location;
 use App\Models\Order;
 use App\Models\PharmacyDrug;
 use App\Traits\FileUpload;
@@ -197,6 +198,11 @@ class DrugController extends Controller
             );
         }
 
+        if (!empty($location = $request->location)) {
+
+            $orders = $orders->where('orders.location_id', $location);
+        }
+
         $orders = $orders->where('carts.vendor_id', $request->user()->vendor_id);
 
         $orders = $orders->groupBy('carts.cart_uuid')->orderByDesc('orders.id');
@@ -215,7 +221,9 @@ class DrugController extends Controller
 
         ];
 
-        return view('drugs-order', compact('orders', 'size', 'total', 'search', 'payment', 'dateStart', 'dateEnd'));
+        $locations = Location::all();
+
+        return view('drugs-order', compact('orders', 'size', 'total', 'search', 'payment', 'dateStart', 'dateEnd', 'locations', 'location'));
     }
 
     public function drugOrderItems(Request $request)

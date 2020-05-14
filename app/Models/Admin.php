@@ -18,7 +18,7 @@ class Admin extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+       'uuid', 'name', 'email', 'phone', 'picture', 'address', 'vendor_id', 'location_id', 'password', 'admin_type'
     ];
 
     /**
@@ -41,5 +41,9 @@ class Admin extends Authenticatable
 
     public function vendor() {
         return $this->belongsTo('App\Models\Vendor', 'vendor_id', 'id');
+    }
+
+    public function location() {
+        return $this->belongsTo('App\Models\Location', 'location_id', 'id');
     }
 }

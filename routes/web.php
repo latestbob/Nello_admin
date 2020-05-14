@@ -51,4 +51,10 @@ Route::prefix('/')->middleware('auth')->group(function () {
 
     Route::match(['post', 'get'],'/point/rule', 'CustomerPointController@index')->name('point-rule');
 
+    Route::get('/agents', 'AdminController@viewAgents')->name('agents');
+
+    Route::match(['post', 'get'],'/agent/add', 'AdminController@addAgent')->name('agent-add');
+
+    Route::match(['post', 'get'],'/agent/{uuid}/view', 'AdminController@viewAgent')->name('agent-view');
+
 });

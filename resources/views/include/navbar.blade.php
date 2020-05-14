@@ -59,6 +59,22 @@
 
         <li class="side-nav-item">
             <a href="javascript: void(0);" class="side-nav-link">
+                <i class="uil-user"></i>
+                <span> Agents </span>
+                <span class="menu-arrow"></span>
+            </a>
+            <ul class="side-nav-second-level" aria-expanded="false">
+                <li>
+                    <a href="{{ route('agent-add') }}">Add</a>
+                </li>
+                <li>
+                    <a href="{{ route('agents') }}">View</a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="side-nav-item">
+            <a href="javascript: void(0);" class="side-nav-link">
                 <i class="uil-location"></i>
                 <span> Locations </span>
                 <span class="menu-arrow"></span>
