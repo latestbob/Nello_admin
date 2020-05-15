@@ -10,6 +10,7 @@ use App\Models\PharmacyDrug;
 use App\Traits\FileUpload;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -19,7 +20,8 @@ class DrugController extends Controller
 
     use FileUpload;
 
-    public function drugs(Request $request) {
+    public function drugs(Request $request)
+    {
 
         $size = empty($request->size) ? 10 : $request->size;
         $category = $request->category;
@@ -45,7 +47,8 @@ class DrugController extends Controller
         return view('drugs', compact('drugs', 'search', 'size', 'categories', 'category'));
     }
 
-    public function drugView(Request $request) {
+    public function drugView(Request $request)
+    {
 
         if (empty($uuid = $request->uuid)) {
             return redirect('/drugs')->with('error', "Drug ID missing");
@@ -63,7 +66,7 @@ class DrugController extends Controller
 
             Validator::make($data = $request->all(), [
                 'name' => 'required|string|max:50',
-                'brand'  => 'required|string|max:50',
+                'brand' => 'required|string|max:50',
                 'category' => 'required|numeric|exists:drug_categories,id',
                 'description' => 'required|string|max:255',
                 'dosage_type' => 'required|string|max:50',
@@ -92,13 +95,14 @@ class DrugController extends Controller
         return view('drug-view', compact('drug', 'uuid', 'categories'));
     }
 
-    public function drugAdd(Request $request) {
+    public function drugAdd(Request $request)
+    {
 
         if (strtolower($request->method()) == "post") {
 
             Validator::make($data = $request->all(), [
                 'name' => 'required|string|max:50',
-                'brand'  => 'required|string|max:50',
+                'brand' => 'required|string|max:50',
                 'category' => 'required|numeric|exists:drug_categories,id',
                 'description' => 'required|string|max:255',
                 'dosage_type' => 'required|string|max:50',
@@ -133,7 +137,8 @@ class DrugController extends Controller
         return view('drug-add', compact('categories'));
     }
 
-    public function drugDelete(Request $request) {
+    public function drugDelete(Request $request)
+    {
 
         if (empty($uuid = $request->uuid)) {
             return response([
@@ -165,7 +170,17 @@ class DrugController extends Controller
 
         $size = empty($request->size) ? 10 : $request->size;
 
+        $locationID = null;
+
+        if (Auth::check() && Auth::user()->admin_type == "agent") {
+            $locationID = Auth::user()->location_id;
+        }
+
         $orders = Order::query()->join('carts', 'orders.cart_uuid', '=', 'carts.cart_uuid', 'INNER');
+
+        $orders->when($locationID, function ($query, $locationID) {
+            $query->where('orders.location_id', $locationID);
+        });
 
         if (!empty($search = $request->search)) {
 
@@ -198,7 +213,9 @@ class DrugController extends Controller
             );
         }
 
-        if (!empty($location = $request->location)) {
+        $location = null;
+
+        if (empty($locationID) && !empty($location = $request->location)) {
 
             $orders = $orders->where('orders.location_id', $location);
         }
@@ -213,15 +230,19 @@ class DrugController extends Controller
 
             'paid' => Order::query()->join('carts', 'orders.cart_uuid', '=',
                 'carts.cart_uuid', 'INNER')->where(['carts.vendor_id' => $request->user()->vendor_id,
-                'orders.payment_confirmed' => 1])->distinct()->count('orders.id'),
+                'orders.payment_confirmed' => 1])->when($locationID, function ($query, $locationID) {
+                $query->where('orders.location_id', $locationID);
+            })->distinct()->count('orders.id'),
 
             'unpaid' => Order::query()->join('carts', 'orders.cart_uuid', '=',
                 'carts.cart_uuid', 'INNER')->where(['carts.vendor_id' => $request->user()->vendor_id,
-                'orders.payment_confirmed' => 0])->distinct()->count('orders.id')
+                'orders.payment_confirmed' => 0])->when($locationID, function ($query, $locationID) {
+                $query->where('orders.location_id', $locationID);
+            })->distinct()->count('orders.id')
 
         ];
 
-        $locations = Location::all();
+        $locations = $locationID ? Location::where('id', $locationID)->get() : Location::all();
 
         return view('drugs-order', compact('orders', 'size', 'total', 'search', 'payment', 'dateStart', 'dateEnd', 'locations', 'location'));
     }
@@ -239,6 +260,10 @@ class DrugController extends Controller
             return redirect('/drugs-order')->with('error', "Sorry, that Cart ID either does not exist or has been deleted");
         }
 
+        if ($request->user()->admin_type == 'agent' && $orderItems->first()->order->location_id != $request->user()->location_id) {
+            return redirect('/drugs-order')->with('warning', "Sorry, that order is not for your assigned location");
+        }
+
         $size = empty($request->size) ? 10 : $request->size;
 
         $orderItems = $orderItems->paginate($size);
@@ -246,7 +271,8 @@ class DrugController extends Controller
         return view('drug-order-items', compact('orderItems', 'size'));
     }
 
-    public function drugOrderItemAction(Request $request) {
+    public function drugOrderItemAction(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
             'id' => 'required|numeric|exists:carts,id',
@@ -278,7 +304,8 @@ class DrugController extends Controller
         ]);
     }
 
-    public function addPrescription(Request $request) {
+    public function addPrescription(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
             'uuid' => 'required|string',

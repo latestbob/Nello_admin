@@ -73,34 +73,37 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-xl-6 col-lg-12">
-            <div class="card tilebox-one">
-                <div class="card-body">
-                    <i class="mdi mdi-rss float-right"></i>
-                    <h6 class="text-uppercase mt-0">Feedback Today</h6>
-                    <h2 class="my-2" id="active-users-count">{{ $total['feedback']['day'] }}</h2>
-                    <p class="mb-0 text-muted">
-                        <span class="text-nowrap">Total Feedback for Today</span>
-                    </p>
-                </div> <!-- end card-body-->
+    @if(\Illuminate\Support\Facades\Auth::check() &&
+            \Illuminate\Support\Facades\Auth::user()->admin_type == "admin")
+        <div class="row">
+            <div class="col-xl-6 col-lg-12">
+                <div class="card tilebox-one">
+                    <div class="card-body">
+                        <i class="mdi mdi-rss float-right"></i>
+                        <h6 class="text-uppercase mt-0">Feedback Today</h6>
+                        <h2 class="my-2" id="active-users-count">{{ $total['feedback']['day'] }}</h2>
+                        <p class="mb-0 text-muted">
+                            <span class="text-nowrap">Total Feedback for Today</span>
+                        </p>
+                    </div> <!-- end card-body-->
+                </div>
+                <!--end card-->
             </div>
-            <!--end card-->
-        </div>
-        <div class="col-xl-6 col-lg-12">
-            <div class="card tilebox-one">
-                <div class="card-body">
-                    <i class="mdi mdi-rss float-right"></i>
-                    <h6 class="text-uppercase mt-0">Feedback Month</h6>
-                    <h2 class="my-2" id="active-users-count">{{ $total['feedback']['month'] }}</h2>
-                    <p class="mb-0 text-muted">
-                        <span class="text-nowrap">Total Feedback for this Month</span>
-                    </p>
-                </div> <!-- end card-body-->
+            <div class="col-xl-6 col-lg-12">
+                <div class="card tilebox-one">
+                    <div class="card-body">
+                        <i class="mdi mdi-rss float-right"></i>
+                        <h6 class="text-uppercase mt-0">Feedback Month</h6>
+                        <h2 class="my-2" id="active-users-count">{{ $total['feedback']['month'] }}</h2>
+                        <p class="mb-0 text-muted">
+                            <span class="text-nowrap">Total Feedback for this Month</span>
+                        </p>
+                    </div> <!-- end card-body-->
+                </div>
+                <!--end card-->
             </div>
-            <!--end card-->
         </div>
-    </div>
+    @endif
 
     <div class="row">
         <div class="col-12">
@@ -152,14 +155,17 @@
                                     <td>{{ $order->firstname }} {{ $order->lastname }}</td>
                                     <td>{{ $order->phone }}, {{ $order->email }}</td>
                                     <td>{{ $order->amount }}</td>
-                                    <td><label class="badge {{ $order->payment_confirmed == 1 ? 'badge-success' : 'badge-warning' }}">{{ $order->payment_confirmed == 1 ? 'Paid' : 'Unpaid' }}</label></td>
+                                    <td><label
+                                            class="badge {{ $order->payment_confirmed == 1 ? 'badge-success' : 'badge-warning' }}">{{ $order->payment_confirmed == 1 ? 'Paid' : 'Unpaid' }}</label>
+                                    </td>
                                     <td>{{ $order->order_ref }}</td>
                                     <td>{{ $order->address1 ?? 'Unavailable' }}</td>
                                     <td>{{ $order->location->name ?? 'Unavailable' }}</td>
                                     <td>{{ $order->city ?? 'Unavailable' }}</td>
                                     <td>{{ $order->state ?? 'Unavailable' }}</td>
                                     <td>{{ \Carbon\Carbon::parse($order->created_at)->format('h:ia F dS, Y') }}</td>
-                                    <td><a href="{{ url("/drugs-order/{$order->cart_uuid}/items") }}" class="btn btn-primary">View Items</a></td>
+                                    <td><a href="{{ url("/drugs-order/{$order->cart_uuid}/items") }}"
+                                           class="btn btn-primary">View Items</a></td>
                                 </tr>
                             @endforeach
 
@@ -177,65 +183,68 @@
         </div><!-- end col-->
     </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
+    @if(\Illuminate\Support\Facades\Auth::check() &&
+            \Illuminate\Support\Facades\Auth::user()->admin_type == "admin")
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
 
-                    <div class="row">
+                        <div class="row">
 
-                        <div class="col-md-12 mt-2">
-                            <div class="row">
-                                <div class="col-md-6">
+                            <div class="col-md-12 mt-2">
+                                <div class="row">
+                                    <div class="col-md-6">
 
-                                    <h4 class="header-title">Recent Feedbacks</h4>
-                                    <p class="text-muted font-14">
-                                        Here's a list of recent feedbacks from Nello users
-                                    </p>
+                                        <h4 class="header-title">Recent Feedbacks</h4>
+                                        <p class="text-muted font-14">
+                                            Here's a list of recent feedbacks from Nello users
+                                        </p>
 
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="table-responsive">
+                        <div class="table-responsive">
 
-                        <table class="table dataTable w-100">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Experience</th>
-                                <th>Feedback</th>
-                                <th>Phone</th>
-                                <th>Date Added</th>
-                            </tr>
-                            </thead>
-
-
-                            <tbody>
-
-                            @foreach($feedbacks as $key => $feedback)
+                            <table class="table dataTable w-100">
+                                <thead>
                                 <tr>
-                                    <td>{{ ($key + 1) }}</td>
-                                    <td>{{ \Illuminate\Support\Str::ucfirst($feedback->experience) }}</td>
-                                    <td>{{ $feedback->feedback }}</td>
-                                    <td>{{ $feedback->phone }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($feedback->created_at)->format('h:ia F dS, Y') }}</td>
+                                    <th>#</th>
+                                    <th>Experience</th>
+                                    <th>Feedback</th>
+                                    <th>Phone</th>
+                                    <th>Date Added</th>
                                 </tr>
-                            @endforeach
+                                </thead>
 
-                            </tbody>
-                        </table>
 
-                    </div>
+                                <tbody>
 
-                    <div class="col-md-2 offset-md-5 text-center">
-                        <a href="{{ url('/feedbacks') }}" class="btn btn-primary btn-rounded btn-block">View All</a>
-                    </div>
+                                @foreach($feedbacks as $key => $feedback)
+                                    <tr>
+                                        <td>{{ ($key + 1) }}</td>
+                                        <td>{{ \Illuminate\Support\Str::ucfirst($feedback->experience) }}</td>
+                                        <td>{{ $feedback->feedback }}</td>
+                                        <td>{{ $feedback->phone }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($feedback->created_at)->format('h:ia F dS, Y') }}</td>
+                                    </tr>
+                                @endforeach
 
-                </div> <!-- end card body-->
-            </div> <!-- end card -->
-        </div><!-- end col-->
-    </div>
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                        <div class="col-md-2 offset-md-5 text-center">
+                            <a href="{{ url('/feedbacks') }}" class="btn btn-primary btn-rounded btn-block">View All</a>
+                        </div>
+
+                    </div> <!-- end card body-->
+                </div> <!-- end card -->
+            </div><!-- end col-->
+        </div>
+    @endif
 
 @endsection
