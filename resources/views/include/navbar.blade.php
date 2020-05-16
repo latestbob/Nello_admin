@@ -86,6 +86,22 @@
 
             <li class="side-nav-item">
                 <a href="javascript: void(0);" class="side-nav-link">
+                    <i class="uil-book-medical"></i>
+                    <span> Health Tips </span>
+                    <span class="menu-arrow"></span>
+                </a>
+                <ul class="side-nav-second-level" aria-expanded="false">
+                    <li>
+                        <a href="{{ route('health-tip-add') }}">Add</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('health-tips') }}">View</a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="side-nav-item">
+                <a href="javascript: void(0);" class="side-nav-link">
                     <i class="uil-location"></i>
                     <span> Locations </span>
                     <span class="menu-arrow"></span>

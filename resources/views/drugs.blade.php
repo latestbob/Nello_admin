@@ -50,7 +50,7 @@
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <label>Category</label>
-                                            <select class="form-control @error('category') is-invalid @enderror" id="category" name="category">
+                                            <select class="form-control" name="category">
                                                 <option value="">Select category</option>
                                                 @foreach($categories as $cate)
                                                     <option value="{{ $cate->id }}" {{ $cate->id == $category ? 'selected' : '' }}>{{ $cate->name }}</option>

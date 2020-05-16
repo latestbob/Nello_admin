@@ -57,4 +57,10 @@ Route::prefix('/')->middleware('auth')->group(function () {
 
     Route::match(['post', 'get'],'/agent/{uuid}/view', 'AdminController@viewAgent')->name('agent-view')->middleware('auth.admin');
 
+    Route::get('/health-tips', 'HealthTipController@index')->name('health-tips')->middleware('auth.admin');
+
+    Route::match(['post', 'get'],'/health-tip/add', 'HealthTipController@addTip')->name('health-tip-add')->middleware('auth.admin');
+
+    Route::match(['post', 'get'],'/health-tip/{uuid}/view', 'HealthTipController@viewTip')->name('health-tip-view')->middleware('auth.admin');
+
 });
