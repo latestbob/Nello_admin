@@ -210,7 +210,7 @@
                                 swal.hideLoading();
 
                                 if (data.status !== true) {
-                                    errorMsg('Drug Delete Failed', Array.isArray(data.message) ? serializeMessage(data.message) : data.message, 'Ok');
+                                    errorMsg('Drug Delete Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
                                     return false;
                                 }
 
@@ -229,7 +229,7 @@
 
                                 swal.hideLoading();
 
-                                errorMsg('Drug Delete Failed', Array.isArray(data.message) ? serializeMessage(data.message) : data.message, 'Ok');
+                                errorMsg('Drug Delete Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
                             }
                         });
 

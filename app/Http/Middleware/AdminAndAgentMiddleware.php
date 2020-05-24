@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
-class AdminMiddleware
+class AdminAndAgentMiddleware
 {
     /**
      * Handle an incoming request.
@@ -17,12 +17,12 @@ class AdminMiddleware
     public function handle($request, Closure $next)
     {
         if (Auth::check()) {
-            if (($userType = $request->user()->user_type) == 'admin') {
+            if (($userType = $request->user()->user_type) == 'admin' || $userType == 'agent') {
                 return $next($request);
             }
             if ($userType == 'customer' || $userType == 'rider') Auth::logout();
-            return redirect($userType == 'customer' ? '/login' : '/')
-                ->with('error', $userType == 'customer' ?
+            return redirect(($userType == 'customer' || $userType == 'rider') ? '/login' : '/')
+                ->with('error', ($userType == 'customer' || $userType == 'rider') ?
                     "You don't have access to that route, login and try again." :
                     "You don't have access to that route.");
         }

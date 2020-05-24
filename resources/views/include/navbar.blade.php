@@ -25,7 +25,7 @@
         <li class="side-nav-title side-nav-item">Modules</li>
 
         @if(\Illuminate\Support\Facades\Auth::check() &&
-                \Illuminate\Support\Facades\Auth::user()->admin_type == "admin")
+                \Illuminate\Support\Facades\Auth::user()->user_type == "admin")
             <li class="side-nav-item">
                 <a href="{{ route('feedbacks') }}" class="side-nav-link">
                     <i class="uil-rss"></i>
@@ -43,7 +43,7 @@
             <ul class="side-nav-second-level" aria-expanded="false">
 
                 @if(\Illuminate\Support\Facades\Auth::check() &&
-                        \Illuminate\Support\Facades\Auth::user()->admin_type == "admin")
+                        \Illuminate\Support\Facades\Auth::user()->user_type == "admin")
                     <li>
                         <a href="{{ route('drug-add') }}">Add</a>
                     </li>
@@ -58,30 +58,64 @@
         </li>
 
         @if(\Illuminate\Support\Facades\Auth::check() &&
-                \Illuminate\Support\Facades\Auth::user()->admin_type == "admin")
-
-
-            <li class="side-nav-item">
-                <a href="{{ route('doctors') }}" class="side-nav-link">
-                    <i class="uil-heart-medical"></i>
-                    <span> Doctors </span>
-                </a>
-            </li>
+                \Illuminate\Support\Facades\Auth::user()->user_type == "admin")
 
             <li class="side-nav-item">
                 <a href="javascript: void(0);" class="side-nav-link">
-                    <i class="uil-user"></i>
-                    <span> Agents </span>
+                    <i class="uil-heart-medical"></i>
+                    <span> Doctors </span>
                     <span class="menu-arrow"></span>
                 </a>
                 <ul class="side-nav-second-level" aria-expanded="false">
                     <li>
-                        <a href="{{ route('agent-add') }}">Add</a>
+                        <a href="{{ route('doctor-add') }}">Add</a>
                     </li>
                     <li>
-                        <a href="{{ route('agents') }}">View</a>
+                        <a href="{{ route('doctors') }}">View</a>
                     </li>
                 </ul>
+            </li>
+
+            <li class="side-nav-item">
+                <a href="javascript: void(0);" class="side-nav-link">
+                    <i class="uil-store"></i>
+                    <span> Pharmacies </span>
+                    <span class="menu-arrow"></span>
+                </a>
+                <ul class="side-nav-second-level" aria-expanded="false">
+                    <li>
+                        <a href="{{ route('pharmacy-add') }}">Add</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('pharmacies') }}">View</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('pharmacy-agents') }}">Agents</a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="side-nav-item">
+                <a href="javascript: void(0);" class="side-nav-link">
+                    <i class="mdi mdi-car"></i>
+                    <span> Riders </span>
+                    <span class="menu-arrow"></span>
+                </a>
+                <ul class="side-nav-second-level" aria-expanded="false">
+                    <li>
+                        <a href="{{ route('rider-add') }}">Add</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('riders') }}">View</a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="side-nav-item">
+                <a href="{{ route('customers') }}" class="side-nav-link">
+                    <i class="uil uil-user"></i>
+                    <span> Customers </span>
+                </a>
             </li>
 
             <li class="side-nav-item">

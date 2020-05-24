@@ -9,10 +9,10 @@
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
                         <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Doctors</li>
+                        <li class="breadcrumb-item active">Customers</li>
                     </ol>
                 </div>
-                <h4 class="page-title">Doctors</h4>
+                <h4 class="page-title">Customers</h4>
             </div>
         </div>
     </div>
@@ -29,9 +29,9 @@
                             <form method="get" class="row" id="filter-form">
                                 <div class="col-md-3 mb-3">
 
-                                    <h4 class="header-title">Doctors</h4>
+                                    <h4 class="header-title">Customers</h4>
                                     <p class="text-muted font-14">
-                                        Here's a list of all doctors on the Nello platform
+                                        Here's a list of all customers on the Nello platform
                                     </p>
 
                                 </div>
@@ -51,8 +51,8 @@
                                     <label>Filter by Gender</label>
                                     <select name="gender" class="form-control">
                                         <option value="">Select gender</option>
-                                        <option value="Male" @if($gender == 'Male') selected @endif>Male Doctors</option>
-                                        <option value="Female" @if($gender == 'Female') selected @endif>Female Doctors</option>
+                                        <option value="Male" @if($gender == 'Male') selected @endif>Male Customers</option>
+                                        <option value="Female" @if($gender == 'Female') selected @endif>Female Customers</option>
                                     </select>
                                 </div>
 
@@ -93,26 +93,26 @@
 
                             <tbody>
 
-                            @foreach($doctors as $key => $doctor)
+                            @foreach($customers as $key => $customer)
                                 <tr>
                                     <td>{{ ($key + 1) }}</td>
-                                    <td><img src="{{ $doctor->image ?: ($doctor->gender == 'Male' ? asset('images/male_doc.png') : ($doctor->gender == 'Female' ? asset('images/female_doc.png') : asset('images/neutral_doc.png'))) }}"
+                                    <td><img src="{{ $customer->image ?: ($customer->gender == 'Male' ? asset('images/male_doc.png') : ($customer->gender == 'Female' ? asset('images/female_doc.png') : asset('images/neutral_doc.png'))) }}"
                                              class="img-thumbnail" width="80"/></td>
-                                    <td>{{ $doctor->firstname }} {{ $doctor->lastname }}</td>
-                                    <td>{{ $doctor->aos ?: 'Unavailable' }}</td>
-                                    <td>{{ $doctor->phone }}</td>
-                                    <td>{{ $doctor->email }}</td>
-                                    <td>{{ $doctor->address ?: 'Unavailable' }}</td>
-                                    <td>{{ $doctor->gender ?: 'Unavailable' }}</td>
-                                    <td>{{ $doctor->dob ? \Carbon\Carbon::parse($doctor->dob)->format('F dS, Y') : 'Unavailable' }}</td>
-                                    <td>{{ $doctor->state ?: 'Unavailable' }}</td>
-                                    <td>{{ $doctor->city ?: 'Unavailable' }}</td>
-                                    <td>{{ $doctor->religion ?: 'Unavailable' }}</td>
-                                    <td>{{ $doctor->height ?: 'Unavailable' }}</td>
-                                    <td>{{ $doctor->weight ?: 'Unavailable' }}</td>
-                                    <td>{{ $doctor->sponsor ?: 'Unavailable' }}</td>
+                                    <td class="name">{{ $customer->firstname }} {{ $customer->lastname }}</td>
+                                    <td>{{ $customer->aos ?: 'Unavailable' }}</td>
+                                    <td>{{ $customer->phone }}</td>
+                                    <td>{{ $customer->email }}</td>
+                                    <td>{{ $customer->address ?: 'Unavailable' }}</td>
+                                    <td>{{ $customer->gender ?: 'Unavailable' }}</td>
+                                    <td>{{ $customer->dob ? \Carbon\Carbon::parse($customer->dob)->format('F dS, Y') : 'Unavailable' }}</td>
+                                    <td>{{ $customer->state ?: 'Unavailable' }}</td>
+                                    <td>{{ $customer->city ?: 'Unavailable' }}</td>
+                                    <td>{{ $customer->religion ?: 'Unavailable' }}</td>
+                                    <td>{{ $customer->height ?: 'Unavailable' }}</td>
+                                    <td>{{ $customer->weight ?: 'Unavailable' }}</td>
+                                    <td>{{ $customer->sponsor ?: 'Unavailable' }}</td>
                                     <td>
-                                        <label class="badge {{ $doctor->active == 1 ? 'badge-success' : 'badge-warning' }}">{{ $doctor->active ? 'active' : 'inactive' }}</label>
+                                        <label class="badge {{ $customer->active == 1 ? 'badge-success' : 'badge-warning' }}">{{ $customer->active ? 'active' : 'inactive' }}</label>
                                     </td>
                                     <td>
                                         <div class="dropdown">
@@ -122,13 +122,16 @@
                                                 Action
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <a class="dropdown-item" href="{{ url("/doctor/{$doctor->uuid}/view") }}">Edit Account</a>
-                                                @if(!empty($doctor->active == 1))
-                                                    <button class="dropdown-item status-toggle" data-id="{{ $doctor->id }}"
+                                                <a class="dropdown-item" href="{{ url("/customer/{$customer->uuid}/view") }}">Edit Account</a>
+                                                <button class="dropdown-item customer-make-agent" data-uuid="{{ $customer->uuid }}">
+                                                    Make Pharmacy Agent
+                                                </button>
+                                                @if(!empty($customer->active == 1))
+                                                    <button class="dropdown-item status-toggle" data-id="{{ $customer->id }}"
                                                             data-status="cancelled">Deactivate Account
                                                     </button>
                                                 @else
-                                                    <button class="dropdown-item status-toggle" data-id="{{ $doctor->id }}"
+                                                    <button class="dropdown-item status-toggle" data-id="{{ $customer->id }}"
                                                             data-status="cancelled">Activate Account
                                                     </button>
                                                 @endif
@@ -144,13 +147,15 @@
                     </div>
 
                     <div class="table-responsive mt-3">
-                        {{ $doctors->links() }}
+                        {{ $customers->links() }}
                     </div>
 
                 </div> <!-- end card body-->
             </div> <!-- end card -->
         </div><!-- end col-->
     </div>
+
+    <input id="pharmacies" value="{{ $pharmacies }}" hidden>
 
 @endsection
 
@@ -201,67 +206,74 @@
 
         });
 
-        {{--const instance = NetBridge.getInstance();--}}
+        const pharmacies = JSON.parse($('#pharmacies').val());
+        const instance = NetBridge.getInstance();
 
-        {{--$('.status-toggle').click(function (e) {--}}
+        $('.customer-make-agent').click(function (e) {
 
-        {{--    let self = $(this), status = self.data('status'), timeout;--}}
+            let self = $(this), customerName = self.closest('td').siblings('.name').html();
 
-        {{--    let title = status === 'approved' ? 'Approve ' : (status === 'disapproved' ? 'Disapprove ' : 'Cancel ');--}}
+            successMsg('Add Agent', "<div class='row text-left'><div class='col-md-12'>" +
+                "<div class='form-group'><label>Select Pharmacy</label>" +
+                "<select class='form-control pharmacy'>" + pharmacies.map(pharmacy => "<option value='" + pharmacy.id + "'>" + pharmacy.name + "</option>") + "</select>" +
+                "</div></div></div><small>Adding '" + customerName + "' as an agent</small>",
+                'Add', 'Cancel', function ({value}) {
 
-        {{--    successMsg(title + 'Order', "This order will be " + status + ", do you want proceed?",--}}
-        {{--        'Yes, proceed', 'No, cancel', function ({value}) {--}}
+                console.log('value', value);
+                    if (!value) return;
 
-        {{--            if (!value) return;--}}
+                    let id = $('.pharmacy').val(),
+                        uuid = self.data('uuid');
 
-        {{--            timeout = setTimeout(() => {--}}
+                    let dispatch = () => {
 
-        {{--                instance.addToRequestQueue({--}}
-        {{--                    url: "{{ url('/drugs-order/item/action') }}",--}}
-        {{--                    method: 'post',--}}
-        {{--                    timeout: 10000,--}}
-        {{--                    dataType: 'json',--}}
-        {{--                    data: {--}}
-        {{--                        id: parseInt(self.data('id')),--}}
-        {{--                        status: status,--}}
-        {{--                        '_token': "{{ csrf_token() }}"--}}
-        {{--                    },--}}
-        {{--                    beforeSend: () => {--}}
-        {{--                        swal.showLoading();--}}
-        {{--                    },--}}
-        {{--                    success: (data, status, xhr) => {--}}
+                        instance.addToRequestQueue({
+                            url: "{{ route('customer-make-agent') }}",
+                            method: 'POST',
+                            timeout: 20000,
+                            dataType: 'json',
+                            data: {
+                                uuid,
+                                id,
+                                _token: "{{ csrf_token() }}"
+                            },
+                            beforeSend: function () {
+                                swal.showLoading();
+                            },
+                            success: (data, status, xhr) => {
 
-        {{--                        swal.hideLoading();--}}
+                                swal.hideLoading();
 
-        {{--                        if (data.status !== true) {--}}
-        {{--                            errorMsg(title + 'Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');--}}
-        {{--                            return false;--}}
-        {{--                        }--}}
+                                if (data.status !== true) {
+                                    errorMsg('Agent Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
+                                    return false;
+                                }
 
-        {{--                        successMsg(title + 'Successful', data.message);--}}
+                                successMsg('Agent Successful', data.message);
 
-        {{--                        timeout = setTimeout(() => {--}}
-        {{--                            window.location.reload();--}}
-        {{--                            clearTimeout(timeout);--}}
-        {{--                        }, 2000);--}}
+                                timeout = setTimeout(() => {
+                                    window.location.reload();
+                                    clearTimeout(timeout);
+                                }, 2000);
 
-        {{--                    },--}}
-        {{--                    ontimeout: () => {--}}
-        {{--                        swal.hideLoading();--}}
-        {{--                        errorMsg(title + 'Failed', 'Failed to ' + type + ' this order at this time as the request timed out', 'Ok');--}}
-        {{--                    },--}}
-        {{--                    error: (data, xhr, status, statusText) => {--}}
+                            },
+                            ontimeout: () => {
+                                swal.hideLoading();
+                                errorMsg('Agent Failed', 'Failed to add prescription to this order at this time as the request timed out', 'Ok');
+                            },
+                            error: (data, xhr, status, statusText) => {
 
-        {{--                        swal.hideLoading();--}}
+                                swal.hideLoading();
 
-        {{--                        errorMsg(title + 'Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');--}}
-        {{--                    }--}}
-        {{--                });--}}
+                                errorMsg('Agent Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
+                            }
+                        });
 
-        {{--                clearTimeout(timeout);--}}
-        {{--            }, 500);--}}
-        {{--        })--}}
-        {{--});--}}
+                    };
+
+                    dispatch();
+                }, true)
+        });
 
     </script>
 @endsection

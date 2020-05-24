@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
-class AdminMiddleware
+class AgentMiddleware
 {
     /**
      * Handle an incoming request.
@@ -17,7 +17,7 @@ class AdminMiddleware
     public function handle($request, Closure $next)
     {
         if (Auth::check()) {
-            if (($userType = $request->user()->user_type) == 'admin') {
+            if (($userType = $request->user()->user_type) == 'agent') {
                 return $next($request);
             }
             if ($userType == 'customer' || $userType == 'rider') Auth::logout();

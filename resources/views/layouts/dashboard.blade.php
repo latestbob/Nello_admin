@@ -26,11 +26,11 @@
     <script src="{{ asset('js/bootbox/bootbox.min.js') }}"></script>
     <script src="{{ asset('js/sweetalert/sweetalert.js') }}"></script>
     <script>
-        function successMsg(title, message, confirmBtnTxt, cancelBtnTxt, btnCallback) {
+        function successMsg(title, message, confirmBtnTxt, cancelBtnTxt, btnCallback, isHtml = false) {
             // swal.fire(title, message, 'success')
             swal.fire({
                 title: title,
-                text: message,
+                [isHtml ? 'html': 'text']: message,
                 type: "success",
                 confirmButtonClass: "btn-success no-border-radius",
                 confirmButtonText: confirmBtnTxt ? confirmBtnTxt : 'Ok',
@@ -196,7 +196,7 @@
                                              class="rounded-circle">
                                     </span>
                             <span>
-                                <span class="account-user-name">{{ Auth::user()->name }}</span>
+                                <span class="account-user-name">{{ Auth::user()->firstname }} {{ Auth::user()->lastname }}</span>
                                 <span class="account-position">{{ Auth::user()->vendor->name }}</span>
                             </span>
                         </a>

@@ -18,63 +18,64 @@
     </div>
     <!-- end page title -->
 
-    <div class="row">
-        <div class="col-xl-3 col-lg-12">
-            <div class="card tilebox-one">
-                <div class="card-body">
-                    <i class="uil uil-moneybag-alt float-right"></i>
-                    <h6 class="text-uppercase mt-0">Paid Today</h6>
-                    <h2 class="my-2" id="active-users-count">{{ $total['order']['day']['paid'] }}</h2>
-                    <p class="mb-0 text-muted">
-                        <span class="text-nowrap">Total Paid Orders for Today</span>
-                    </p>
-                </div> <!-- end card-body-->
+    @if(($userType == 'admin' || $userType == 'agent'))
+        <div class="row">
+            <div class="col-xl-3 col-lg-12">
+                <div class="card tilebox-one">
+                    <div class="card-body">
+                        <i class="uil uil-moneybag-alt float-right"></i>
+                        <h6 class="text-uppercase mt-0">Paid Today</h6>
+                        <h2 class="my-2" id="active-users-count">{{ $total['order']['day']['paid'] }}</h2>
+                        <p class="mb-0 text-muted">
+                            <span class="text-nowrap">Total Paid Orders for Today</span>
+                        </p>
+                    </div> <!-- end card-body-->
+                </div>
+                <!--end card-->
             </div>
-            <!--end card-->
-        </div>
-        <div class="col-xl-3 col-lg-12">
-            <div class="card tilebox-one">
-                <div class="card-body">
-                    <i class="uil uil-money-withdraw float-right"></i>
-                    <h6 class="text-uppercase mt-0">Unpaid Today</h6>
-                    <h2 class="my-2" id="active-users-count">{{ $total['order']['day']['unpaid'] }}</h2>
-                    <p class="mb-0 text-muted">
-                        <span class="text-nowrap">Total Unpaid Orders for Today</span>
-                    </p>
-                </div> <!-- end card-body-->
+            <div class="col-xl-3 col-lg-12">
+                <div class="card tilebox-one">
+                    <div class="card-body">
+                        <i class="uil uil-money-withdraw float-right"></i>
+                        <h6 class="text-uppercase mt-0">Unpaid Today</h6>
+                        <h2 class="my-2" id="active-users-count">{{ $total['order']['day']['unpaid'] }}</h2>
+                        <p class="mb-0 text-muted">
+                            <span class="text-nowrap">Total Unpaid Orders for Today</span>
+                        </p>
+                    </div> <!-- end card-body-->
+                </div>
+                <!--end card-->
             </div>
-            <!--end card-->
-        </div>
-        <div class="col-xl-3 col-lg-12">
-            <div class="card tilebox-one">
-                <div class="card-body">
-                    <i class="uil uil-moneybag-alt float-right"></i>
-                    <h6 class="text-uppercase mt-0">Paid Month</h6>
-                    <h2 class="my-2" id="active-users-count">{{ $total['order']['month']['paid'] }}</h2>
-                    <p class="mb-0 text-muted">
-                        <span class="text-nowrap">Total Paid Orders for this Month</span>
-                    </p>
-                </div> <!-- end card-body-->
+            <div class="col-xl-3 col-lg-12">
+                <div class="card tilebox-one">
+                    <div class="card-body">
+                        <i class="uil uil-moneybag-alt float-right"></i>
+                        <h6 class="text-uppercase mt-0">Paid Month</h6>
+                        <h2 class="my-2" id="active-users-count">{{ $total['order']['month']['paid'] }}</h2>
+                        <p class="mb-0 text-muted">
+                            <span class="text-nowrap">Total Paid Orders for this Month</span>
+                        </p>
+                    </div> <!-- end card-body-->
+                </div>
+                <!--end card-->
             </div>
-            <!--end card-->
-        </div>
-        <div class="col-xl-3 col-lg-12">
-            <div class="card tilebox-one">
-                <div class="card-body">
-                    <i class="uil uil-money-withdraw float-right"></i>
-                    <h6 class="text-uppercase mt-0">Unpaid Month</h6>
-                    <h2 class="my-2" id="active-users-count">{{ $total['order']['month']['unpaid'] }}</h2>
-                    <p class="mb-0 text-muted">
-                        <span class="text-nowrap">Total Unpaid Orders for this Month</span>
-                    </p>
-                </div> <!-- end card-body-->
+            <div class="col-xl-3 col-lg-12">
+                <div class="card tilebox-one">
+                    <div class="card-body">
+                        <i class="uil uil-money-withdraw float-right"></i>
+                        <h6 class="text-uppercase mt-0">Unpaid Month</h6>
+                        <h2 class="my-2" id="active-users-count">{{ $total['order']['month']['unpaid'] }}</h2>
+                        <p class="mb-0 text-muted">
+                            <span class="text-nowrap">Total Unpaid Orders for this Month</span>
+                        </p>
+                    </div> <!-- end card-body-->
+                </div>
+                <!--end card-->
             </div>
-            <!--end card-->
         </div>
-    </div>
+    @endif
 
-    @if(\Illuminate\Support\Facades\Auth::check() &&
-            \Illuminate\Support\Facades\Auth::user()->admin_type == "admin")
+    @if($userType == "admin")
         <div class="row">
             <div class="col-xl-6 col-lg-12">
                 <div class="card tilebox-one">
@@ -183,8 +184,7 @@
         </div><!-- end col-->
     </div>
 
-    @if(\Illuminate\Support\Facades\Auth::check() &&
-            \Illuminate\Support\Facades\Auth::user()->admin_type == "admin")
+    @if($userType == "admin")
         <div class="row">
             <div class="col-12">
                 <div class="card">

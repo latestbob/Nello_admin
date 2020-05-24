@@ -3,22 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\DoctorsPrescriptions;
 use App\Models\DrugCategory;
-use App\Models\Location;
+use App\Models\Locations;
 use App\Models\Order;
 use App\Models\PharmacyDrug;
 use App\Traits\FileUpload;
-use Carbon\Carbon;
+use App\Traits\FirebaseNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 
 class DrugController extends Controller
 {
 
-    use FileUpload;
+    use FileUpload, FirebaseNotification;
 
     public function drugs(Request $request)
     {
@@ -171,15 +171,16 @@ class DrugController extends Controller
         $size = empty($request->size) ? 10 : $request->size;
 
         $locationID = null;
+        $userType = '';
 
-        if (Auth::check() && Auth::user()->admin_type == "agent") {
-            $locationID = Auth::user()->location_id;
+        if (Auth::check() && ($userType = Auth::user()->user_type) == "agent") {
+            $locationID = Auth::user()->pharmacy->location_id;
         }
 
         $orders = Order::query()->join('carts', 'orders.cart_uuid', '=', 'carts.cart_uuid', 'INNER');
 
         $orders->when($locationID, function ($query, $locationID) {
-            $query->where('orders.location_id', $locationID);
+            $query->where(['orders.location_id' => $locationID, 'orders.payment_confirmed' => 1]);
         });
 
         if (!empty($search = $request->search)) {
@@ -188,11 +189,10 @@ class DrugController extends Controller
                 "(orders.firstname like ? or orders.lastname like ? or
                 orders.phone like ? or orders.email like ? or
                 orders.company like ? or orders.city = ? or
-                orders.state = ? or orders.order_ref = ? or
-                orders.cart_uuid = ?)",
+                orders.order_ref = ? or orders.cart_uuid = ?)",
                 [
                     "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%",
-                    "%{$search}%", $search, $search, $search, $search
+                    "%{$search}%", $search, $search, $search
                 ]
             );
         }
@@ -228,23 +228,23 @@ class DrugController extends Controller
 
         $total = [
 
-            'paid' => Order::query()->join('carts', 'orders.cart_uuid', '=',
+            'paid' => ($userType == 'admin' || $userType == 'agent') ? Order::query()->join('carts', 'orders.cart_uuid', '=',
                 'carts.cart_uuid', 'INNER')->where(['carts.vendor_id' => $request->user()->vendor_id,
                 'orders.payment_confirmed' => 1])->when($locationID, function ($query, $locationID) {
                 $query->where('orders.location_id', $locationID);
-            })->distinct()->count('orders.id'),
+            })->distinct()->count('orders.id') : null,
 
-            'unpaid' => Order::query()->join('carts', 'orders.cart_uuid', '=',
+            'unpaid' => ($userType == 'admin' || $userType == 'agent') ? Order::query()->join('carts', 'orders.cart_uuid', '=',
                 'carts.cart_uuid', 'INNER')->where(['carts.vendor_id' => $request->user()->vendor_id,
                 'orders.payment_confirmed' => 0])->when($locationID, function ($query, $locationID) {
                 $query->where('orders.location_id', $locationID);
-            })->distinct()->count('orders.id')
+            })->distinct()->count('orders.id') : null
 
         ];
 
-        $locations = $locationID ? Location::where('id', $locationID)->get() : Location::all();
+        $locations = $locationID ? Locations::where('id', $locationID)->get() : Locations::all();
 
-        return view('drugs-order', compact('orders', 'size', 'total', 'search', 'payment', 'dateStart', 'dateEnd', 'locations', 'location'));
+        return view('drugs-order', compact('orders', 'size', 'total', 'search', 'payment', 'dateStart', 'dateEnd', 'locations', 'location', 'userType'));
     }
 
     public function drugOrderItems(Request $request)
@@ -260,15 +260,19 @@ class DrugController extends Controller
             return redirect('/drugs-order')->with('error', "Sorry, that Cart ID either does not exist or has been deleted");
         }
 
-        if ($request->user()->admin_type == 'agent' && $orderItems->first()->order->location_id != $request->user()->location_id) {
-            return redirect('/drugs-order')->with('warning', "Sorry, that order is not for your assigned location");
+        if (($userType = $request->user()->user_type) == 'agent') {
+
+            if ($orderItems->first()->order->location_id != $request->user()->pharmacy->location_id) {
+                return redirect('/drugs-order')->with('warning', "Sorry, that order is not for your pharmacy's assigned location");
+            }
+            $orderItems = $orderItems->where('status', 'approved');
         }
 
         $size = empty($request->size) ? 10 : $request->size;
 
         $orderItems = $orderItems->paginate($size);
 
-        return view('drug-order-items', compact('orderItems', 'size'));
+        return view('drug-order-items', compact('orderItems', 'size', 'userType'));
     }
 
     public function drugOrderItemAction(Request $request)
@@ -298,9 +302,129 @@ class DrugController extends Controller
         $item->status = $request->status;
         $item->save();
 
+        $isAllApproved = true; $items = [];
+
+        foreach ($item->order->items as $it) {
+            if ($it->status != 'approved') {
+                $isAllApproved = false;
+                break;
+            }
+
+            $items[] = [
+                'id' => $item->id,
+                'name' => $item->drug->name,
+                'quantity' => $item->quantity
+            ];
+        }
+
+        if ($isAllApproved) {
+
+            $agents = [];
+            foreach (($item->order->location->pharmacies ?? []) as $pharmacy) {
+                foreach ($pharmacy->agents as $agent) $agents[] = $agent->device_token;
+            }
+
+            if (!empty($agents)) {
+
+                $this->sendNotification($agents, "New Order",
+                    "Hello there! there's been a newly approved order for your location with Order REF: {$item->order->order_ref}",
+                    'high', ['orderId' => $item->order->id, 'items' => $items]);
+            }
+        }
+
         return response([
             'status' => true,
             'message' => "That order item has been {$request->status} successfully"
+        ]);
+    }
+
+    public function drugOrderItemReady(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric|exists:carts,id',
+            'is_ready' => 'required|boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return response([
+                'status' => false,
+                'message' => $validator->errors()
+            ]);
+        }
+
+        $item = Cart::where(['id' => $request->id, 'vendor_id' => $request->user()->vendor_id])->first();
+
+        if (empty($item)) {
+            return response([
+                'status' => false,
+                'message' => 'Sorry, that item was not found'
+            ]);
+        }
+
+        if ($item->is_ready == true) {
+            return response([
+                'status' => false,
+                'message' => 'Sorry, that item has already been marked as ready by a pharmacy'
+            ]);
+        }
+
+        $item->is_ready = $request->is_ready;
+        $item->is_ready_by = $request->user()->pharmacy_id;
+        $item->save();
+
+        $isAllReady = true;
+
+        $items = []; $pickup_addresses = [];
+
+        foreach ($item->order->items as $it) {
+            if ($it->is_ready != true) {
+                $isAllReady = false;
+                break;
+            }
+
+            $items[$item->is_ready_by][] = [
+                'name' => $item->drug->name,
+                'quantity' => $item->quantity
+            ];
+
+            $pickup_addresses[$item->is_ready_by] = [
+                'name' => $item->accepted_by->name,
+                'address' => $item->accepted_by->address
+            ];
+        }
+
+        if ($isAllReady) {
+
+            if ($item->order->delivery_method == 'shipping') {
+
+                $riders = [];
+                foreach ($item->order->location->riders as $rider) {
+                    $riders[] = $rider->device_token;
+                }
+
+                if (!empty($riders)) {
+
+                    $this->sendNotification($riders,
+                        "New Order",
+                        "Hello there! an order has been processed and is ready for pick up",
+                        'high',
+                        [
+                            'orderId' => $item->order->id,
+                            'items' => $items,
+                            'customer_name' => "{$item->order->firstname} {$item->order->lastname}",
+                            'delivery_address' => $item->address1,
+                            'pickup_address' => $pickup_addresses
+                        ]
+                    );
+                }
+            }
+
+        }
+
+        return response([
+            'status' => true,
+            'message' => "That order has been successfully marked as ready"
         ]);
     }
 
@@ -308,7 +432,7 @@ class DrugController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'uuid' => 'required|string',
+            'uuid' => 'required|uuid|exists:carts,cart_uuid',
             'id' => 'required|integer',
             'file' => 'required|image|mimes:jpeg,jpg,png',
         ]);
@@ -347,5 +471,52 @@ class DrugController extends Controller
             'status' => false,
             'message' => "No prescription file uploaded"
         ]);
+    }
+
+    public function addDoctorsPrescription(Request $request)
+    {
+        if ($request->user()->user_type != 'doctor') {
+            return response([
+                'status' => false,
+                'message' => "Sorry only doctors can add this prescription"
+            ]);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'uuid' => 'required|uuid|exists:carts,cart_uuid|unique:doctors_prescriptions,cart_uuid',
+            'id' => 'required|integer',
+            'dosage' => 'required|string',
+            'note' => 'required|string',
+        ], [
+            'uuid.exists' => "Sorry, that item seems not to exist.",
+            'uuid.unique' => "Sorry, you've already added a prescription for that item."
+        ]);
+
+        if ($validator->fails()) {
+            return response([
+                'status' => false,
+                'message' => $validator->errors()
+            ]);
+        }
+
+        $data = $validator->validated();
+        $data['cart_uuid'] = $data['uuid'];
+        $data['uuid'] = Str::uuid()->toString();
+        $data['drug_id'] = $data['id'];
+        $data['doctor_id'] = $request->user()->id;
+        $data['vendor_id'] = $request->user()->vendor_id;
+
+        DoctorsPrescriptions::create($data);
+
+        $cart = Cart::where(['cart_uuid' => $data['cart_uuid'], 'drug_id' => $data['drug_id']])->first();
+        $cart->update([
+            'prescription' => route('doctors-prescription', ['uuid' => $data['cart_uuid']])
+        ]);
+
+        return response([
+            'status' => true,
+            'message' => "Prescription added successfully"
+        ]);
+
     }
 }

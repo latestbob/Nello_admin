@@ -16,7 +16,9 @@
         "laravel/tinker": "^2.0",
         "laravel/ui": "^2.0",
         "jrm2k6/cloudder": "^0.6.0",
-        "mailgun/mailgun-php": "^3.0"
+        "mailgun/mailgun-php": "^3.0",
+      "ext-curl": "*",
+        "ext-json": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.0",

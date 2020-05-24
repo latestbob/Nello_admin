@@ -211,7 +211,7 @@
         {{--                        swal.hideLoading();--}}
 
         {{--                        if (data.status !== true) {--}}
-        {{--                            errorMsg(title + 'Failed', Array.isArray(data.message) ? serializeMessage(data.message) : data.message, 'Ok');--}}
+        {{--                            errorMsg(title + 'Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');--}}
         {{--                            return false;--}}
         {{--                        }--}}
 
@@ -231,7 +231,7 @@
 
         {{--                        swal.hideLoading();--}}
 
-        {{--                        errorMsg(title + 'Failed', Array.isArray(data.message) ? serializeMessage(data.message) : data.message, 'Ok');--}}
+        {{--                        errorMsg(title + 'Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');--}}
         {{--                    }--}}
         {{--                });--}}
 

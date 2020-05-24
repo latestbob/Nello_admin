@@ -20,6 +20,8 @@
                             <p class="text-muted mb-4">Enter your email address and password to access admin panel.</p>
                         </div>
 
+                        @include('include.messages')
+
                         <form method="POST" action="{{ route('login') }}">
 
                             <div class="form-group">

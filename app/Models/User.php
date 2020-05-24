@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Model
+class User extends Authenticatable
 {
 
     /**
@@ -13,10 +13,13 @@ class User extends Model
      * @var array
      */
     protected $fillable = [
-        'vendor_id', 'firstname','lastname','middlename','email','phone',
+        'vendor_id', 'token',
+        'firstname','lastname','middlename','email','phone',
         'user_type','aos','cwork','password','picture','dob',
         'hwg','is_seen','ufield','height','weight','gender','source',
-        'address','state','city','religion','sponsor', 'uuid'];
+        'session_id','address','state','city','religion','sponsor',
+        'uuid', 'local_saved', 'pharmacy_id', 'location_id'
+    ];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -26,5 +29,17 @@ class User extends Model
     protected $hidden = [
         'password', 'remember_token', 'token'
     ];
+
+    public function vendor() {
+        return $this->belongsTo('App\Models\Vendor', 'vendor_id', 'id');
+    }
+
+    public function pharmacy() {
+        return $this->belongsTo('App\Models\Pharmacies', 'pharmacy_id', 'id');
+    }
+
+    public function location() {
+        return $this->belongsTo('App\Models\Locations', 'location_id', 'id');
+    }
 
 }

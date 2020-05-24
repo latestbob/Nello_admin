@@ -9,10 +9,11 @@
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
                         <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="javascript: void(0);">Pharmacy</a></li>
                         <li class="breadcrumb-item active">Agents</li>
                     </ol>
                 </div>
-                <h4 class="page-title">Agents</h4>
+                <h4 class="page-title">Pharmacy Agents</h4>
             </div>
         </div>
     </div>
@@ -67,6 +68,7 @@
                                 <th>Phone</th>
                                 <th>Email</th>
                                 <th>Address</th>
+                                <th>Pharmacy</th>
                                 <th>Assigned Location</th>
                                 <th>Action</th>
                             </tr>
@@ -78,12 +80,13 @@
                             @foreach($agents as $key => $agent)
                                 <tr>
                                     <td>{{ ($key + 1) }}</td>
-                                    <td><img src="{{ $agent->image }}" class="img-thumbnail" width="80"/></td>
-                                    <td>{{ $agent->name ?? 'Unknown' }}</td>
+                                    <td><img src="{{ $agent->picture }}" class="img-thumbnail" width="80"/></td>
+                                    <td>{{ $agent->firstname }} {{ $agent->lastname }}</td>
                                     <td>{{ $agent->phone ?? 'Unknown' }}</td>
                                     <td>{{ $agent->email ?? 'Unknown' }}</td>
                                     <td>{{ $agent->address ?? 'Unknown' }}</td>
-                                    <td>{{ $agent->location->name ?? 'Unassigned' }}</td>
+                                    <td>{{ $agent->pharmacy->name ?? 'Unknown' }}</td>
+                                    <td>{{ $agent->pharmacy->location->name ?? 'Unassigned' }}</td>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button"
@@ -92,9 +95,8 @@
                                                 Action
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <a class="dropdown-item" href="{{ route("agent-view", ['uuid' => $agent->uuid]) }}">Edit Account</a>
                                                 <button class="dropdown-item status-toggle" data-id="{{ $agent->uuid }}"
-                                                        data-status="cancelled">Delete Account
+                                                        data-status="cancelled">Delete Agent
                                                 </button>
                                             </div>
                                         </div>
@@ -155,67 +157,63 @@
 
         });
 
-        {{--const instance = NetBridge.getInstance();--}}
+        const instance = NetBridge.getInstance();
 
-        {{--$('.status-toggle').click(function (e) {--}}
+        $('.status-toggle').click(function (e) {
 
-        {{--    let self = $(this), status = self.data('status'), timeout;--}}
+            let self = $(this), uuid = self.data('id'), timeout;
 
-        {{--    let title = status === 'approved' ? 'Approve ' : (status === 'disapproved' ? 'Disapprove ' : 'Cancel ');--}}
+            successMsg('Delete Agent', "This agent will be deleted, once done it cannot be undone, do you want proceed?",
+                'Yes, proceed', 'No, cancel', function ({value}) {
 
-        {{--    successMsg(title + 'Order', "This order will be " + status + ", do you want proceed?",--}}
-        {{--        'Yes, proceed', 'No, cancel', function ({value}) {--}}
+                    if (!value) return;
 
-        {{--            if (!value) return;--}}
+                    timeout = setTimeout(() => {
 
-        {{--            timeout = setTimeout(() => {--}}
+                        instance.addToRequestQueue({
+                            url: "{{ route('pharmacy-agent-delete') }}",
+                            method: 'post',
+                            timeout: 10000,
+                            dataType: 'json',
+                            data: {
+                                uuid,
+                                '_token': "{{ csrf_token() }}"
+                            },
+                            beforeSend: () => {
+                                swal.showLoading();
+                            },
+                            success: (data, status, xhr) => {
 
-        {{--                instance.addToRequestQueue({--}}
-        {{--                    url: "{{ url('/drugs-order/item/action') }}",--}}
-        {{--                    method: 'post',--}}
-        {{--                    timeout: 10000,--}}
-        {{--                    dataType: 'json',--}}
-        {{--                    data: {--}}
-        {{--                        id: parseInt(self.data('id')),--}}
-        {{--                        status: status,--}}
-        {{--                        '_token': "{{ csrf_token() }}"--}}
-        {{--                    },--}}
-        {{--                    beforeSend: () => {--}}
-        {{--                        swal.showLoading();--}}
-        {{--                    },--}}
-        {{--                    success: (data, status, xhr) => {--}}
+                                swal.hideLoading();
 
-        {{--                        swal.hideLoading();--}}
+                                if (data.status !== true) {
+                                    errorMsg('Agent Delete Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
+                                    return false;
+                                }
 
-        {{--                        if (data.status !== true) {--}}
-        {{--                            errorMsg(title + 'Failed', Array.isArray(data.message) ? serializeMessage(data.message) : data.message, 'Ok');--}}
-        {{--                            return false;--}}
-        {{--                        }--}}
+                                successMsg('Agent Delete Successful', data.message);
 
-        {{--                        successMsg(title + 'Successful', data.message);--}}
+                                self.closest('tr').fadeOut(600, function () {
+                                    $(this).detact();
+                                });
 
-        {{--                        timeout = setTimeout(() => {--}}
-        {{--                            window.location.reload();--}}
-        {{--                            clearTimeout(timeout);--}}
-        {{--                        }, 2000);--}}
+                            },
+                            ontimeout: () => {
+                                swal.hideLoading();
+                                errorMsg('Agent Delete Failed', 'Failed to delete this agent at this time as the request timed out', 'Ok');
+                            },
+                            error: (data, xhr, status, statusText) => {
 
-        {{--                    },--}}
-        {{--                    ontimeout: () => {--}}
-        {{--                        swal.hideLoading();--}}
-        {{--                        errorMsg(title + 'Failed', 'Failed to ' + type + ' this order at this time as the request timed out', 'Ok');--}}
-        {{--                    },--}}
-        {{--                    error: (data, xhr, status, statusText) => {--}}
+                                swal.hideLoading();
 
-        {{--                        swal.hideLoading();--}}
+                                errorMsg('Agent Delete Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
+                            }
+                        });
 
-        {{--                        errorMsg(title + 'Failed', Array.isArray(data.message) ? serializeMessage(data.message) : data.message, 'Ok');--}}
-        {{--                    }--}}
-        {{--                });--}}
-
-        {{--                clearTimeout(timeout);--}}
-        {{--            }, 500);--}}
-        {{--        })--}}
-        {{--});--}}
+                        clearTimeout(timeout);
+                    }, 500);
+                })
+        });
 
     </script>
 @endsection

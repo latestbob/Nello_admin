@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Location;
-use App\Models\PharmacyDrug;
+use App\Models\Locations;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -17,7 +16,7 @@ class LocationController extends Controller
 
         $size = empty($request->size) ? 10 : $request->size;
 
-        $locations = Location::where('vendor_id', '=', $request->user()->vendor_id)->orderBy('name', 'desc');
+        $locations = Locations::where('vendor_id', '=', $request->user()->vendor_id)->orderBy('name');
 
         if (!empty($search = $request->search)) {
 
@@ -40,14 +39,13 @@ class LocationController extends Controller
 
             $validated = Validator::make($request->all(), [
                 'name' => 'required|string|min:2|max:255|unique:locations,name',
-                'price' => $request->action != 'pickup' ? 'required|numeric' : 'nullable|numeric'
+                'price' => 'required|numeric'
             ])->validate();
 
-            $validated['price'] = $validated['price'] ?? 0;
             $validated['uuid'] = Str::uuid()->toString();
             $validated['vendor_id'] = $request->user()->vendor_id;
 
-            Location::create($validated);
+            Locations::create($validated);
 
             return redirect("/locations")->with('success', "Location has been added successfully");
         }
@@ -61,7 +59,7 @@ class LocationController extends Controller
             return redirect('/locations')->with('error', "Location ID missing");
         }
 
-        $location = Location::where(['uuid' => $request->uuid, 'vendor_id' => $request->user()->vendor_id])->first();
+        $location = Locations::where(['uuid' => $request->uuid, 'vendor_id' => $request->user()->vendor_id])->first();
 
         if (empty($location)) {
             return redirect('/locations')->with('error', "Sorry, the ID '{$request->uuid}' is associated with any location");
@@ -72,10 +70,9 @@ class LocationController extends Controller
             $validated = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'min:2', 'max:255',
                     Rule::unique('locations', 'id')->ignore($location->id)],
-                'price' => $request->action != 'pickup' ? 'required|numeric' : 'nullable|numeric'
+                'price' => 'required|numeric'
             ])->validate();
 
-            $validated['price'] = $validated['price'] ?? 0;
             $location->update($validated);
 
             return redirect('/locations')->with('success', "Location has been updated successfully");
@@ -86,7 +83,7 @@ class LocationController extends Controller
 
     }
 
-    public function locationDelete(Request $request) {
+    public function deleteLocation(Request $request) {
 
         if (!$request->uuid) {
             return response()->json([
@@ -95,7 +92,7 @@ class LocationController extends Controller
             ]);
         }
 
-        $delete = Location::where(['uuid' => $request->uuid])->first();
+        $delete = Locations::where(['uuid' => $request->uuid])->first();
 
         if (!$delete->delete()) {
 

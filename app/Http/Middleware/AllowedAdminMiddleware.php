@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
-class AdminMiddleware
+class AllowedAdminMiddleware
 {
     /**
      * Handle an incoming request.
@@ -17,14 +17,13 @@ class AdminMiddleware
     public function handle($request, Closure $next)
     {
         if (Auth::check()) {
-            if (($userType = $request->user()->user_type) == 'admin') {
+            if (($userType = $request->user()->user_type) == 'admin' ||
+                $userType == 'agent' || $userType == 'doctor') {
                 return $next($request);
             }
-            if ($userType == 'customer' || $userType == 'rider') Auth::logout();
+            Auth::logout();
             return redirect($userType == 'customer' ? '/login' : '/')
-                ->with('error', $userType == 'customer' ?
-                    "You don't have access to that route, login and try again." :
-                    "You don't have access to that route.");
+                ->with('error', "Sorry only administrators are allowed to login from this section.");
         }
         return redirect('/login');
     }

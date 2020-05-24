@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use JD\Cloudder\Facades\Cloudder;
 
 trait FileUpload {
-    public function uploadFile(Request $request, string $key) 
+    public function uploadFile(Request $request, string $key)
     {
         if ($request->hasFile($key)) {
             Cloudder::upload($request->file($key));

@@ -64,6 +64,7 @@
                                 <th>Price</th>
                                 <th>Total Price</th>
                                 <th>Status</th>
+                                <th>Accepted By</th>
                                 <th>Date Ordered</th>
                                 <th>Action</th>
                             </tr>
@@ -72,20 +73,22 @@
 
                             <tbody>
 
-                            @foreach($orderItems as $key => $items)
+                            @foreach($orderItems as $key => $item)
                                 <tr>
                                     <td>{{ ($key + 1) }}</td>
-                                    <td><img src="{{ $items->drug->image ?? asset('images/drug-placeholder.png') }}" class="img-thumbnail" width="80"/></td>
-                                    <td>{{ $items->drug->name }}</td>
-                                    <td>{{ $items->drug->category->name }}</td>
-                                    <td>{{ $items->drug->brand }}</td>
-                                    <td>{{ $items->quantity }}</td>
-                                    <td>{{ $items->drug->price }}</td>
-                                    <td>{{ $items->price }}</td>
+                                    <td><img src="{{ $item->drug->image ?? asset('images/drug-placeholder.png') }}"
+                                             class="img-thumbnail" width="80"/></td>
+                                    <td class="name">{{ $item->drug->name }}</td>
+                                    <td>{{ $item->drug->category->name }}</td>
+                                    <td>{{ $item->drug->brand }}</td>
+                                    <td>{{ $item->quantity }}</td>
+                                    <td>{{ $item->drug->price }}</td>
+                                    <td>{{ $item->price }}</td>
                                     <td><label
-                                            class="badge {{ $items->status == 'approved' ? 'badge-success' : ($items->status == 'cancelled' ? 'badge-danger' : 'badge-warning') }}">{{ $items->status }}</label>
+                                            class="badge {{ $item->status == 'approved' ? 'badge-success' : ($item->status == 'cancelled' ? 'badge-danger' : 'badge-warning') }}">{{ $item->status }}</label>
                                     </td>
-                                    <td>{{ \Carbon\Carbon::parse($items->created_at)->format('h:ia F dS, Y') }}</td>
+                                    <td>{{ $item->accepted_by->name ?? 'None' }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($item->created_at)->format('h:ia F dS, Y') }}</td>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button"
@@ -94,21 +97,43 @@
                                                 Action
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <button class="dropdown-item status-toggle" data-id="{{ $items->id }}"
-                                                        data-status="approved">Approve
-                                                </button>
-                                                <button class="dropdown-item status-toggle" data-id="{{ $items->id }}"
-                                                        data-status="disapproved">Disapprove
-                                                </button>
-                                                <button class="dropdown-item status-toggle" data-id="{{ $items->id }}"
-                                                        data-status="cancelled">Cancel
-                                                </button>
-                                                @if(!empty($items->prescription))
-                                                    <a class="dropdown-item" href="{{ $items->prescription }}"
+                                                @if($userType == 'admin')
+                                                    <button class="dropdown-item status-toggle"
+                                                            data-id="{{ $item->id }}"
+                                                            data-status="approved">Approve
+                                                    </button>
+                                                    <button class="dropdown-item status-toggle"
+                                                            data-id="{{ $item->id }}"
+                                                            data-status="disapproved">Disapprove
+                                                    </button>
+                                                    <button class="dropdown-item status-toggle"
+                                                            data-id="{{ $item->id }}"
+                                                            data-status="cancelled">Cancel
+                                                    </button>
+                                                @endif
+                                                @if($userType == 'agent' && $item->is_ready != true)
+                                                    <button class="dropdown-item order-ready"
+                                                            data-id="{{ $item->id }}">
+                                                        Order Ready
+                                                    </button>
+                                                @endif
+                                                @if(!empty($item->prescription))
+                                                    <a class="dropdown-item" href="{{ $item->prescription }}"
                                                        target="_blank">View Prescription</a>
                                                 @else
-                                                    <button class="dropdown-item add-prescription">Add Prescription</button>
-                                                    <input type="file" onchange="uploadPrescription(event.target.files[0], '{{ $items->drug_id }}', '{{ $items->cart_uuid }}')" hidden/>
+                                                    @if($userType == 'doctor')
+                                                        <button class="dropdown-item add-doctors-prescription"
+                                                                data-id="{{ $item->drug_id }}"
+                                                                data-uuid="{{ $item->cart_uuid }}">Add Prescription
+                                                        </button>
+                                                    @else
+                                                        <button class="dropdown-item add-prescription">
+                                                            Add Prescription
+                                                        </button>
+                                                        <input type="file"
+                                                               onchange="uploadPrescription(event.target.files[0], '{{ $item->drug_id }}', '{{ $item->cart_uuid }}')"
+                                                               hidden/>
+                                                    @endif
                                                 @endif
                                             </div>
                                         </div>
@@ -159,6 +184,7 @@
 
         const instance = NetBridge.getInstance();
 
+        @if($userType == 'admin')
         $('.status-toggle').click(function (e) {
 
             let self = $(this), status = self.data('status'), timeout;
@@ -190,7 +216,7 @@
                                 swal.hideLoading();
 
                                 if (data.status !== true) {
-                                    errorMsg(title + 'Failed', Array.isArray(data.message) ? serializeMessage(data.message) : data.message, 'Ok');
+                                    errorMsg(title + 'Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
                                     return false;
                                 }
 
@@ -210,7 +236,7 @@
 
                                 swal.hideLoading();
 
-                                errorMsg(title + 'Failed', Array.isArray(data.message) ? serializeMessage(data.message) : data.message, 'Ok');
+                                errorMsg(title + 'Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
                             }
                         });
 
@@ -218,7 +244,140 @@
                     }, 500);
                 })
         });
+        @endif
 
+        @if($userType == 'agent')
+        $('.order-ready').click(function (e) {
+
+            let self = $(this), timeout;
+
+            successMsg('Order is Ready', "This order will be marked as ready, do you want proceed?",
+                'Yes, proceed', 'No, cancel', function ({value}) {
+
+                    if (!value) return;
+
+                    timeout = setTimeout(() => {
+
+                        instance.addToRequestQueue({
+                            url: "{{ url('/drugs-order/item/ready') }}",
+                            method: 'post',
+                            timeout: 10000,
+                            dataType: 'json',
+                            data: {
+                                id: parseInt(self.data('id')),
+                                is_ready: 1,
+                                '_token': "{{ csrf_token() }}"
+                            },
+                            beforeSend: () => {
+                                swal.showLoading();
+                            },
+                            success: (data, status, xhr) => {
+
+                                swal.hideLoading();
+
+                                if (data.status !== true) {
+                                    errorMsg('Order Ready Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
+                                    return false;
+                                }
+
+                                successMsg('Order Ready Successful', data.message);
+
+                                timeout = setTimeout(() => {
+                                    window.location.reload();
+                                    clearTimeout(timeout);
+                                }, 2000);
+
+                            },
+                            ontimeout: () => {
+                                swal.hideLoading();
+                                errorMsg('Order Ready Failed', 'Failed to mark this order as ready at this time as the request timed out', 'Ok');
+                            },
+                            error: (data, xhr, status, statusText) => {
+
+                                swal.hideLoading();
+
+                                errorMsg('Order Ready Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
+                            }
+                        });
+
+                        clearTimeout(timeout);
+                    }, 500);
+                })
+        });
+        @endif
+
+        @if($userType == 'doctor')
+        $('.add-doctors-prescription').click(function (e) {
+
+            let self = $(this), drugName = self.closest('td').siblings('.name').html();
+
+            successMsg('Add Prescription', "<div class='row text-left'><div class='col-md-12'>" +
+                "<div class='form-group'><label>Prescription Dosage</label>" +
+                "<input class='form-control prescription-dosage' type='text' placeholder='Enter dosage'/>" +
+                "</div></div></div><div class='row text-left mt-2'><div class='col-md-12'><div class='form-group'>" +
+                "<label>Prescription Note</label><textarea class='form-control prescription-note' placeholder='Enter note'></textarea>" +
+                "</div></div></div><small>Adding prescription for '" + drugName + "'</small>",
+                'Prescribe', 'Cancel', function ({value}) {
+
+                    if (!value) return;
+
+                    let dosage = $('.prescription-dosage').val(),
+                        note = $('.prescription-note').val(),
+                        uuid = self.data('uuid'),
+                        id = self.data('id');
+
+                    let dispatch = () => {
+
+                        instance.addToRequestQueue({
+                            url: "{{ route('add-doctors-prescription') }}",
+                            method: 'POST',
+                            timeout: 20000,
+                            dataType: 'json',
+                            data: {
+                                dosage,
+                                note,
+                                uuid,
+                                id,
+                                _token: "{{ csrf_token() }}"
+                            },
+                            beforeSend: function () {
+                                swal.showLoading();
+                            },
+                            success: (data, status, xhr) => {
+
+                                swal.hideLoading();
+
+                                if (data.status !== true) {
+                                    errorMsg('Prescription Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
+                                    return false;
+                                }
+
+                                successMsg('Prescription Successful', data.message);
+
+                                timeout = setTimeout(() => {
+                                    window.location.reload();
+                                    clearTimeout(timeout);
+                                }, 2000);
+
+                            },
+                            ontimeout: () => {
+                                swal.hideLoading();
+                                errorMsg('Prescription Failed', 'Failed to add prescription to this order at this time as the request timed out', 'Ok');
+                            },
+                            error: (data, xhr, status, statusText) => {
+
+                                swal.hideLoading();
+
+                                errorMsg('Prescription Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
+                            }
+                        });
+
+                    };
+
+                    dispatch();
+                }, true)
+        });
+        @else
         $('.add-prescription').click(function () {
             $(this).siblings("input[type='file']").click();
         });
@@ -232,7 +391,7 @@
             formData.append('id', id);
 
             instance.addToRequestQueue({
-                url: "{{ url('/drugs-order/item/add-prescription') }}",
+                url: "{{ route('add-prescription') }}",
                 method: 'POST',
                 timeout: 20000,
                 cache: false,
@@ -272,6 +431,7 @@
                 }
             });
         }
+        @endif
 
     </script>
 @endsection

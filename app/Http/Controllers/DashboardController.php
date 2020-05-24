@@ -23,53 +23,54 @@ class DashboardController extends Controller
         $month = Carbon::today()->format('Y-m');
 
         $locationID = null;
+        $userType = '';
 
-        if (Auth::check() && Auth::user()->admin_type == "agent") {
-            $locationID = Auth::user()->location_id;
+        if (Auth::check() && ($userType = Auth::user()->user_type) == "agent") {
+            $locationID = Auth::user()->pharmacy->location_id;
         }
 
         $total = [
             'order' => [
                 'day' => [
 
-                    'paid' => Order::query()->join('carts', 'orders.cart_uuid', '=',
+                    'paid' => ($userType == 'admin' || $userType == 'agent') ? Order::query()->join('carts', 'orders.cart_uuid', '=',
                         'carts.cart_uuid', 'INNER')->where(['carts.vendor_id' => $request->user()->vendor_id,
                         'orders.payment_confirmed' => 1])->whereRaw(
                         "(orders.created_at between ? and ?)",
                         ["{$today} 00:00:00", "{$today} 23:59:59"]
                     )->when($locationID, function ($query, $locationID) {
                         $query->where('orders.location_id', $locationID);
-                    })->distinct()->count('orders.id'),
+                    })->distinct()->count('orders.id') : null,
 
-                    'unpaid' => Order::query()->join('carts', 'orders.cart_uuid', '=',
+                    'unpaid' => ($userType == 'admin' || $userType == 'agent') ? Order::query()->join('carts', 'orders.cart_uuid', '=',
                         'carts.cart_uuid', 'INNER')->where(['carts.vendor_id' => $request->user()->vendor_id,
                         'orders.payment_confirmed' => 0])->whereRaw(
                         "(orders.created_at between ? and ?)",
                         ["{$today} 00:00:00", "{$today} 23:59:59"]
                     )->when($locationID, function ($query, $locationID) {
                         $query->where('orders.location_id', $locationID);
-                    })->distinct()->count('orders.id')
+                    })->distinct()->count('orders.id') : null
 
                 ],
                 'month' => [
 
-                    'paid' => Order::query()->join('carts', 'orders.cart_uuid', '=',
+                    'paid' => ($userType == 'admin' || $userType == 'agent') ? Order::query()->join('carts', 'orders.cart_uuid', '=',
                         'carts.cart_uuid', 'INNER')->where(['carts.vendor_id' => $request->user()->vendor_id,
                         'orders.payment_confirmed' => 1])->whereRaw(
                         "(orders.created_at between ? and ?)",
                         ["{$month}-01 00:00:00", "{$today} 23:59:59"]
                     )->when($locationID, function ($query, $locationID) {
                         $query->where('orders.location_id', $locationID);
-                    })->distinct()->count('orders.id'),
+                    })->distinct()->count('orders.id') : null,
 
-                    'unpaid' => Order::query()->join('carts', 'orders.cart_uuid', '=',
+                    'unpaid' => ($userType == 'admin' || $userType == 'agent') ? Order::query()->join('carts', 'orders.cart_uuid', '=',
                         'carts.cart_uuid', 'INNER')->where(['carts.vendor_id' => $request->user()->vendor_id,
                         'orders.payment_confirmed' => 0])->whereRaw(
                         "(orders.created_at between ? and ?)",
                         ["{$month}-01 00:00:00", "{$today} 23:59:59"]
                     )->when($locationID, function ($query, $locationID) {
                         $query->where('orders.location_id', $locationID);
-                    })->distinct()->count('orders.id')
+                    })->distinct()->count('orders.id') : null
 
                 ],
             ],
@@ -85,7 +86,7 @@ class DashboardController extends Controller
         $orders = Order::query()->join('carts', 'orders.cart_uuid', '=', 'carts.cart_uuid', 'INNER');
 
         $orders->when($locationID, function ($query, $locationID) {
-            $query->where('orders.location_id', $locationID);
+            $query->where(['orders.location_id' => $locationID, 'orders.payment_confirmed' => 1]);
         });
 
         $orders = $orders->where('carts.vendor_id', $request->user()->vendor_id);
@@ -96,6 +97,6 @@ class DashboardController extends Controller
 
         $feedbacks = !$locationID ? Feedbacks::where('vendor_id', '=', $request->user()->vendor_id)->orderByDesc('id')->limit(10)->get() : null;
 
-        return view('dashboard', compact('total', 'orders', 'feedbacks'));
+        return view('dashboard', compact('total', 'orders', 'feedbacks', 'userType'));
     }
 }

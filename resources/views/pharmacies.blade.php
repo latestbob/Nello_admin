@@ -9,10 +9,10 @@
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
                         <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Locations</li>
+                        <li class="breadcrumb-item active">Pharmacies</li>
                     </ol>
                 </div>
-                <h4 class="page-title">Locations</h4>
+                <h4 class="page-title">Pharmacies</h4>
             </div>
         </div>
     </div>
@@ -29,9 +29,9 @@
                             <div class="row">
                                 <div class="col-md-6">
 
-                                    <h4 class="header-title">Locations</h4>
+                                    <h4 class="header-title">Pharmacies</h4>
                                     <p class="text-muted font-14">
-                                        Here's a list of locations from which Nello users can place an order
+                                        Here's a list of pharmacies on the Nello platform
                                     </p>
 
                                 </div>
@@ -73,8 +73,13 @@
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Location</th>
-                                <th>Price</th>
+                                <th>Picture</th>
+                                <th>Name</th>
+                                <th>Address</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Assigned Location</th>
+                                <th>Is Pick up Location</th>
                                 <th>Date Added</th>
                                 <th>Action</th>
                             </tr>
@@ -83,12 +88,18 @@
 
                             <tbody>
 
-                            @foreach($locations as $key => $location)
+                            @foreach($pharmacies as $key => $pharmacy)
                                 <tr>
                                     <td>{{ ($key + 1) }}</td>
-                                    <td>{{ $location->name }}</td>
-                                    <td>{{ $location->price }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($location->created_at)->format('h:ia F dS, Y') }}</td>
+                                    <td><img src="{{ $pharmacy->picture ?: asset('images/pharmacy.png') }}"
+                                             class="img-thumbnail" width="60"/></td>
+                                    <td>{{ $pharmacy->name }}</td>
+                                    <td>{{ $pharmacy->address }}</td>
+                                    <td>{{ $pharmacy->email }}</td>
+                                    <td>{{ $pharmacy->phone }}</td>
+                                    <td>{{ $pharmacy->location->name ?? 'Unassigned' }}</td>
+                                    <td>{{ $pharmacy->is_pick_up_location == 1 ? "Yes" : "No" }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($pharmacy->created_at)->format('h:ia F dS, Y') }}</td>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button"
@@ -97,9 +108,9 @@
                                                 Action
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <a class="dropdown-item" href="{{ route("location-view", ['uuid' => $location->uuid]) }}">Edit Location</a>
-                                                <button class="dropdown-item status-toggle" data-id="{{ $location->uuid }}"
-                                                        data-status="cancelled">Delete Location
+                                                <a class="dropdown-item" href="{{ route("pharmacy-view", ['uuid' => $pharmacy->uuid]) }}">Edit Pharmacy</a>
+                                                <button class="dropdown-item status-toggle" data-id="{{ $pharmacy->uuid }}"
+                                                        data-status="cancelled">Delete Pharmacy
                                                 </button>
                                             </div>
                                         </div>
@@ -113,7 +124,7 @@
                     </div>
 
                     <div class="table-responsive mt-3">
-                        {{ $locations->links() }}
+                        {{ $pharmacies->links() }}
                     </div>
 
                 </div> <!-- end card body-->
@@ -166,7 +177,7 @@
 
             let self = $(this), uuid = self.data('id'), timeout;
 
-            successMsg('Delete Location', "This location will be deleted, once done it cannot be undone, do you want proceed?",
+            successMsg('Delete Pharmacy', "This pharmacy will be deleted, once done it cannot be undone, do you want proceed?",
                 'Yes, proceed', 'No, cancel', function ({value}) {
 
                     if (!value) return;
@@ -174,7 +185,7 @@
                     timeout = setTimeout(() => {
 
                         instance.addToRequestQueue({
-                            url: "{{ route('location-delete') }}",
+                            url: "{{ route('pharmacy-delete') }}",
                             method: 'post',
                             timeout: 10000,
                             dataType: 'json',
@@ -190,11 +201,11 @@
                                 swal.hideLoading();
 
                                 if (data.status !== true) {
-                                    errorMsg('Location Delete Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
+                                    errorMsg('Pharmacy Delete Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
                                     return false;
                                 }
 
-                                successMsg('Location Delete Successful', data.message);
+                                successMsg('Pharmacy Delete Successful', data.message);
 
                                 self.closest('tr').fadeOut(600, function () {
                                     $(this).detact();
@@ -203,13 +214,13 @@
                             },
                             ontimeout: () => {
                                 swal.hideLoading();
-                                errorMsg('Location Delete Failed', 'Failed to delete this location at this time as the request timed out', 'Ok');
+                                errorMsg('Pharmacy Delete Failed', 'Failed to delete this pharmacy at this time as the request timed out', 'Ok');
                             },
                             error: (data, xhr, status, statusText) => {
 
                                 swal.hideLoading();
 
-                                errorMsg('Location Delete Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
+                                errorMsg('Pharmacy Delete Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
                             }
                         });
 

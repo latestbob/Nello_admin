@@ -18,34 +18,36 @@
     </div>
     <!-- end page title -->
 
-    <div class="row">
-        <div class="col-xl-6 col-lg-12">
-            <div class="card tilebox-one">
-                <div class="card-body">
-                    <i class="uil uil-moneybag-alt float-right"></i>
-                    <h6 class="text-uppercase mt-0">Paid</h6>
-                    <h2 class="my-2" id="active-users-count">{{ $total['paid'] }}</h2>
-                    <p class="mb-0 text-muted">
-                        <span class="text-nowrap">Total Paid Orders</span>
-                    </p>
-                </div> <!-- end card-body-->
+    @if(($userType == 'admin' || $userType == 'agent'))
+        <div class="row">
+            <div class="col-xl-6 col-lg-12">
+                <div class="card tilebox-one">
+                    <div class="card-body">
+                        <i class="uil uil-moneybag-alt float-right"></i>
+                        <h6 class="text-uppercase mt-0">Paid</h6>
+                        <h2 class="my-2" id="active-users-count">{{ $total['paid'] }}</h2>
+                        <p class="mb-0 text-muted">
+                            <span class="text-nowrap">Total Paid Orders</span>
+                        </p>
+                    </div> <!-- end card-body-->
+                </div>
+                <!--end card-->
             </div>
-            <!--end card-->
-        </div>
-        <div class="col-xl-6 col-lg-12">
-            <div class="card tilebox-one">
-                <div class="card-body">
-                    <i class="uil uil-money-withdraw float-right"></i>
-                    <h6 class="text-uppercase mt-0">Unpaid</h6>
-                    <h2 class="my-2" id="active-users-count">{{ $total['unpaid'] }}</h2>
-                    <p class="mb-0 text-muted">
-                        <span class="text-nowrap">Total Unpaid Orders</span>
-                    </p>
-                </div> <!-- end card-body-->
+            <div class="col-xl-6 col-lg-12">
+                <div class="card tilebox-one">
+                    <div class="card-body">
+                        <i class="uil uil-money-withdraw float-right"></i>
+                        <h6 class="text-uppercase mt-0">Unpaid</h6>
+                        <h2 class="my-2" id="active-users-count">{{ $total['unpaid'] }}</h2>
+                        <p class="mb-0 text-muted">
+                            <span class="text-nowrap">Total Unpaid Orders</span>
+                        </p>
+                    </div> <!-- end card-body-->
+                </div>
+                <!--end card-->
             </div>
-            <!--end card-->
         </div>
-    </div>
+    @endif
 
     <div class="row">
         <div class="col-12">
@@ -120,16 +122,21 @@
                                                     <select class="form-control" name="location">
                                                         <option value="">Select location</option>
                                                         @foreach($locations as $loc)
-                                                            <option value="{{ $loc->id }}" {{ $loc->id == $location ? 'selected' : '' }}>{{ $loc->name }}</option>
+                                                            <option
+                                                                value="{{ $loc->id }}" {{ $loc->id == $location ? 'selected' : '' }}>{{ $loc->name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label>Filter by Date: (Start - End)</label>
-                                                    <div class="form-control" data-toggle="date-picker-range" data-date-start="{{ $dateStart }}" data-date-end="{{ $dateEnd }}"
-                                                         data-target-display="#selectedValue" onchange="getDateRange(event)" data-cancel-class="btn-light">
+                                                    <div class="form-control" data-toggle="date-picker-range"
+                                                         data-date-start="{{ $dateStart }}"
+                                                         data-date-end="{{ $dateEnd }}"
+                                                         data-target-display="#selectedValue"
+                                                         onchange="getDateRange(event)" data-cancel-class="btn-light">
                                                         <i class="mdi mdi-calendar"></i>&nbsp;
-                                                        <span id="selectedValue"></span> <i class="mdi mdi-menu-down"></i>
+                                                        <span id="selectedValue"></span> <i
+                                                            class="mdi mdi-menu-down"></i>
                                                     </div>
                                                 </div>
                                             </div>
@@ -157,6 +164,8 @@
                                 <th>Location</th>
                                 <th>City</th>
                                 <th>State</th>
+                                <th>Delivery Method</th>
+                                <th>Delivery Status</th>
                                 <th>Date Ordered</th>
                                 <th>Action</th>
                             </tr>
@@ -171,12 +180,16 @@
                                     <td>{{ $order->firstname }} {{ $order->lastname }}</td>
                                     <td>{{ $order->phone }}, {{ $order->email }}</td>
                                     <td>{{ $order->amount }}</td>
-                                    <td><label class="badge {{ $order->payment_confirmed == 1 ? 'badge-success' : 'badge-warning' }}">{{ $order->payment_confirmed == 1 ? 'Paid' : 'Unpaid' }}</label></td>
+                                    <td><label
+                                            class="badge {{ $order->payment_confirmed == 1 ? 'badge-success' : 'badge-warning' }}">{{ $order->payment_confirmed == 1 ? 'Paid' : 'Unpaid' }}</label>
+                                    </td>
                                     <td>{{ $order->order_ref }}</td>
                                     <td>{{ $order->address1 ?? 'Unavailable' }}</td>
-                                    <td>{{ $order->location->name ?? 'Unavailable' }}</td>
+                                    <td>{{ ($order->delivery_method == 'pickup' ? ($order->pickup_location->address ?? 'Unavailable') : ($order->location->name ?? 'Unavailable')) }}</td>
                                     <td>{{ $order->city ?? 'Unavailable' }}</td>
                                     <td>{{ $order->state ?? 'Unavailable' }}</td>
+                                    <td>{{ \Illuminate\Support\Str::ucfirst($order->delivery_method) }}</td>
+                                    <td>{{ $order->delivery_status == 1 ? 'Delivered' : 'Not Delivered' }}</td>
                                     <td>{{ \Carbon\Carbon::parse($order->created_at)->format('h:ia F dS, Y') }}</td>
                                     <td>
                                         <div class="dropdown">
@@ -187,13 +200,9 @@
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
-                                                <a href="{{ url("/drugs-order/{$order->cart_uuid}/items") }}" class="dropdown-item">View Items</a>
+                                                <a href="{{ url("/drugs-order/{$order->cart_uuid}/items") }}"
+                                                   class="dropdown-item">View Items</a>
 
-                                                @if(($order->location->id ?? 0) == \Illuminate\Support\Facades\Auth::user()->location_id)
-                                                    <button class="dropdown-item status-toggle" data-id="{{ $order->id }}"
-                                                            data-status="cancelled">Notify Order Ready
-                                                    </button>
-                                                @endif
                                             </div>
                                         </div>
                                     </td>
@@ -261,7 +270,7 @@
 
         });
 
-        function getDateRange (event) {
+        function getDateRange(event) {
 
             let dateStart = event.start.format("YYYY-MM-DD");
             let dateEnd = event.end.format("YYYY-MM-DD");

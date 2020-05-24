@@ -29,7 +29,7 @@ class AddLocationIdToOrdersTable extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
 
-            $table->dropForeign(['location_id']);
+            $table->dropForeign('orders_location_id_foreign');
             $table->dropColumn(['location_id']);
         });
     }

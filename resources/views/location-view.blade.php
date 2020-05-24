@@ -28,13 +28,11 @@
                         <h5 class="mb-4 text-uppercase"><i class="uil-location mr-1"></i> Location Info</h5>
 
                         <div class="row">
-                            <div class="{{ $location->price > 0 ? 'col-md-6' : 'col-md-12' }}">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="name">Location</label>
                                     <input type="text" class="form-control @error('name') is-invalid @enderror"
-                                           id="name"
-                                           value="{{ old('name', $location->name) }}" name="name"
-                                           placeholder="Enter {{ $location->price > 0 ? 'location' : 'location and pickup time' }}">
+                                           id="name" value="{{ old('name', $location->name) }}" name="name" placeholder="Enter location">
 
                                     @error('name')
                                     <span class="invalid-feedback" role="alert">
@@ -44,29 +42,26 @@
 
                                 </div>
                             </div>
-                            @if($location->price > 0)
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="price">Price</label>
-                                        <input type="number" class="form-control @error('price') is-invalid @enderror"
-                                               id="price"
-                                               value="{{ old('price', $location->price)  }}" name="price"
-                                               placeholder="Enter price">
 
-                                        @error('price')
-                                        <span class="invalid-feedback" role="alert">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="price">Price</label>
+                                    <input type="number" class="form-control @error('price') is-invalid @enderror"
+                                           id="price"
+                                           value="{{ old('price', $location->price)  }}" name="price"
+                                           placeholder="Enter price">
+
+                                    @error('price')
+                                    <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
-                                        @enderror
+                                    @enderror
 
-                                    </div>
                                 </div>
-                            @endif
+                            </div>
                         </div>
 
                         @csrf
-
-                        <input type="hidden" name="action" value="{{ $location->price > 0 ? 'delivery' : 'pickup' }}">
 
                         <div class="col-md-2 offset-md-5 text-center mt-2">
                             <button type="submit" class="btn btn-success btn-block btn-rounded"><i
