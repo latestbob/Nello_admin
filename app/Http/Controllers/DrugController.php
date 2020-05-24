@@ -68,7 +68,7 @@ class DrugController extends Controller
                 'name' => 'required|string|max:50',
                 'brand' => 'required|string|max:50',
                 'category' => 'required|numeric|exists:drug_categories,id',
-                'description' => 'required|string|max:255',
+                'description' => 'required|string',
                 'dosage_type' => 'required|string|max:50',
                 'price' => 'required|numeric',
                 'image' => 'nullable|image|mimes:jpeg,jpg,png'
@@ -104,7 +104,7 @@ class DrugController extends Controller
                 'name' => 'required|string|max:50',
                 'brand' => 'required|string|max:50',
                 'category' => 'required|numeric|exists:drug_categories,id',
-                'description' => 'required|string|max:255',
+                'description' => 'required|string',
                 'dosage_type' => 'required|string|max:50',
                 'price' => 'required|numeric',
                 'image' => 'nullable|image|mimes:jpeg,jpg,png'
