@@ -26,7 +26,7 @@
                 <div class="card-body">
                     <h5 class="card-title mb-4 text-uppercase"><i class="uil-store mr-1"></i> Pharmacy Info</h5>
 
-                    <form method="post" action="{{ route('pharmacy-add') }}">
+                    <form method="post" action="{{ route('pharmacy-add') }}" enctype="multipart/form-data">
 
                         <div class="row">
                             <div class="col-md-6">

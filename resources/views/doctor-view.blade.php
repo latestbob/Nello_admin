@@ -53,7 +53,7 @@
         <div class="col-xl-8 col-lg-7">
             <div class="card">
                 <div class="card-body">
-                    <form method="post" action="{{ route('doctor-view', ['uuid' => $uuid]) }}">
+                    <form method="post" action="{{ route('doctor-view', ['uuid' => $uuid]) }}" enctype="multipart/form-data">
                         <h5 class="mb-4 text-uppercase"><i class="mdi mdi-account-circle mr-1"></i> Personal Info</h5>
 
                         <div class="row">

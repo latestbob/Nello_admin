@@ -24,7 +24,7 @@
         <div class="col-md-8 offset-md-2">
             <div class="card">
                 <div class="card-body">
-                    <form method="post" action="{{ route('doctor-add') }}">
+                    <form method="post" action="{{ route('doctor-add') }}" enctype="multipart/form-data">
                         <h5 class="mb-4 text-uppercase"><i class="mdi mdi-account-circle mr-1"></i> Personal Info</h5>
 
                         <div class="row">
