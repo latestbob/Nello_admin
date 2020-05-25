@@ -52,8 +52,6 @@ class PharmaciesController extends Controller
                 'phone' => 'required|digits_between:11,16|unique:pharmacies,phone',
                 'picture' => 'nullable|image|mimes:jpeg,jpg,png',
                 'location' => 'nullable|numeric|exists:locations,id',
-                'password' => 'required|string|min:6',
-                'confirm_password' => 'required_with:password|string|same:password',
                 'is_pick_up_location' => 'required_without:location|boolean'
             ])->validate();
 
@@ -63,7 +61,6 @@ class PharmaciesController extends Controller
 //            $validated['image'] = 'http://www.famacare.com/img/famacare.png';
             }
 
-            $validated['password'] = Hash::make($validated['password']);
             $validated['uuid'] = Str::uuid()->toString();
             $validated['location_id'] = $validated['location'];
             unset($validated['location']);
