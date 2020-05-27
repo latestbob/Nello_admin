@@ -15,7 +15,7 @@ trait FirebaseNotification
     {
         $data = [
             "registration_ids" => $deviceTokens,
-            'priority' => $priority,
+            'priority' => $priority
         ];
 
 
