@@ -326,7 +326,7 @@ class DrugController extends Controller
 
             if (!empty($agents)) {
 
-                $this->sendNotification($agents, "New Order",
+                return $this->sendNotification($agents, "New Order",
                     "Hello there! there's been a newly approved order for your location with Order REF: {$item->order->order_ref}",
                     'high', ['orderId' => $item->order->id, 'items' => $items]);
             }
