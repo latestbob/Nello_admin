@@ -36,4 +36,19 @@ class Order extends Model
         return $this->belongsTo('App\Models\Pharmacies', 'pickup_location_id', 'id');
     }
 
+    public function accepted_pickup() {
+
+        return $this->belongsTo('App\Models\User', 'accepted_pick_up_by', 'id');
+    }
+
+    public function picked_up() {
+
+        return $this->belongsTo('App\Models\User', 'picked_up_by', 'id');
+    }
+
+    public function delivered() {
+
+        return $this->belongsTo('App\Models\User', 'delivered_by', 'id');
+    }
+
 }

@@ -165,7 +165,12 @@
                                 <th>City</th>
                                 <th>State</th>
                                 <th>Delivery Method</th>
+                                <th>Accepted Pickup</th>
+                                <th>Accepted Pickup By</th>
+                                <th>Pick Status</th>
+                                <th>Picked up By</th>
                                 <th>Delivery Status</th>
+                                <th>Delivered By</th>
                                 <th>Date Ordered</th>
                                 <th>Action</th>
                             </tr>
@@ -189,7 +194,12 @@
                                     <td>{{ $order->city ?? 'Unavailable' }}</td>
                                     <td>{{ $order->state ?? 'Unavailable' }}</td>
                                     <td>{{ \Illuminate\Support\Str::ucfirst($order->delivery_method) }}</td>
+                                    <td>{{ $order->delivery_method == "shipping" ? ($order->accepted_pick_up == 1 ? "Accepted" : "Not Accepted") : 'Not Applicable' }}</td>
+                                    <td>{{ $order->accepted_pickup ? "{$order->accepted_pickup->firstname} {$order->accepted_pickup->lastname}" : 'None' }}</td>
+                                    <td>{{ $order->is_picked_up == 1 ? 'Picked up' : 'Not Picked up' }}</td>
+                                    <td>{{ $order->picked_up ? "{$order->picked_up->firstname} {$order->picked_up->lastname}"  : 'None' }}</td>
                                     <td>{{ $order->delivery_status == 1 ? 'Delivered' : 'Not Delivered' }}</td>
+                                    <td>{{ $order->delivered ? "{$order->delivered->firstname} {$order->delivered->lastname}"  : 'None' }}</td>
                                     <td>{{ \Carbon\Carbon::parse($order->created_at)->format('h:ia F dS, Y') }}</td>
                                     <td>
                                         <div class="dropdown">
