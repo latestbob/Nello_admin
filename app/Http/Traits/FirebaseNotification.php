@@ -16,13 +16,19 @@ trait FirebaseNotification
         $data = [
             "registration_ids" => $deviceTokens,
             'priority' => $priority,
-            "notification" => [
-                "title" => $title,
-                "body" => $message
-            ],
         ];
 
-        if ($payload !== null) $data['data'] = $payload;
+
+        if ($payload !== null) {
+            $payload['nello_title'] = $title;
+            $payload['nello_body'] = $message;
+            $data['data'] = $payload;
+        } else {
+            $data['notification'] = [
+                "title" => $title,
+                "body" => $message
+            ];
+        }
 
         $headers = [
             'Authorization: key=' . env('FIREBASE_SERVER_KEY'),
@@ -37,5 +43,6 @@ trait FirebaseNotification
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
 
         return curl_exec($ch);
+
     }
 }
