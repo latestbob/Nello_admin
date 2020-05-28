@@ -177,8 +177,7 @@ class DrugController extends Controller
             $locationID = Auth::user()->pharmacy->location_id;
         }
 
-        //$orders = Order::query()->join('carts', 'orders.cart_uuid', '=', 'carts.cart_uuid', 'INNER');
-        $orders = Order::with(['items']);
+        $orders = Order::query()->join('carts', 'orders.cart_uuid', '=', 'carts.cart_uuid', 'INNER');
 
         $orders->when($locationID, function ($query, $locationID) {
             $query->where(['orders.location_id' => $locationID, 'orders.payment_confirmed' => 1]);
@@ -221,7 +220,7 @@ class DrugController extends Controller
             $orders = $orders->where('orders.location_id', $location);
         }
 
-        $orders = $orders->where('carts.vendor_id', $request->user()->vendor_id)->select(['*', 'orders.id as id']);
+        //$orders = $orders->where('carts.vendor_id', $request->user()->vendor_id)->select(['*', 'orders.id as id']);
 
         $orders = $orders->groupBy('carts.cart_uuid')->orderByDesc('orders.id');
 
