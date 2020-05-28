@@ -12,9 +12,8 @@ class Order extends Model
         'amount', 'firstname', 'lastname', 'email', 'phone',
         'order_ref', 'company', 'address1', 'address2', 'location_id',
         'pickup_location_id', 'city', 'delivery_method',
-//        'state',
-//        'postal_code',
-        'payment_confirmed', 'delivery_status'
+        'payment_confirmed', 'accepted_pick_up', 'accepted_pick_up_by',
+        'is_picked_up', 'picked_up_by', 'delivery_status', 'delivered_by'
     ];
 
     public function items() {

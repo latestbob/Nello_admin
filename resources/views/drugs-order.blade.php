@@ -195,11 +195,11 @@
                                     <td>{{ $order->state ?? 'Unavailable' }}</td>
                                     <td>{{ \Illuminate\Support\Str::ucfirst($order->delivery_method) }}</td>
                                     <td>{{ $order->delivery_method == "shipping" ? ($order->accepted_pick_up == 1 ? "Accepted" : "Not Accepted") : 'Not Applicable' }}</td>
-                                    <td>{{ $order->accepted_pickup ? "{$order->accepted_pickup->firstname} {$order->accepted_pickup->lastname}" : 'None' }}</td>
-                                    <td>{{ $order->is_picked_up == 1 ? 'Picked up' : 'Not Picked up' }}</td>
-                                    <td>{{ $order->picked_up ? "{$order->picked_up->firstname} {$order->picked_up->lastname}"  : 'None' }}</td>
+                                    <td>{{ $order->delivery_method == "shipping" ? ($order->accepted_pickup ? "{$order->accepted_pickup->firstname} {$order->accepted_pickup->lastname}" : 'None') : 'Not Applicable' }}</td>
+                                    <td>{{ $order->delivery_method == "shipping" ? ($order->is_picked_up == 1 ? 'Picked up' : 'Not Picked up') : 'Not Applicable' }}</td>
+                                    <td>{{ $order->delivery_method == "shipping" ? ($order->picked_up ? "{$order->picked_up->firstname} {$order->picked_up->lastname}"  : 'None') : 'Not Applicable' }}</td>
                                     <td>{{ $order->delivery_status == 1 ? 'Delivered' : 'Not Delivered' }}</td>
-                                    <td>{{ $order->delivered ? "{$order->delivered->firstname} {$order->delivered->lastname}"  : 'None' }}</td>
+                                    <td>{{ $order->delivered ? ("{$order->delivered->firstname} {$order->delivered->lastname} - (" . \Illuminate\Support\Str::ucfirst($order->delivered->user_type) . ")")  : 'None' }}</td>
                                     <td>{{ \Carbon\Carbon::parse($order->created_at)->format('h:ia F dS, Y') }}</td>
                                     <td>
                                         <div class="dropdown">
@@ -209,6 +209,13 @@
                                                 Action
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+                                                @if($userType == 'agent' && $order->delivery_method == 'pickup' && $order->delivery_status != true)
+                                                    <button class="dropdown-item order-delivered"
+                                                            data-id="{{ $order->id }}">
+                                                        Order Delivered
+                                                    </button>
+                                                @endif
 
                                                 <a href="{{ url("/drugs-order/{$order->cart_uuid}/items") }}"
                                                    class="dropdown-item">View Items</a>
@@ -237,6 +244,7 @@
 @endsection
 
 @section('js')
+    <script src="{{ asset('js/net-bridge/net-bridge.js') }}" type="application/javascript"></script>
 
     <script type="application/javascript">
 
@@ -304,6 +312,69 @@
             delete params.page;
             window.location.href = (window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + serialize(params));
         });
+
+        @if($userType == 'agent')
+
+        const instance = NetBridge.getInstance();
+
+        $('.order-delivered').click(function (e) {
+
+            let self = $(this), timeout;
+
+            successMsg('Order Delivered', "This order will be marked as delivered, do you want proceed?",
+                'Yes, proceed', 'No, cancel', function ({value}) {
+
+                    if (!value) return;
+
+                    timeout = setTimeout(() => {
+
+                        instance.addToRequestQueue({
+                            url: "{{ url('/drugs-order/delivered') }}",
+                            method: 'post',
+                            timeout: 10000,
+                            dataType: 'json',
+                            data: {
+                                id: parseInt(self.data('id')),
+                                '_token': "{{ csrf_token() }}"
+                            },
+                            beforeSend: () => {
+                                swal.showLoading();
+                            },
+                            success: (data, status, xhr) => {
+
+                                swal.hideLoading();
+
+                                if (data.status !== true) {
+                                    errorMsg('Order Delivered Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
+                                    return false;
+                                }
+
+                                successMsg('Order Delivered Successful', data.message);
+
+                                timeout = setTimeout(() => {
+                                    window.location.reload();
+                                    clearTimeout(timeout);
+                                }, 2000);
+
+                            },
+                            ontimeout: () => {
+                                swal.hideLoading();
+                                errorMsg('Order Delivered Failed', 'Failed to mark this order as delivered at this time as the request timed out', 'Ok');
+                            },
+                            error: (data, xhr, status, statusText) => {
+
+                                swal.hideLoading();
+
+                                errorMsg('Order Delivered Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
+                            }
+                        });
+
+                        clearTimeout(timeout);
+                    }, 500);
+                })
+        });
+        @endif
+
     </script>
 @endsection
 

@@ -37,6 +37,8 @@ Route::prefix('/')->middleware(['auth', 'auth.allowed'])->group(function () {
 
     Route::post('/drugs-order/item/ready', 'DrugController@drugOrderItemReady')->middleware('auth.agent');
 
+    Route::post('/drugs-order/delivered', 'DrugController@drugOrderPickedUp')->middleware('auth.agent');
+
     Route::post('/drugs-order/item/add-prescription', 'DrugController@addPrescription')->name('add-prescription')->middleware('auth.admin.agent.doctor');
 
     Route::post('/drugs-order/item/add-doctors-prescription', 'DrugController@addDoctorsPrescription')->name('add-doctors-prescription')->middleware('auth.admin.agent.doctor');

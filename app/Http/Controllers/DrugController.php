@@ -220,7 +220,7 @@ class DrugController extends Controller
             $orders = $orders->where('orders.location_id', $location);
         }
 
-        $orders = $orders->where('carts.vendor_id', $request->user()->vendor_id);
+        $orders = $orders->where('carts.vendor_id', $request->user()->vendor_id)->select(['*', 'orders.id as id']);
 
         $orders = $orders->groupBy('carts.cart_uuid')->orderByDesc('orders.id');
 
@@ -429,6 +429,54 @@ class DrugController extends Controller
             'status' => true,
             'message' => "That order has been successfully marked as ready"
         ]);
+    }
+
+    public function drugOrderPickedUp(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric|exists:orders,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response([
+                'status' => false,
+                'message' => $validator->errors()
+            ]);
+        }
+
+        $order = Order::where('id', $request->id)->first();
+
+        if ($order->location_id != ($user = $request->user())->pharmacy->location_id) {
+            return [
+                'status' => false,
+                'message' => "Sorry, your assigned pharmacy is not assigned to that order's location"
+            ];
+        }
+
+        if ($order->delivery_method != 'pickup') {
+            return [
+                'status' => false,
+                'message' => "Sorry, you can't deliver that order, it's not a pick up order"
+            ];
+        }
+
+        if ($order->delivery_status == true) {
+            return [
+                'status' => false,
+                'message' => "Sorry, this order has already been delivered"
+            ];
+        }
+
+        $order->update([
+            'delivery_status' => true,
+            'delivered_by' => $user->id
+        ]);
+
+        return [
+            'status' => true,
+            'message' => 'Successfully marked order as delivered'
+        ];
     }
 
     public function addPrescription(Request $request)
