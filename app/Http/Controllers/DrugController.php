@@ -311,9 +311,12 @@ class DrugController extends Controller
             }
 
             $items[] = [
-                'id' => $item->id,
-                'name' => $item->drug->name,
-                'quantity' => $item->quantity
+                'id' => $it->id,
+                'name' => $it->drug->name,
+                'brand' => $it->drug->brand,
+                'image' => $it->drug->image,
+                'quantity' => $it->quantity,
+                'price' => $it->price
             ];
         }
 
@@ -326,9 +329,9 @@ class DrugController extends Controller
 
             if (!empty($agents)) {
 
-                return $this->sendNotification($agents, "New Order",
+                $this->sendNotification($agents, "New Order",
                     "Hello there! there's been a newly approved order for your location with Order REF: {$item->order->order_ref}",
-                    'high', ['orderId' => $item->order->id, 'items' => $items]);
+                    'high', ['cart_uuid' => $item->order->cart_uuid, 'items' => $items]);
             }
         }
 
