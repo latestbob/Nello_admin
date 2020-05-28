@@ -46,8 +46,7 @@ trait FirebaseNotification
 
         if(($res = curl_exec($ch)) === false)
         {
-            $headers['error'] = 'Curl error: ' . curl_error($ch); 
-            return $headers;
+            return 'Curl error: ' . curl_error($ch);
         }
         else
         {
