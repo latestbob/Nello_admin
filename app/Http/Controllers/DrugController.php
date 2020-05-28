@@ -77,7 +77,7 @@ class DrugController extends Controller
             if ($request->hasFile('image')) {
 
                 $data['image'] = $this->uploadFile($request, 'image');
-//            $data['image'] = 'http://www.famacare.com/img/famacare.png';
+            //            $data['image'] = 'http://www.famacare.com/img/famacare.png';
 
             }
 
@@ -113,7 +113,7 @@ class DrugController extends Controller
             if ($request->hasFile('image')) {
 
                 $data['image'] = $this->uploadFile($request, 'image');
-//            $data['image'] = 'http://www.famacare.com/img/famacare.png';
+        //            $data['image'] = 'http://www.famacare.com/img/famacare.png';
 
             }
 
@@ -329,7 +329,7 @@ class DrugController extends Controller
 
             if (!empty($agents)) {
 
-                $this->sendNotification($agents, "New Order",
+                return $this->sendNotification($agents, "New Order",
                     "Hello there! there's been a newly approved order for your location with Order REF: {$item->order->order_ref}",
                     'high', ['cart_uuid' => $item->order->cart_uuid, 'items' => $items]);
             }
