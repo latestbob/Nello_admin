@@ -220,7 +220,7 @@ class DrugController extends Controller
             $orders = $orders->where('orders.location_id', $location);
         }
 
-        $orders = $orders->where('carts.vendor_id', $request->user()->vendor_id)->select(['*', 'orders.id as id']);
+        $orders = $orders->where('carts.vendor_id', $request->user()->vendor_id)->select(['*'/*, 'orders.id as id'*/]);
 
         $orders = $orders->groupBy('carts.cart_uuid')->orderByDesc('orders.id');
 
