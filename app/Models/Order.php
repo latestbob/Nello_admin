@@ -16,6 +16,8 @@ class Order extends Model
         'is_picked_up', 'picked_up_by', 'delivery_status', 'delivered_by'
     ];
 
+    protected $appends = ['pending'];
+
     public function items() {
         return $this->hasMany('App\Models\Cart', 'cart_uuid', 'cart_uuid');
     }
