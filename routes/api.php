@@ -18,4 +18,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('drugs/import');
+Route::post('drugs/import', 'Api\DrugController@import');

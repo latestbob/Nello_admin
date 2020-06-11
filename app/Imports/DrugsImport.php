@@ -14,7 +14,7 @@ class DrugsImport implements ToCollection
         $drugs = [];
         foreach ($rows as $row) 
         {
-            if (!empty(trim($row[0]))) {
+            if (!empty(trim($row[0])) && is_numeric($row[3])) {
                 $drugs[] = [
                     'sku' => $row[0],
                     'name' => $row[1],
