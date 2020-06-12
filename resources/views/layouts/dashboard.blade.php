@@ -197,7 +197,7 @@
                                     </span>
                             <span>
                                 <span class="account-user-name">{{ Auth::user()->firstname }} {{ Auth::user()->lastname }}</span>
-                                <span class="account-position">{{ Auth::user()->vendor->name }}</span>
+                                <span class="account-position">{{ Auth::user()->vendor->name }} - ({{ Auth::user()->user_type }})</span>
                             </span>
                         </a>
                         <div
@@ -285,7 +285,7 @@
 
         <div class="p-3">
             <div class="alert alert-warning" role="alert">
-                <strong>Customize </strong> the overall color scheme, sidebar menu, etc. Note that, Nello stores the
+                <strong>Customize </strong> the overall color scheme, sidebar menu, etc. Note that, {{ config('app.name', 'Laravel') }} stores the
                 preferences in local storage.
             </div>
 
