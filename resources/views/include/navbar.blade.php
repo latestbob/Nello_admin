@@ -50,6 +50,9 @@
                     <li>
                         <a href="{{ route('drugs') }}">View</a>
                     </li>
+                    <li>
+                        <a href="{{ route('drugs-import') }}">Import</a>
+                    </li>
                 @endif
                 <li>
                     <a href="{{ route('drugs-order') }}">Orders</a>

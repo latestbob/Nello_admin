@@ -165,6 +165,34 @@ class DrugController extends Controller
 
     }
 
+    public function drugStatus(Request $request)
+    {
+
+        if (empty($uuid = $request->uuid)) {
+            return response([
+                'status' => false,
+                'message' => "Drug ID missing"
+            ]);
+        }
+
+        $drug = PharmacyDrug::where(['uuid' => $request->uuid, 'vendor_id' => $request->user()->vendor_id])->first();
+
+        if (empty($drug)) {
+            return response([
+                'status' => false,
+                'message' => "Sorry, the ID '{$request->uuid}' is associated with any drug"
+            ]);
+        }
+
+        $drug->update(['status' => !$drug->status]);
+
+        return response([
+            'status' => true,
+            'message' => "This drug is now " . ($drug->status == true ? 'available' : 'unavailable')
+        ]);
+
+    }
+
     public function drugOrders(Request $request)
     {
 
@@ -569,5 +597,9 @@ class DrugController extends Controller
             'message' => "Prescription added successfully"
         ]);
 
+    }
+
+    public function drugImport(Request $request) {
+        return view('drug-import');
     }
 }

@@ -81,6 +81,7 @@
                                 <th>Description</th>
                                 <th>Dosage Type</th>
                                 <th>Prescription</th>
+                                <th>Availabilty</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -98,6 +99,7 @@
                                     <td>{{ $drug->description ?: 'Unavailable' }}</td>
                                     <td>{{ $drug->dosage_type ?: 'Unavailable' }}</td>
                                     <td>{{ $drug->require_prescription == 1 ? 'Required' : 'Not required' }}</td>
+                                    <td>{{ $drug->status == 1 ? 'Available' : 'Unavailable (Out of stock)' }}</td>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button"
@@ -107,8 +109,10 @@
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                 <a class="dropdown-item" href="{{ route("drug-view", ['uuid' => $drug->uuid]) }}">Edit drug</a>
-                                                <button class="dropdown-item status-toggle" data-id="{{ $drug->uuid }}"
-                                                        data-status="cancelled">
+                                                <button class="dropdown-item status-toggle" data-id="{{ $drug->uuid }}" data-status="{{ $drug->status == 1 ? "unavailable" : "available" }}">
+                                                    {{ $drug->status == 1 ? "Unavailable" : "Available" }}
+                                                </button>
+                                                <button class="dropdown-item delete-btn" data-id="{{ $drug->uuid }}">
                                                     Delete drug
                                                 </button>
                                             </div>
@@ -183,6 +187,59 @@
         const instance = NetBridge.getInstance();
 
         $('.status-toggle').click(function (e) {
+
+            let self = $(this), uuid = self.data('id'), timeout;
+
+            successMsg('Drug Status', `This drug will be marked as ${self.data('status')}, do you want proceed?`,
+                'Yes, proceed', 'No, cancel', function ({value}) {
+
+                    if (!value) return;
+
+                    timeout = setTimeout(() => {
+
+                        instance.addToRequestQueue({
+                            url: "{{ route('drug-status') }}",
+                            method: 'post',
+                            timeout: 10000,
+                            dataType: 'json',
+                            data: {
+                                uuid,
+                                '_token': "{{ csrf_token() }}"
+                            },
+                            beforeSend: () => {
+                                swal.showLoading();
+                            },
+                            success: (data, status, xhr) => {
+
+                                swal.hideLoading();
+
+                                if (data.status !== true) {
+                                    errorMsg('Drug Status Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
+                                    return false;
+                                }
+
+                                successMsg('Drug Status Successful', data.message);
+                                window.location.reload();
+
+                            },
+                            ontimeout: () => {
+                                swal.hideLoading();
+                                errorMsg('Drug Status Failed', 'Failed to switch drug status at this time as the request timed out', 'Ok');
+                            },
+                            error: (data, xhr, status, statusText) => {
+
+                                swal.hideLoading();
+
+                                errorMsg('Drug Status Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
+                            }
+                        });
+
+                        clearTimeout(timeout);
+                    }, 500);
+                })
+        });
+
+        $('.delete-btn').click(function (e) {
 
             let self = $(this), uuid = self.data('id'), timeout;
 
