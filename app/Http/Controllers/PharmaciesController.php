@@ -109,14 +109,14 @@ class PharmaciesController extends Controller
 
             ]);
 
+            $validated = $validator->validate();
+
             if ($request->hasFile('picture')) {
 
                 $validated['picture'] = $this->uploadFile($request, 'picture');
 //            $validated['image'] = 'http://www.famacare.com/img/famacare.png';
 
             }
-
-            $validated = $validator->validate();
 
             $validated['location_id'] = $validated['location'];
             unset($validated['location']);
