@@ -12,7 +12,7 @@ class DrugsImport implements ToCollection
     public function collection(Collection $rows)
     {
         $drugs = [];
-        foreach ($rows as $row) 
+        foreach ($rows as $row)
         {
             if (!empty(trim($row[0])) && is_numeric($row[3])) {
                 $drugs[] = [
@@ -24,6 +24,7 @@ class DrugsImport implements ToCollection
                     'price' => (double) str_replace(',', '', $row[5]),
                     'require_prescription' => strtolower($row[6]) == 'no' ? 0 : 1,
                     'description' => $row[7],
+                    'vendor_id' => 1,
                     'uuid' => Str::uuid()->toString()
                 ];
             }
