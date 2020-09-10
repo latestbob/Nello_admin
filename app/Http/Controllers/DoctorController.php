@@ -22,7 +22,7 @@ class DoctorController extends Controller
         $gender = $request->gender;
         $size = empty($request->size) ? 10 : $request->size;
 
-        $doctors = User::where('user_type', 'doctor')
+        $doctors = User::with('prescriptions')->where('user_type', 'doctor')
             ->when($search, function ($query, $search) {
 
                 $query->whereRaw(
@@ -47,7 +47,7 @@ class DoctorController extends Controller
             return redirect('/doctors')->with('error', "Doctor ID missing");
         }
 
-        $doctor = User::where(['user_type' => 'doctor', 'uuid' => $request->uuid])->first();
+        $doctor = User::with('prescriptions')->where(['user_type' => 'doctor', 'uuid' => $request->uuid])->first();
 
         if (empty($doctor)) {
             return redirect('/doctors')->with('error', "Sorry, the ID '{$request->uuid}' is not associated with any doctor account");
