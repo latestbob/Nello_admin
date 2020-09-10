@@ -143,7 +143,34 @@ class PharmaciesController extends Controller
 
         $locations = Locations::all();
 
-        return view('pharmacy-view', compact('locations', 'pharmacy', 'uuid'));
+        $orders = Order::with('items')->whereHas('items', function ($query) use ($pharmacy) {
+            $query->where('is_ready_by', $pharmacy->id);
+        })->where('payment_confirmed', true)->get();
+
+        $dateEnd = null;
+
+        if (!empty($dateStart = $request->dateStart)) {
+
+            $dateEnd = $request->dateEnd ?: date('Y-m-d');
+
+            $orders = $orders->whereBetween('created_at', ["{$dateStart} 00:00:00", "{$dateEnd} 23:59:59"]);
+        }
+
+        $volume = 0; $value = 0;
+
+        if (!empty($orders)) {
+            foreach ($orders as $order) {
+                $volume += $order->items->count();
+                $value += $order->items->sum('price');
+            }
+        }
+
+        $total = [
+            'volume' => $volume,
+            'value' => $value
+        ];
+
+        return view('pharmacy-view', compact('locations', 'pharmacy', 'uuid', 'total', 'dateStart', 'dateEnd'));
 
     }
 
