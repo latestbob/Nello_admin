@@ -73,6 +73,35 @@
                 <!--end card-->
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-xl-6 col-lg-12">
+                <div class="card tilebox-one">
+                    <div class="card-body">
+                        <i class="mdi mdi-scale float-right"></i>
+                        <h6 class="text-uppercase mt-0">Total Volume</h6>
+                        <h2 class="my-2" id="active-users-count">{{ $total['sales']['volume'] }}</h2>
+                        <p class="mb-0 text-muted">
+                            <span class="text-nowrap">Total Sales Volume</span>
+                        </p>
+                    </div> <!-- end card-body-->
+                </div>
+                <!--end card-->
+            </div>
+            <div class="col-xl-6 col-lg-12">
+                <div class="card tilebox-one">
+                    <div class="card-body">
+                        <i class="mdi mdi-cash float-right"></i>
+                        <h6 class="text-uppercase mt-0">Total Value</h6>
+                        <h2 class="my-2" id="active-users-count">₦{{ $total['sales']['value'] }}</h2>
+                        <p class="mb-0 text-muted">
+                            <span class="text-nowrap">Total Sales Value</span>
+                        </p>
+                    </div> <!-- end card-body-->
+                </div>
+                <!--end card-->
+            </div>
+        </div>
     @endif
 
     @if($userType == "admin")

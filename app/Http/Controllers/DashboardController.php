@@ -29,6 +29,10 @@ class DashboardController extends Controller
             $locationID = Auth::user()->pharmacy->location_id;
         }
 
+        $orders = Order::when($locationID, function ($query, $locationID) {
+            $query->where('location_id', $locationID);
+        })->where('payment_confirmed', true);
+
         $total = [
             'order' => [
                 'day' => [
@@ -73,6 +77,10 @@ class DashboardController extends Controller
                     })->distinct()->count('orders.id') : null
 
                 ],
+            ],
+            'sales' => [
+                'volume' => $orders->count(),
+                'value' => number_format($orders->sum('amount'))
             ],
             'feedback' => [
                 'day' => !$locationID ? Feedbacks::whereBetween('created_at', ["{$today} 00:00:00", "{$today} 23:59:59"])
