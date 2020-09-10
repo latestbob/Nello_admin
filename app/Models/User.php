@@ -46,4 +46,8 @@ class User extends Authenticatable
         return $this->hasMany(DoctorsPrescriptions::class, 'doctor_id', 'id');
     }
 
+    public function delivered() {
+        return $this->hasMany(Order::class, 'delivered_by', 'id');
+    }
+
 }

@@ -86,6 +86,7 @@
                                 <th>Height</th>
                                 <th>Weight</th>
                                 <th>Sponsor</th>
+                                <th>Total Delivery</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -113,6 +114,7 @@
                                     <td>{{ $rider->height ?: 'Unavailable' }}</td>
                                     <td>{{ $rider->weight ?: 'Unavailable' }}</td>
                                     <td>{{ $rider->sponsor ?: 'Unavailable' }}</td>
+                                    <td>{{ $rider->delivered->count() ?: 0 }}</td>
                                     <td>
                                         <label class="badge {{ $rider->active == 1 ? 'badge-success' : 'badge-warning' }}">{{ $rider->active ? 'active' : 'inactive' }}</label>
                                     </td>
