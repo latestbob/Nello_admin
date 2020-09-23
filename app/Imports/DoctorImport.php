@@ -34,6 +34,7 @@ class DoctorImport implements ToModel, WithHeadingRow
                 'phone' => $row['tel_no'],
                 'email' => $row['email_address'],
                 'password' => Hash::make(Str::random(8)),
+                'address' => $row['address'],
                 'picture' => '',
                 //'ufield' => '',
                 'aos' => $row['specialization'],
