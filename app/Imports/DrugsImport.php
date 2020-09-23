@@ -5,10 +5,35 @@ namespace App\Imports;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use App\Models\PharmacyDrug as Drug;
+use App\Models\PharmacyDrug;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class DrugsImport implements ToCollection
+class DrugsImport implements ToModel, WithHeadingRow
 {
+
+    public function headingRow() : int 
+    {
+        return 1;
+    }
+
+    public function model(array $row)
+    {
+        return new PharmacyDrug([
+            'sku' => $row['drug_id'],
+            'name' => $row['item_name'],
+            'brand' => $row['brand'],
+            'category_id' => $row['category_id'],
+            'dosage_type' => $row['dosage_form'],
+            'price' => (double) str_replace(',', '', $row['price']),
+            'require_prescription' => strtolower($row['require_prescription']) == 'no' ? 0 : 1,
+            'description' => $row['description'],
+            'vendor_id' => 1,
+            'uuid' => Str::uuid()->toString()
+        ]);
+    }
+
     public function collection(Collection $rows)
     {
         $drugs = [];
