@@ -20,20 +20,21 @@ class DrugsImport implements ToModel, WithHeadingRow
 
     public function model(array $row)
     {
-        dd($row);
-
-        return new PharmacyDrug([
-            'sku' => $row['drug_id'],
-            'name' => $row['item_name'],
-            'brand' => $row['brand'],
-            'category_id' => $row['category_id'],
-            'dosage_type' => $row['dosage_form'],
-            'price' => (double) str_replace(',', '', $row['price']),
-            'require_prescription' => strtolower($row['require_prescription']) == 'no' ? 0 : 1,
-            'description' => $row['description'],
-            'vendor_id' => 1,
-            'uuid' => Str::uuid()->toString()
-        ]);
+        if (isset($row['drug_id'])) {
+            return new PharmacyDrug([
+                'sku' => $row['drug_id'],
+                'name' => $row['item_name'],
+                'brand' => $row['brand'],
+                'category_id' => $row['category_id'],
+                'dosage_type' => $row['dosage_form'],
+                'price' => (double) str_replace(',', '', $row['price']),
+                'require_prescription' => strtolower($row['require_prescription']) == 'no' ? 0 : 1,
+                'description' => $row['description'],
+                'vendor_id' => 1,
+                'uuid' => Str::uuid()->toString()
+            ]);
+    
+        }
     }
 
     public function collection(Collection $rows)
