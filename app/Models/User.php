@@ -42,4 +42,12 @@ class User extends Authenticatable
         return $this->belongsTo('App\Models\Locations', 'location_id', 'id');
     }
 
+    public function prescriptions() {
+        return $this->hasMany(DoctorsPrescriptions::class, 'doctor_id', 'id');
+    }
+
+    public function delivered() {
+        return $this->hasMany(Order::class, 'delivered_by', 'id');
+    }
+
 }

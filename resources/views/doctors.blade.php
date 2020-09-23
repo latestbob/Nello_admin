@@ -85,6 +85,7 @@
                                 <th>Height</th>
                                 <th>Weight</th>
                                 <th>Sponsor</th>
+                                <th>Total Prescriptions Issued</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -111,6 +112,7 @@
                                     <td>{{ $doctor->height ?: 'Unavailable' }}</td>
                                     <td>{{ $doctor->weight ?: 'Unavailable' }}</td>
                                     <td>{{ $doctor->sponsor ?: 'Unavailable' }}</td>
+                                    <td>{{ $doctor->prescriptions->count() ?: 0 }}</td>
                                     <td>
                                         <label class="badge {{ $doctor->active == 1 ? 'badge-success' : 'badge-warning' }}">{{ $doctor->active ? 'active' : 'inactive' }}</label>
                                     </td>

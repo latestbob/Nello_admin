@@ -108,7 +108,7 @@
                                                 Action
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <a class="dropdown-item" href="{{ route("pharmacy-view", ['uuid' => $pharmacy->uuid]) }}">Edit Pharmacy</a>
+                                                <a class="dropdown-item" href="{{ route("pharmacy-view", ['uuid' => $pharmacy->uuid]) }}">View Pharmacy</a>
                                                 <button class="dropdown-item status-toggle" data-id="{{ $pharmacy->uuid }}"
                                                         data-status="cancelled">Delete Pharmacy
                                                 </button>

@@ -19,6 +19,49 @@
     </div>
     <!-- end page title -->
 
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <label>Filter by Date: (Start - End)</label>
+            <div class="form-control" data-toggle="date-picker-range"
+                 data-date-start="{{ $dateStart }}"
+                 data-date-end="{{ $dateEnd }}"
+                 data-target-display="#selectedValue"
+                 onchange="getDateRange(event)" data-cancel-class="btn-light">
+                <i class="mdi mdi-calendar"></i>&nbsp;
+                <span id="selectedValue"></span> <i
+                    class="mdi mdi-menu-down"></i>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-6 col-lg-12">
+            <div class="card tilebox-one">
+                <div class="card-body">
+                    <i class="mdi mdi-scale float-right"></i>
+                    <h6 class="text-uppercase mt-0">Total Volume</h6>
+                    <h2 class="my-2" id="active-users-count">{{ $total['volume'] }}</h2>
+                    <p class="mb-0 text-muted">
+                        <span class="text-nowrap">Total Sales Volume</span>
+                    </p>
+                </div> <!-- end card-body-->
+            </div>
+            <!--end card-->
+        </div>
+        <div class="col-xl-6 col-lg-12">
+            <div class="card tilebox-one">
+                <div class="card-body">
+                    <i class="mdi mdi-cash float-right"></i>
+                    <h6 class="text-uppercase mt-0">Total Value</h6>
+                    <h2 class="my-2" id="active-users-count">₦{{ $total['value'] }}</h2>
+                    <p class="mb-0 text-muted">
+                        <span class="text-nowrap">Total Sales Value</span>
+                    </p>
+                </div> <!-- end card-body-->
+            </div>
+            <!--end card-->
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-xl-4 col-lg-5">
             <div class="card text-center">
@@ -189,4 +232,25 @@
         </div> <!-- end col -->
     </div>
 
+@endsection
+@section('js')
+    <script type="application/javascript">
+
+        const params = getSearchParameters();
+
+        function getDateRange(event) {
+
+            let dateStart = event.start.format("YYYY-MM-DD");
+            let dateEnd = event.end.format("YYYY-MM-DD");
+
+            if (dateStart !== '') params.dateStart = dateStart;
+            else delete params.dateStart;
+
+            if (dateEnd !== '') params.dateEnd = dateEnd;
+            else delete params.dateEnd;
+            delete params.page;
+            window.location.href = (window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + serialize(params));
+        }
+
+    </script>
 @endsection

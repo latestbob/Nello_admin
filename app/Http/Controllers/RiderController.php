@@ -24,7 +24,7 @@ class RiderController extends Controller
         $gender = $request->gender;
         $size = empty($request->size) ? 10 : $request->size;
 
-        $riders = User::where('user_type', 'rider')
+        $riders = User::with('delivered')->where('user_type', 'rider')
             ->when($search, function ($query, $search) {
 
                 $query->whereRaw(
