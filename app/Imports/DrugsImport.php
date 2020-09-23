@@ -15,7 +15,7 @@ class DrugsImport implements ToModel, WithHeadingRow
 
     public function headingRow() : int 
     {
-        return 0;
+        return 1;
     }
 
     public function model(array $row)
