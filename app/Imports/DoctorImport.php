@@ -25,20 +25,22 @@ class DoctorImport implements ToModel, WithHeadingRow
     {
         $names = explode(' ', $row['medical_director']);
         $count = count($names);
-        return new User([
-            'uuid'      => Str::uuid()->toString(),
-            'firstname' => $names[1],
-            'middlename' => $count > 3 ? $names[2] : '',
-            'lastname' => $count > 3 ? $names[3] : ($count == 3 ? $names[2] : '') ,
-            'phone' => $row['tel_no'],
-            'email' => $row['email_address'],
-            'password' => Hash::make(Str::random(8)),
-            'picture' => '',
-            //'ufield' => '',
-            'aos' => $row['specialization'],
-            'gender' => '',
-            'user_type' => 'doctor',
-            'vendor_id' => 1        
-        ]);
+        if (isset($row['medical_director'])) {
+            return new User([
+                'uuid'      => Str::uuid()->toString(),
+                'firstname' => $names[1],
+                'middlename' => $count > 3 ? $names[2] : '',
+                'lastname' => $count > 3 ? $names[3] : ($count == 3 ? $names[2] : '') ,
+                'phone' => $row['tel_no'],
+                'email' => $row['email_address'],
+                'password' => Hash::make(Str::random(8)),
+                'picture' => '',
+                //'ufield' => '',
+                'aos' => $row['specialization'],
+                'gender' => $row['gender'],
+                'user_type' => 'doctor',
+                'vendor_id' => 1        
+            ]);    
+        }
     }
 }
