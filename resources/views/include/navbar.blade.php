@@ -159,6 +159,13 @@
                     <span> Customer Point Rules </span>
                 </a>
             </li>
+
+            <li class="side-nav-item">
+                <a href="{{ route('prescription-fee') }}" class="side-nav-link">
+                    <i class="uil-money-bill"></i>
+                    <span> Prescription Fee </span>
+                </a>
+            </li>
         @endif
 
     </ul>

@@ -63,6 +63,8 @@ Route::prefix('/')->middleware(['auth', 'auth.allowed'])->group(function () {
 
     Route::match(['post', 'get'],'/point/rule', 'CustomerPointController@index')->name('point-rule')->middleware('auth.admin');
 
+    Route::match(['post', 'get'],'/prescription/fee', 'PrescriptionFeeController@index')->name('prescription-fee')->middleware('auth.admin');
+
     Route::get('/health-tips', 'HealthTipController@index')->name('health-tips')->middleware('auth.admin');
 
     Route::match(['post', 'get'],'/health-tip/add', 'HealthTipController@addTip')->name('health-tip-add')->middleware('auth.admin');
