@@ -19,3 +19,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('drugs/import', 'Api\DrugController@import')->name('drug-import');
+Route::post('doctors/import', 'Api\DoctorController@import')->name('doctor-import');
