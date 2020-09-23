@@ -20,6 +20,8 @@ class DrugsImport implements ToModel, WithHeadingRow
 
     public function model(array $row)
     {
+        dd($row);
+        
         return new PharmacyDrug([
             'sku' => $row['drug_id'],
             'name' => $row['item_name'],
