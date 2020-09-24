@@ -65,6 +65,7 @@ class Kernel extends HttpKernel
         'auth.allowed' => \App\Http\Middleware\AllowedAdminMiddleware::class,
         'auth.admin' => \App\Http\Middleware\AdminMiddleware::class,
         'auth.agent' => \App\Http\Middleware\AgentMiddleware::class,
+        'auth.doctor' => \App\Http\Middleware\DoctorMiddleware::class,
         'auth.admin.agent.doctor' => \App\Http\Middleware\AdminAgentAndDoctorMiddleware::class,
         'auth.admin.agent' => \App\Http\Middleware\AdminAndAgentMiddleware::class,
     ];

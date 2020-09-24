@@ -61,6 +61,16 @@
         </li>
 
         @if(\Illuminate\Support\Facades\Auth::check() &&
+                \Illuminate\Support\Facades\Auth::user()->user_type == "doctor")
+        <li class="side-nav-item">
+            <a href="{{ route('doctor-messages') }}" class="side-nav-link">
+                <i class="uil-message"></i>
+                <span> Messages </span>
+            </a>
+        </li>
+        @endif
+
+        @if(\Illuminate\Support\Facades\Auth::check() &&
                 \Illuminate\Support\Facades\Auth::user()->user_type == "admin")
 
             <li class="side-nav-item">
