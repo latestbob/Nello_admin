@@ -88,7 +88,7 @@ class DrugController extends Controller
 
             $drug->update($data);
 
-            session()->put('success', "Drug has been updated successfully");
+            return redirect(route('drugs'))->with('success', "Drug has been updated successfully");
 
         }
 
