@@ -53,7 +53,7 @@ Route::prefix('/')->middleware(['auth', 'auth.allowed'])->group(function () {
 
     Route::match(['post', 'get'],'/doctor/add', 'DoctorController@addDoctor')->name('doctor-add')->middleware('auth.admin');
 
-    Route::get('/doctor/messages', 'DoctorMessageController@index')->name('doctor-messages')->middleware('auth.doctor');
+    Route::get('/doctor/messages', 'DoctorMessageController@index')->name('doctor-messages')->middleware('auth.doctor.admin');
 
     Route::get('/locations', 'LocationController@index')->name('locations')->middleware('auth.admin');
 

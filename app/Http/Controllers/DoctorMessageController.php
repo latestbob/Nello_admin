@@ -29,13 +29,33 @@ class DoctorMessageController extends Controller
         })->when($search, function ($query, $search) {
 
             $query->whereRaw(
-                "(name like ? or email like ? or subject like ? or message like ?)",
+                "(name like ? or email like ? or subject like ?)",
                 [
-                    "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%"
+                    "%{$search}%", "%{$search}%", "%{$search}%"
                 ]
             );
 
-        })->where('doctor_id', $request->user()->id)->paginate($size);
+        });
+
+        if ($request->user()->user_type != 'admin') $messages = $messages->where('doctor_id', $request->user()->id);
+        else {
+            $messages = $messages->whereHas('doctor', function ($query) use ($search) {
+
+                $query->when($search, function ($query, $search) {
+
+                    $query->whereRaw(
+                        "(firstname like ? or lastname like ? or phone like ? or email like ?)",
+                        [
+                            "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%"
+                        ]
+                    );
+
+                });
+
+            });
+        }
+
+        $messages = $messages->paginate($size);
 
         return view('doctor-contacts', compact('messages', 'search', 'size'));
     }
