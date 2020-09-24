@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Locations;
 use App\Models\User;
+use App\Notifications\NotifyCreatedRider;
 use App\Traits\FileUpload;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -108,15 +109,13 @@ class RiderController extends Controller
         if (strtolower($request->method()) == "post") {
 
             $data = Validator::make($request->all(), [
-                'username' => 'required|string|max:30|unique:users,username',
+                'username' => 'required|string|max:30|regex:/^[a-z0-9._-]+$/|not_in:admin,rider,agent,doctor|unique:users,username',
                 'firstname' => 'required|string|max:50',
                 'lastname'  => 'required|string|max:50',
                 'middlename' => 'nullable|string|max:50',
                 'email' => 'required|string|email|max:255|unique:users,email',
                 'phone' => 'required|digits_between:11,16|unique:users,phone',
                 'location' => 'required|numeric|exists:locations,id',
-                'password' => 'required|string|min:6',
-                'confirm_password' => 'required_with:password|string|same:password',
                 'dob' => 'required|date_format:Y-m-d|before_or_equal:today',
                 'address' => 'nullable|string',
                 'state' => 'nullable|string',
@@ -141,12 +140,18 @@ class RiderController extends Controller
                 $data['dob'] = Carbon::parse($data['dob'])->toDateString();
             }
 
-            $data['password'] = Hash::make($data['password']);
+            $data['password'] = Hash::make("Rider@101");
             $data['vendor_id'] = $request->user()->vendor_id;
             $data['location_id'] = $data['location'];
             $data['uuid'] = Str::uuid()->toString();
             $data['user_type'] = 'rider';
-            User::create($data);
+            $rider = User::create($data);
+
+            if (!$rider) {
+
+                return redirect("/riders")->with('error', "Sorry, we couldn't create a rider at this time. Please try again later.");
+
+            } else $rider->notify(new NotifyCreatedRider());
 
             return redirect("/riders")->with('success', "Rider has been added successfully");
 

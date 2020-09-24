@@ -117,36 +117,36 @@
                             </div> <!-- end col -->
                         </div> <!-- end row -->
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="password">Password</label>
-                                    <input type="password" class="form-control @error('password') is-invalid @enderror" id="password"
-                                           value="{{ old('password')  }}" name="password" placeholder="Enter password">
+{{--                        <div class="row">--}}
+{{--                            <div class="col-md-6">--}}
+{{--                                <div class="form-group">--}}
+{{--                                    <label for="password">Password</label>--}}
+{{--                                    <input type="password" class="form-control @error('password') is-invalid @enderror" id="password"--}}
+{{--                                           value="{{ old('password')  }}" name="password" placeholder="Enter password">--}}
 
-                                    @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
+{{--                                    @error('password')--}}
+{{--                                    <span class="invalid-feedback" role="alert">--}}
+{{--                                        <strong>{{ $message }}</strong>--}}
+{{--                                    </span>--}}
+{{--                                    @enderror--}}
 
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="confirm_password">Confirm Password</label>
-                                    <input type="password" class="form-control @error('confirm_password') is-invalid @enderror" id="confirm_password"
-                                           value="{{ old('confirm_password') }}" name="confirm_password" placeholder="Enter confirm password">
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                            <div class="col-md-6">--}}
+{{--                                <div class="form-group">--}}
+{{--                                    <label for="confirm_password">Confirm Password</label>--}}
+{{--                                    <input type="password" class="form-control @error('confirm_password') is-invalid @enderror" id="confirm_password"--}}
+{{--                                           value="{{ old('confirm_password') }}" name="confirm_password" placeholder="Enter confirm password">--}}
 
-                                    @error('confirm_password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
+{{--                                    @error('confirm_password')--}}
+{{--                                    <span class="invalid-feedback" role="alert">--}}
+{{--                                        <strong>{{ $message }}</strong>--}}
+{{--                                    </span>--}}
+{{--                                    @enderror--}}
 
-                                </div>
-                            </div> <!-- end col -->
-                        </div> <!-- end row -->
+{{--                                </div>--}}
+{{--                            </div> <!-- end col -->--}}
+{{--                        </div> <!-- end row -->--}}
 
                         <div class="row">
                             <div class="col-md-6">
