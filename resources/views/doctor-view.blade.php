@@ -133,6 +133,23 @@
                         </div> <!-- end row -->
 
                         <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="about">About</label>
+                                    <textarea class="form-control @error('about') is-invalid @enderror" rows="3"
+                                              id="about" name="about" placeholder="Enter about">{{ old('about', $doctor->about)  }}</textarea>
+
+                                    @error('about')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+                        </div> <!-- end row -->
+
+                        <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="gender">Gender</label>
