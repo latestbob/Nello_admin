@@ -73,6 +73,7 @@
                                 <th>#</th>
                                 <th>Picture</th>
                                 <th>Name</th>
+                                <th>Username</th>
                                 <th>Specialization</th>
                                 <th>Phone</th>
                                 <th>Email</th>
@@ -101,6 +102,7 @@
                                     <td><img src="{{ $rider->image ?: asset('images/rider.png') }}"
                                              class="img-thumbnail" width="80"/></td>
                                     <td>{{ $rider->firstname }} {{ $rider->lastname }}</td>
+                                    <td>{{ $rider->username ?: 'Unavailable' }}</td>
                                     <td>{{ $rider->aos ?: 'Unavailable' }}</td>
                                     <td>{{ $rider->phone }}</td>
                                     <td>{{ $rider->email }}</td>

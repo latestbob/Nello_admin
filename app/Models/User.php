@@ -13,7 +13,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'vendor_id', 'token',
+        'vendor_id', 'token', 'username',
         'firstname','lastname','middlename','email','phone',
         'user_type','aos','cwork','password','picture','dob',
         'hwg','is_seen','ufield','height','weight','gender','source',

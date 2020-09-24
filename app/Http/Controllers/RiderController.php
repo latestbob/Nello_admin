@@ -108,6 +108,7 @@ class RiderController extends Controller
         if (strtolower($request->method()) == "post") {
 
             $data = Validator::make($request->all(), [
+                'username' => 'required|string|max:30|unique:users,username',
                 'firstname' => 'required|string|max:50',
                 'lastname'  => 'required|string|max:50',
                 'middlename' => 'nullable|string|max:50',

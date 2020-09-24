@@ -73,7 +73,21 @@
                         </div> <!-- end row -->
 
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="username">Username</label>
+                                    <input type="tel" class="form-control @error('username') is-invalid @enderror" id="username"
+                                           value="{{ old('username')  }}" name="username" placeholder="Enter username">
+
+                                    @error('username')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="phone">Phone Number</label>
                                     <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="phone"
@@ -87,7 +101,7 @@
 
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="email">Email Address</label>
                                     <input type="email" class="form-control @error('email') is-invalid @enderror" id="email"

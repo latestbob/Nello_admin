@@ -36,6 +36,8 @@
                         <p class="text-muted mb-2 font-13">
                             <strong>Full Name :</strong> <span class="ml-2">{{ $rider->lastname }} {{ $rider->firstname }} {{ $rider->middlename }}</span></p>
 
+                        <p class="text-muted mb-2 font-13"><strong>Username :</strong><span class="ml-2">{{ $rider->username ?: 'Unavailable' }}</span></p>
+
                         <p class="text-muted mb-2 font-13"><strong>Specialization :</strong><span class="ml-2">{{ $rider->aos ?: 'Unavailable' }}</span></p>
 
                         <p class="text-muted mb-2 font-13"><strong>Mobile :</strong><span class="ml-2">{{ $rider->phone }}</span></p>
