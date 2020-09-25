@@ -26,9 +26,9 @@ class DoctorController extends Controller
             ->when($search, function ($query, $search) {
 
                 $query->whereRaw(
-                    "(firstname like ? or lastname like ? or phone like ? or email like ? or aos like ?)",
+                    "(firstname like ? or lastname like ? or phone like ? or email like ? or aos like ? or hospital like ?)",
                     [
-                        "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%"
+                        "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%"
                     ]
                 );
 
@@ -66,6 +66,7 @@ class DoctorController extends Controller
                 'dob' => 'required|date_format:Y-m-d|before_or_equal:today',
                 'about' => 'nullable|string',
                 'address' => 'nullable|string',
+                'hospital' => 'nullable|string',
                 'state' => 'nullable|string',
                 'city'  => 'nullable|string',
                 'religion' => 'nullable|string',
@@ -120,6 +121,7 @@ class DoctorController extends Controller
                 'weight' => 'nullable|numeric',
                 'sponsor' => 'nullable|string',
                 'aos' => 'nullable|string',
+                'hospital' => 'nullable|string',
                 'picture' => 'nullable|image|mimes:jpeg,jpg,png'
             ])->validate();
 
