@@ -71,6 +71,7 @@ class DrugController extends Controller
                 'description' => 'required|string',
                 'dosage_type' => 'required|string|max:50',
                 'price' => 'required|numeric',
+                'quantity' => 'required|numeric',
                 'image' => 'nullable|image|mimes:jpeg,jpg,png'
             ])->validate();
 
@@ -107,6 +108,7 @@ class DrugController extends Controller
                 'description' => 'required|string',
                 'dosage_type' => 'required|string|max:50',
                 'price' => 'required|numeric',
+                'quantity' => 'required|numeric',
                 'image' => 'nullable|image|mimes:jpeg,jpg,png'
             ])->validate();
 

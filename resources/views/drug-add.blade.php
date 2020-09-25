@@ -98,7 +98,7 @@
                         </div> <!-- end row -->
 
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="dosage_type">Dosage Type</label>
                                     <input type="text" class="form-control @error('dosage_type') is-invalid @enderror"
@@ -114,7 +114,7 @@
 
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="price">Price</label>
                                     <input type="number" class="form-control @error('price') is-invalid @enderror"
@@ -122,6 +122,21 @@
                                            value="{{ old('price')  }}" name="price" placeholder="Enter price">
 
                                     @error('price')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="quantity">Quantity</label>
+                                    <input type="number" class="form-control @error('quantity') is-invalid @enderror"
+                                           id="quantity"
+                                           value="{{ old('quantity')  }}" name="quantity" placeholder="Enter quantity">
+
+                                    @error('quantity')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>

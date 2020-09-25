@@ -81,7 +81,8 @@
                                 <th>Description</th>
                                 <th>Dosage Type</th>
                                 <th>Prescription</th>
-                                <th>Availabilty</th>
+                                <th>Quantity</th>
+                                <th>Availability</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -99,7 +100,8 @@
                                     <td>{{ $drug->description ?: 'Unavailable' }}</td>
                                     <td>{{ $drug->dosage_type ?: 'Unavailable' }}</td>
                                     <td>{{ $drug->require_prescription == 1 ? 'Required' : 'Not required' }}</td>
-                                    <td>{{ $drug->status == 1 ? 'Available' : 'Unavailable (Out of stock)' }}</td>
+                                    <td>{{ $drug->quantity }}</td>
+                                    <td>{{ $drug->is_out_of_stock == true ? 'Unavailable (Out of stock)' : 'Available' }}</td>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button"
