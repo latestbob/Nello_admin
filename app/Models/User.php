@@ -32,6 +32,8 @@ class User extends Authenticatable
         'password', 'remember_token', 'token'
     ];
 
+    protected $appends = ['title'];
+
     public function vendor() {
         return $this->belongsTo('App\Models\Vendor', 'vendor_id', 'id');
     }
@@ -50,6 +52,14 @@ class User extends Authenticatable
 
     public function delivered() {
         return $this->hasMany(Order::class, 'delivered_by', 'id');
+    }
+
+    public function getTitleAttribute()
+    {
+        if ($this->user_type == 'doctor') {
+            return 'Dr.';
+        }
+        return;
     }
 
 }
