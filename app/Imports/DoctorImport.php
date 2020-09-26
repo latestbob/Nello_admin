@@ -10,8 +10,8 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 class DoctorImport implements ToModel, WithHeadingRow
 {
-    
-    public function headingRow() : int 
+
+    public function headingRow() : int
     {
         return 1;
     }
@@ -35,13 +35,14 @@ class DoctorImport implements ToModel, WithHeadingRow
                 'email' => $row['email_address'],
                 'password' => Hash::make(Str::random(8)),
                 'address' => $row['address'],
+                'hospital' => $row['hospital'],
                 'picture' => '',
                 //'ufield' => '',
                 'aos' => $row['specialization'],
                 'gender' => $row['gender'],
                 'user_type' => 'doctor',
-                'vendor_id' => 1        
-            ]);    
+                'vendor_id' => 1
+            ]);
         }
     }
 }

@@ -10,7 +10,7 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 class DrugsImport implements ToModel, WithHeadingRow
 {
 
-    public function headingRow() : int 
+    public function headingRow() : int
     {
         return 1;
     }
@@ -22,6 +22,7 @@ class DrugsImport implements ToModel, WithHeadingRow
                 'sku' => $row['drug_id'],
                 'name' => $row['item_name'],
                 'brand' => $row['brand'],
+                'quantity' => $row['quantity'],
                 'category_id' => $row['category_id'],
                 'dosage_type' => $row['dosage_form'],
                 'price' => (double) str_replace(',', '', $row['price']),
@@ -30,7 +31,7 @@ class DrugsImport implements ToModel, WithHeadingRow
                 'vendor_id' => 1,
                 'uuid' => Str::uuid()->toString()
             ]);
-    
+
         }
     }
 

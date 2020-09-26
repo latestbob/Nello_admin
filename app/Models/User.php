@@ -20,7 +20,7 @@ class User extends Authenticatable
         'user_type','aos','cwork','password','picture','dob',
         'hwg','is_seen','ufield','height','weight','gender','source',
         'session_id','address','state','city','religion','sponsor',
-        'uuid', 'local_saved', 'pharmacy_id', 'location_id'
+        'uuid', 'local_saved', 'pharmacy_id', 'location_id', 'about', 'hospital'
     ];
 
     /**

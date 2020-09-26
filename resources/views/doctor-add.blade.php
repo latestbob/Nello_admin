@@ -104,6 +104,23 @@
                         </div> <!-- end row -->
 
                         <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="about">About</label>
+                                    <textarea class="form-control @error('about') is-invalid @enderror" rows="3"
+                                              id="about" name="about" placeholder="Enter about">{{ old('about')  }}</textarea>
+
+                                    @error('about')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+                        </div> <!-- end row -->
+
+                        <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="password">Password</label>
@@ -214,7 +231,21 @@
                         </div> <!-- end row -->
 
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="hospital">Hospital</label>
+                                    <input type="text" class="form-control @error('hospital') is-invalid @enderror" id="hospital"
+                                           value="{{ old('hospital') }}" name="hospital" placeholder="Enter hospital">
+
+                                    @error('hospital')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="sponsor">Sponsor</label>
                                     <input type="text" class="form-control @error('sponsor') is-invalid @enderror" id="sponsor"
@@ -228,10 +259,7 @@
 
                                 </div>
                             </div>
-                        </div> <!-- end row -->
-
-                        <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="religion">Religion</label>
                                     <input type="text" class="form-control @error('religion') is-invalid @enderror" id="religion"

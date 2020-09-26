@@ -65,7 +65,11 @@
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Subject</th>
-                                <th>Message</th>
+                                @if(\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->user_type == "doctor")
+                                    <th>Message</th>
+                                @else
+                                    <th>Sent To</th>
+                                @endif
                             </tr>
                             </thead>
 
@@ -78,7 +82,11 @@
                                     <td>{{ $message->name ?: "{$message->user->firstname} {$message->user->lastname}" }}</td>
                                     <td>{{ $message->email ?: $message->user->email }}</td>
                                     <td>{{ $message->subject }}</td>
-                                    <td>{{ $message->message }}</td>
+                                    @if(\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->user_type == "doctor")
+                                        <td>{{ $message->message }}</td>
+                                    @else
+                                        <td>Dr. {{ $message->doctor->firstname ?: 'Unknown' }} {{ $message->doctor->lastname ?: 'Unknown' }}</td>
+                                    @endif
                                 </tr>
                             @endforeach
 

@@ -41,6 +41,8 @@
 
                         <p class="text-muted mb-2 font-13"><strong>Price :</strong> <span class="ml-2 ">N{{ number_format($drug->price ?: 0) }}</span></p>
 
+                        <p class="text-muted mb-2 font-13"><strong>Quantity :</strong> <span class="ml-2 ">{{ number_format($drug->quantity ?: 0) }}</span></p>
+
                     </div>
 
                 </div> <!-- end card-body -->
@@ -142,6 +144,20 @@
                                            value="{{ old('price', $drug->price)  }}" name="price" placeholder="Enter price">
 
                                     @error('price')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="quantity">Quantity</label>
+                                    <input type="number" class="form-control @error('quantity') is-invalid @enderror" id="quantity"
+                                           value="{{ old('quantity', $drug->quantity)  }}" name="quantity" placeholder="Enter quantity">
+
+                                    @error('quantity')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
