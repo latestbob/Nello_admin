@@ -148,4 +148,35 @@ class DoctorController extends Controller
 
         return view('doctor-add');
     }
+
+    public function changeStatus(Request $request) {
+
+        if (empty($request->uuid)) {
+            return response([
+                'status' => false,
+                'message' => "Doctor ID missing"
+            ]);
+        }
+
+        $user = User::where(['uuid' => $request->uuid, 'user_type' => 'doctor'])->first();
+
+        if (empty($user)) {
+            return response([
+                'status' => false,
+                'message' => "Sorry, the ID '{$request->uuid}' is associated with any doctor"
+            ]);
+        }
+
+        if (!$user->update(['active' => !$user->active])) {
+            return response([
+                'status' => false,
+                'message' => "Sorry, we could not " . ($user->active == true ? 'activate' : 'deactivate') . " this doctor at this time."
+            ]);
+        }
+
+        return response([
+            'status' => true,
+            'message' => "This doctor is now " . ($user->active == true ? 'active' : 'inactive')
+        ]);
+    }
 }
