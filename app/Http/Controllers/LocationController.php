@@ -16,7 +16,8 @@ class LocationController extends Controller
 
         $size = empty($request->size) ? 10 : $request->size;
 
-        $locations = Locations::where('vendor_id', '=', $request->user()->vendor_id)->orderBy('name');
+        //$locations = Locations::where('vendor_id', '=', $request->user()->vendor_id)->orderBy('name');
+        $locations = Locations::orderBy('name');
 
         if (!empty($search = $request->search)) {
 
