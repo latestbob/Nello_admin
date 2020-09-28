@@ -111,6 +111,22 @@
 
             <li class="side-nav-item">
                 <a href="javascript: void(0);" class="side-nav-link">
+                    <i class="uil-store"></i>
+                    <span> Health Centers </span>
+                    <span class="menu-arrow"></span>
+                </a>
+                <ul class="side-nav-second-level" aria-expanded="false">
+                    <li>
+                        <a href="{{ route('health-center-add') }}">Add</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('health-centers') }}">View</a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="side-nav-item">
+                <a href="javascript: void(0);" class="side-nav-link">
                     <i class="mdi mdi-car"></i>
                     <span> Riders </span>
                     <span class="menu-arrow"></span>
