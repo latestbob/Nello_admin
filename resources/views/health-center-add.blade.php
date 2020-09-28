@@ -152,6 +152,28 @@
                             </div> <!-- end col -->
                         </div> <!-- end row -->
 
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="logo">Logo <small>(*optional)</small></label>
+
+                                    <div class="custom-file">
+                                        <input type="file"
+                                               class="custom-file-input @error('logo') is-invalid @enderror"
+                                               name="logo" id="logo-input">
+                                        <label class="custom-file-label" for="logo-input">Choose file</label>
+
+                                        @error('logo')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div> <!-- end row -->
+
                         @csrf
 
                         <div class="col-md-2 offset-md-5 text-center mt-2">
