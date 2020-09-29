@@ -72,6 +72,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Picture</th>
+                                <th>Title</th>
                                 <th>Name</th>
                                 <th>Hospital</th>
                                 <th>Specialization</th>
@@ -100,6 +101,7 @@
                                     <td>{{ ($key + 1) }}</td>
                                     <td><img src="{{ $doctor->image ?: ($doctor->gender == 'Male' ? asset('images/male_doc.png') : ($doctor->gender == 'Female' ? asset('images/female_doc.png') : asset('images/neutral_doc.png'))) }}"
                                              class="img-thumbnail" width="80"/></td>
+                                    <td>{{ $doctor->title }}</td>
                                     <td>{{ $doctor->firstname }} {{ $doctor->lastname }}</td>
                                     <td>{{ $doctor->hospital ?: 'Unavailable' }}</td>
                                     <td>{{ $doctor->aos ?: 'Unavailable' }}</td>

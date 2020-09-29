@@ -56,6 +56,7 @@ class DoctorController extends Controller
         if (strtolower($request->method()) == "post") {
 
             Validator::make($data = $request->all(), [
+                'title' => 'required|string|max:20',
                 'firstname' => 'required|string|max:50',
                 'lastname'  => 'required|string|max:50',
                 'middlename' => 'nullable|string|max:50',
@@ -103,6 +104,7 @@ class DoctorController extends Controller
         if (strtolower($request->method()) == "post") {
 
             $data = Validator::make($request->all(), [
+                'title' => 'required|string|max:20',
                 'firstname' => 'required|string|max:50',
                 'lastname'  => 'required|string|max:50',
                 'middlename' => 'nullable|string|max:50',

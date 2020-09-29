@@ -15,7 +15,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'vendor_id', 'token', 'username', 'active',
+        'vendor_id', 'token', 'username', 'active', 'title',
         'firstname','lastname','middlename','email','phone',
         'user_type','aos','cwork','password','picture','dob',
         'hwg','is_seen','ufield','height','weight','gender','source',
@@ -33,8 +33,6 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token', 'token'
     ];
-
-    protected $appends = ['title'];
 
     public function vendor() {
         return $this->belongsTo('App\Models\Vendor', 'vendor_id', 'id');
@@ -54,14 +52,6 @@ class User extends Authenticatable
 
     public function delivered() {
         return $this->hasMany(Order::class, 'delivered_by', 'id');
-    }
-
-    public function getTitleAttribute()
-    {
-        if ($this->user_type == 'doctor') {
-            return 'Dr.';
-        }
-        return;
     }
 
 }
