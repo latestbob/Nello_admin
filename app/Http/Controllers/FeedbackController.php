@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Feedbacks;
+use App\Models\Feedback;
 use Illuminate\Http\Request;
 
 class FeedbackController extends Controller
@@ -11,7 +11,7 @@ class FeedbackController extends Controller
 
         $size = empty($request->size) ? 10 : $request->size;
 
-        $feedbacks = Feedbacks::where('vendor_id', '=', $request->user()->vendor_id)->orderBy('id', 'desc');
+        $feedbacks = Feedback::where('vendor_id', '=', $request->user()->vendor_id)->orderBy('id', 'desc');
 
         if (!empty($experience = $request->experience)) {
             $feedbacks = $feedbacks->where('experience', $experience);
@@ -30,9 +30,9 @@ class FeedbackController extends Controller
         $feedbacks = $feedbacks->paginate($size);
 
         $total = [
-            'happy' => Feedbacks::where(['vendor_id' => $request->user()->vendor_id, 'experience' => 'happy'])->count('id'),
-            'sad' => Feedbacks::where(['vendor_id' => $request->user()->vendor_id, 'experience' => 'sad'])->count('id'),
-            'neutral' => Feedbacks::where(['vendor_id' => $request->user()->vendor_id, 'experience' => 'neutral'])->count('id')
+            'happy' => Feedback::where(['vendor_id' => $request->user()->vendor_id, 'experience' => 'happy'])->count('id'),
+            'sad' => Feedback::where(['vendor_id' => $request->user()->vendor_id, 'experience' => 'sad'])->count('id'),
+            'neutral' => Feedback::where(['vendor_id' => $request->user()->vendor_id, 'experience' => 'neutral'])->count('id')
         ];
 
         return view('feedback', compact('feedbacks', 'total', 'size', 'experience', 'search'));

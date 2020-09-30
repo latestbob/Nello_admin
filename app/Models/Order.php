@@ -29,12 +29,12 @@ class Order extends Model
 
     public function location()
     {
-        return $this->belongsTo('App\Models\Locations', 'location_id', 'id');
+        return $this->belongsTo('App\Models\Location', 'location_id', 'id');
     }
 
     public function pickup_location()
     {
-        return $this->belongsTo('App\Models\Pharmacies', 'pickup_location_id', 'id');
+        return $this->belongsTo('App\Models\Pharmacy', 'pickup_location_id', 'id');
     }
 
     public function accepted_pickup() {

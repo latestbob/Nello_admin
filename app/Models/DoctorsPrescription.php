@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class DoctorsPrescriptions extends Model
+class DoctorsPrescription extends Model
 {
     protected $fillable = ['uuid', 'cart_uuid', 'drug_id', 'dosage', 'note', 'doctor_id', 'vendor_id'];
 

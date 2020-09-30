@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Locations;
+use App\Models\Location;
 use App\Models\User;
 use App\Notifications\NotifyCreatedRider;
 use App\Traits\FileUpload;
@@ -99,7 +99,7 @@ class RiderController extends Controller
 
         }
 
-        $locations = Locations::all();
+        $locations = Location::all();
 
         return view('rider-view', compact('rider', 'locations', 'uuid'));
     }
@@ -157,7 +157,7 @@ class RiderController extends Controller
 
         }
 
-        $locations = Locations::all();
+        $locations = Location::all();
 
         return view('rider-add', compact('locations'));
     }

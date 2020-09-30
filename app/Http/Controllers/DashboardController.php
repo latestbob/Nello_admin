@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Feedbacks;
+use App\Models\Feedback;
 use App\Models\Order;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -83,10 +83,10 @@ class DashboardController extends Controller
                 'value' => number_format($orders->sum('amount'))
             ],
             'feedback' => [
-                'day' => !$locationID ? Feedbacks::whereBetween('created_at', ["{$today} 00:00:00", "{$today} 23:59:59"])
+                'day' => !$locationID ? Feedback::whereBetween('created_at', ["{$today} 00:00:00", "{$today} 23:59:59"])
                     ->where('vendor_id', $request->user()->vendor_id)->count('id') : 0,
 
-                'month' => !$locationID ? Feedbacks::whereBetween('created_at', ["{$month}-01 00:00:00", "{$today} 23:59:59"])
+                'month' => !$locationID ? Feedback::whereBetween('created_at', ["{$month}-01 00:00:00", "{$today} 23:59:59"])
                     ->where('vendor_id', $request->user()->vendor_id)->count('id') : 0
             ]
         ];
@@ -103,7 +103,7 @@ class DashboardController extends Controller
 
         $orders = $orders->groupBy('carts.cart_uuid')->orderByDesc('orders.id')->limit(10)->get();
 
-        $feedbacks = !$locationID ? Feedbacks::where('vendor_id', '=', $request->user()->vendor_id)->orderByDesc('id')->limit(10)->get() : null;
+        $feedbacks = !$locationID ? Feedback::where('vendor_id', '=', $request->user()->vendor_id)->orderByDesc('id')->limit(10)->get() : null;
 
         return view('dashboard', compact('total', 'orders', 'feedbacks', 'userType'));
     }

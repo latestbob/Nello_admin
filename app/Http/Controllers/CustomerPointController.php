@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CustomerPointRules;
+use App\Models\CustomerPointRule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -10,7 +10,7 @@ class CustomerPointController extends Controller
 {
     public function index(Request $request)
     {
-        $rules = CustomerPointRules::orderByDesc('id')->limit(1)->first();
+        $rules = CustomerPointRule::orderByDesc('id')->limit(1)->first();
 
         if (strtolower($request->method()) == 'post') {
 
@@ -21,7 +21,7 @@ class CustomerPointController extends Controller
             ])->validate();
 
             if (!empty($rules)) $rules->update($validated);
-            else $rules = CustomerPointRules::create($validated);
+            else $rules = CustomerPointRule::create($validated);
 
             session()->put('success', "Rule has been updated successfully");
         }

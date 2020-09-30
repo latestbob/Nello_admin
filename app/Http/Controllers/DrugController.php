@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
-use App\Models\DoctorsPrescriptions;
+use App\Models\DoctorsPrescription;
 use App\Models\DrugCategory;
-use App\Models\Locations;
+use App\Models\Location;
 use App\Models\Order;
 use App\Models\PharmacyDrug;
 use App\Traits\FileUpload;
@@ -272,7 +272,7 @@ class DrugController extends Controller
 
         ];
 
-        $locations = $locationID ? Locations::where('id', $locationID)->get() : Locations::all();
+        $locations = $locationID ? Location::where('id', $locationID)->get() : Location::all();
 
         return view('drugs-order', compact('orders', 'size', 'total', 'search', 'payment', 'dateStart', 'dateEnd', 'locations', 'location', 'userType'));
     }
@@ -326,6 +326,13 @@ class DrugController extends Controller
             return response([
                 'status' => false,
                 'message' => 'Sorry, that item was not found'
+            ]);
+        }
+
+        if ($request->status == 'approved' && !$item->has_prescription) {
+            return response([
+                'status' => false,
+                'message' => "Sorry, you can't approve an item with no prescription"
             ]);
         }
 
@@ -392,6 +399,13 @@ class DrugController extends Controller
             return response([
                 'status' => false,
                 'message' => 'Sorry, that item was not found'
+            ]);
+        }
+
+        if (!$item->has_prescription) {
+            return response([
+                'status' => false,
+                'message' => "Sorry, you can't mark ready an item without a prescription"
             ]);
         }
 
@@ -587,7 +601,7 @@ class DrugController extends Controller
         $data['doctor_id'] = $request->user()->id;
         $data['vendor_id'] = $request->user()->vendor_id;
 
-        DoctorsPrescriptions::create($data);
+        DoctorsPrescription::create($data);
 
         $cart = Cart::where(['cart_uuid' => $data['cart_uuid'], 'drug_id' => $data['drug_id']])->first();
         $cart->update([
