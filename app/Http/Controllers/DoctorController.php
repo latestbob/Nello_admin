@@ -58,7 +58,7 @@ class DoctorController extends Controller
             Validator::make($data = $request->all(), [
                 'title' => 'required|string|max:20',
                 'firstname' => 'required|string|max:50',
-                'lastname'  => 'required|string|max:50',
+                'lastname'  => 'nullable|string|max:50',
                 'middlename' => 'nullable|string|max:50',
                 'email' => ['required', 'string', 'email', 'max:255',
                     Rule::unique('users', 'email')->ignore($doctor->id)],
@@ -106,7 +106,7 @@ class DoctorController extends Controller
             $data = Validator::make($request->all(), [
                 'title' => 'required|string|max:20',
                 'firstname' => 'required|string|max:50',
-                'lastname'  => 'required|string|max:50',
+                'lastname'  => 'nullable|string|max:50',
                 'middlename' => 'nullable|string|max:50',
                 'email' => 'required|string|email|max:255|unique:users,email',
                 'phone' => 'required|digits_between:11,16|unique:users,phone',
