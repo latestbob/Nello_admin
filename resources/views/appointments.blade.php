@@ -9,10 +9,10 @@
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
                         <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Doctor Messages</li>
+                        <li class="breadcrumb-item active">Appointments</li>
                     </ol>
                 </div>
-                <h4 class="page-title">Messages</h4>
+                <h4 class="page-title">Appointments</h4>
             </div>
         </div>
     </div>
@@ -31,7 +31,7 @@
 
                                     <h4 class="header-title">Messages</h4>
                                     <p class="text-muted font-14">
-                                        Here's a list of all messages on the Nello platform
+                                        Here's a list of all appointments on the Nello platform
                                     </p>
 
                                 </div>
@@ -62,31 +62,27 @@
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Subject</th>
-                                @if(\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->user_type == "doctor")
-                                    <th>Message</th>
-                                @else
-                                    <th>Sent To</th>
-                                @endif
+                                <th>Customer Name</th>
+                                <th>Customer Email</th>
+                                <th>Reason for Visit</th>
+                                <th>Center</th>
+                                <th>Date</th>
+                                <th>Time</th>
                             </tr>
                             </thead>
 
 
                             <tbody>
 
-                            @foreach($messages as $key => $message)
+                            @foreach($appointments as $key => $appointment)
                                 <tr>
                                     <td>{{ ($key + 1) }}</td>
-                                    <td>{{ $message->name ?: "{$message->user->firstname} {$message->user->lastname}" }}</td>
-                                    <td>{{ $message->email ?: $message->user->email }}</td>
-                                    <td>{{ $message->subject }}</td>
-                                    @if(\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->user_type == "doctor")
-                                        <td>{{ $message->message }}</td>
-                                    @else
-                                        <td>Dr. {{ $message->doctor->firstname ?: 'Unknown' }} {{ $message->doctor->lastname ?: 'Unknown' }}</td>
-                                    @endif
+                                    <td>{{ $appointment->user->firstname }} {{ $appointment->user->lastname }}</td>
+                                    <td>{{ $appointment->user->email }}</td>
+                                    <td>{{ $appointment->reason }}</td>
+                                    <td>{{ $appointment->center->name }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($appointment->date)->format('F dS, Y') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($appointment->time)->format('h:ia') }}</td>
                                 </tr>
                             @endforeach
 
@@ -96,7 +92,7 @@
                     </div>
 
                     <div class="table-responsive mt-3">
-                        {{ $messages->links() }}
+                        {{ $appointments->links() }}
                     </div>
 
                 </div> <!-- end card body-->
@@ -176,11 +172,11 @@
         {{--                        swal.hideLoading();--}}
 
         {{--                        if (data.status !== true) {--}}
-        {{--                            errorMsg(title + 'Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');--}}
+        {{--                            errorMsg(title + 'Failed', typeof data.appointment !== 'string' ? serializeMessage(data.appointment) : data.appointment, 'Ok');--}}
         {{--                            return false;--}}
         {{--                        }--}}
 
-        {{--                        successMsg(title + 'Successful', data.message);--}}
+        {{--                        successMsg(title + 'Successful', data.appointment);--}}
 
         {{--                        timeout = setTimeout(() => {--}}
         {{--                            window.location.reload();--}}
@@ -196,7 +192,7 @@
 
         {{--                        swal.hideLoading();--}}
 
-        {{--                        errorMsg(title + 'Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');--}}
+        {{--                        errorMsg(title + 'Failed', typeof data.appointment !== 'string' ? serializeMessage(data.appointment) : data.appointment, 'Ok');--}}
         {{--                    }--}}
         {{--                });--}}
 

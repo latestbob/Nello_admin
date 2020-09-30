@@ -21,6 +21,8 @@ Route::prefix('/')->middleware(['auth', 'auth.allowed'])->group(function () {
 
     Route::get('/feedbacks', 'FeedbackController@index')->name('feedbacks')->middleware('auth.admin');
 
+    Route::get('/appointments', 'AppointmentController@index')->name('appointments')->middleware('auth.admin');
+
     Route::get('/drugs', 'DrugController@drugs')->name('drugs')->middleware('auth.admin');
 
     Route::match(['post', 'get'],'/drug/{uuid}/view', 'DrugController@drugView')->name('drug-view')->middleware('auth.admin');

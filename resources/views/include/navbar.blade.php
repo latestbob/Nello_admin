@@ -34,6 +34,16 @@
             </li>
         @endif
 
+        @if(\Illuminate\Support\Facades\Auth::check() &&
+                \Illuminate\Support\Facades\Auth::user()->user_type == "admin")
+            <li class="side-nav-item">
+                <a href="{{ route('appointments') }}" class="side-nav-link">
+                    <i class="uil-calender"></i>
+                    <span> Appointments </span>
+                </a>
+            </li>
+        @endif
+
         <li class="side-nav-item">
             <a href="javascript: void(0);" class="side-nav-link">
                 <i class="uil-medical"></i>
