@@ -112,6 +112,28 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label for="parent_pharmacy">Parent Pharmacy</label>
+
+                                    <select class="form-control @error('parent_pharmacy') is-invalid @enderror" name="parent_pharmacy">
+                                        <option value="">Select pharmacy</option>
+                                        @foreach($pharmacies as $pharmacy)
+                                            <option value="{{ $pharmacy->id }}" {{ old('parent_pharmacy') == $pharmacy->id ? 'selected' : '' }}>{{ $pharmacy->name }}</option>
+                                        @endforeach
+                                    </select>
+
+                                    @error('parent_pharmacy')
+                                    <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
                                     <label for="picture">Picture <small>(*optional)</small></label>
 
                                     <div class="custom-file">

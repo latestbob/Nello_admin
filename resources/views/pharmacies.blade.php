@@ -80,6 +80,7 @@
                                 <th>Phone</th>
                                 <th>Assigned Location</th>
                                 <th>Is Pick up Location</th>
+                                <th>Parent Pharmacy</th>
                                 <th>Date Added</th>
                                 <th>Action</th>
                             </tr>
@@ -99,6 +100,7 @@
                                     <td>{{ $pharmacy->phone }}</td>
                                     <td>{{ $pharmacy->location->name ?? 'Unassigned' }}</td>
                                     <td>{{ $pharmacy->is_pick_up_location == 1 ? "Yes" : "No" }}</td>
+                                    <td>{{ $pharmacy->parent->name ?? 'None' }}</td>
                                     <td>{{ \Carbon\Carbon::parse($pharmacy->created_at)->format('h:ia F dS, Y') }}</td>
                                     <td>
                                         <div class="dropdown">

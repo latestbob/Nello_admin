@@ -52,6 +52,7 @@ class PharmaciesController extends Controller
                 'phone' => 'required|digits_between:11,16|unique:pharmacies,phone',
                 'picture' => 'nullable|image|mimes:jpeg,jpg,png',
                 'location' => 'nullable|numeric|exists:locations,id',
+                'parent_pharmacy' => 'nullable|numeric|exists:pharmacies,id',
                 'is_pick_up_location' => 'required_without:location|boolean'
             ])->validate();
 
@@ -63,6 +64,7 @@ class PharmaciesController extends Controller
 
             $validated['uuid'] = Str::uuid()->toString();
             $validated['location_id'] = $validated['location'];
+            $validated['parent_id'] = $validated['parent_pharmacy'];
             unset($validated['location']);
 
             $validated['is_pick_up_location'] = (($validated['is_pick_up_location'] ?? 0) == 1 ? true : false);
@@ -73,8 +75,9 @@ class PharmaciesController extends Controller
         }
 
         $locations = Location::all();
+        $pharmacies = Pharmacy::all();
 
-        return view('pharmacy-add', compact('locations'));
+        return view('pharmacy-add', compact('locations', 'pharmacies'));
     }
 
     /**
@@ -105,6 +108,7 @@ class PharmaciesController extends Controller
                     Rule::unique('pharmacies')->ignore($pharmacy->id)],
                 'picture' => 'nullable|image|mimes:jpeg,jpg,png',
                 'location' => 'nullable|numeric|exists:locations,id',
+                'parent_pharmacy' => 'nullable|numeric|exists:pharmacies,id',
                 'is_pick_up_location' => 'required_without:location|boolean'
 
             ]);
@@ -119,6 +123,7 @@ class PharmaciesController extends Controller
             }
 
             $validated['location_id'] = $validated['location'];
+            $validated['parent_id'] = $validated['parent_pharmacy'];
             unset($validated['location']);
 
             $validated['is_pick_up_location'] = (($validated['is_pick_up_location'] ?? 0) == 1 ? true : false);
@@ -142,6 +147,7 @@ class PharmaciesController extends Controller
         }
 
         $locations = Location::all();
+        $pharmacies = Pharmacy::all();
 
         $orders = Order::with('items')->whereHas('items', function ($query) use ($pharmacy) {
             $query->where('is_ready_by', $pharmacy->id);
@@ -170,7 +176,7 @@ class PharmaciesController extends Controller
             'value' => $value
         ];
 
-        return view('pharmacy-view', compact('locations', 'pharmacy', 'uuid', 'total', 'dateStart', 'dateEnd'));
+        return view('pharmacy-view', compact('locations', 'pharmacies', 'pharmacy', 'uuid', 'total', 'dateStart', 'dateEnd'));
 
     }
 
