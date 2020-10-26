@@ -76,7 +76,7 @@
         <li class="side-nav-item">
             <a href="{{ route('doctor-messages') }}" class="side-nav-link">
                 <i class="uil-message"></i>
-                <span> Messages </span>
+                <span> Doctors Messages </span>
             </a>
         </li>
         @endif

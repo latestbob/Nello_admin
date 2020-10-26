@@ -13,20 +13,7 @@ class DoctorMessageController extends Controller
         $search = $request->search;
         $size = empty($request->size) ? 10 : $request->size;
 
-        $messages = DoctorContact::whereHas('user', function ($query) use ($search) {
-
-            $query->when($search, function ($query, $search) {
-
-                $query->whereRaw(
-                    "(firstname like ? or lastname like ? or phone like ? or email like ?)",
-                    [
-                        "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%"
-                    ]
-                );
-
-            });
-
-        })->when($search, function ($query, $search) {
+        $messages = DoctorContact::when($search, function ($query, $search) {
 
             $query->whereRaw(
                 "(name like ? or email like ? or subject like ?)",
@@ -55,7 +42,7 @@ class DoctorMessageController extends Controller
             });
         }
 
-        $messages = $messages->paginate($size);
+        $messages = $messages->orderByDesc('id')->paginate($size);
 
         return view('doctor-contacts', compact('messages', 'search', 'size'));
     }

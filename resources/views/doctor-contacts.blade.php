@@ -70,6 +70,7 @@
                                 @else
                                     <th>Sent To</th>
                                 @endif
+                                <th>Date Sent</th>
                             </tr>
                             </thead>
 
@@ -87,6 +88,7 @@
                                     @else
                                         <td>Dr. {{ $message->doctor->firstname ?: 'Unknown' }} {{ $message->doctor->lastname ?: 'Unknown' }}</td>
                                     @endif
+                                    <td>{{ \Carbon\Carbon::parse($message->created_at)->format('h:ia F dS, Y') }}</td>
                                 </tr>
                             @endforeach
 
