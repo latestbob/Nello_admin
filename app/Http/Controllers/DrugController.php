@@ -334,6 +334,8 @@ class DrugController extends Controller
 
         $isAllApproved = true; $items = [];
 
+        $drugIds = [];
+
         foreach ($item->order->items as $it) {
             if ($it->status != 'approved') {
                 $isAllApproved = false;
