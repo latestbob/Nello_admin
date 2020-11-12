@@ -9,10 +9,10 @@
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
                         <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Pharmacies</li>
+                        <li class="breadcrumb-item active">Health Centers</li>
                     </ol>
                 </div>
-                <h4 class="page-title">Pharmacies</h4>
+                <h4 class="page-title">Health Centers</h4>
             </div>
         </div>
     </div>
@@ -26,44 +26,33 @@
                     <div class="row">
 
                         <div class="col-md-12 mt-2">
-                            <div class="row">
-                                <div class="col-md-6">
+                            <form method="get" class="row" id="filter-form">
+                                <div class="col-md-4 mb-3">
 
-                                    <h4 class="header-title">Pharmacies</h4>
+                                    <h4 class="header-title">Doctors</h4>
                                     <p class="text-muted font-14">
-                                        Here's a list of pharmacies on the Nello platform
+                                        Here's a list of all doctors on the Nello platform
                                     </p>
 
                                 </div>
-                                <div class="col-md-6">
 
-                                    <form method="get" id="form-filter" class="row">
-
-                                        <div class="col-md-6 mb-3">
-                                            <label>Show entries</label>
-                                            <select name="size" class="form-control">
-                                                <option value="5" @if($size == '5') selected @endif>5 records</option>
-                                                <option value="10" @if($size == '10') selected @endif>10 records
-                                                </option>
-                                                <option value="25" @if($size == '25') selected @endif>25 records
-                                                </option>
-                                                <option value="50" @if($size == '50') selected @endif>50 records
-                                                </option>
-                                                <option value="100" @if($size == '100') selected @endif>100 records
-                                                </option>
-                                            </select>
-                                        </div>
-
-                                        <div class="col-md-6 mb-3">
-                                            <label>Filter by Keyword</label>
-                                            <input class="form-control" name="search" value="{{ $search }}"
-                                                   placeholder="Enter keyword"/>
-                                        </div>
-
-                                    </form>
-
+                                <div class="col-md-4 mb-3">
+                                    <label>Show entries</label>
+                                    <select name="size" class="form-control">
+                                        <option value="5" @if($size == '5') selected @endif>5 records</option>
+                                        <option value="10" @if($size == '10') selected @endif>10 records</option>
+                                        <option value="25" @if($size == '25') selected @endif>25 records</option>
+                                        <option value="50" @if($size == '50') selected @endif>50 records</option>
+                                        <option value="100" @if($size == '100') selected @endif>100 records</option>
+                                    </select>
                                 </div>
-                            </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label>Filter by Keyword</label>
+                                    <input class="form-control" name="search" value="{{ $search }}"
+                                           placeholder="Enter Keyword"/>
+                                </div>
+                            </form>
                         </div>
                     </div>
 
@@ -73,15 +62,15 @@
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Picture</th>
                                 <th>Name</th>
-                                <th>Address</th>
-                                <th>Email</th>
+                                <th>Center Type</th>
                                 <th>Phone</th>
-                                <th>Assigned Location</th>
-                                <th>Is Pick up Location</th>
-                                <th>Parent Pharmacy</th>
-                                <th>Date Added</th>
+                                <th>Email</th>
+                                <th>Address One</th>
+                                <th>Address Two</th>
+                                <th>State</th>
+                                <th>City</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -89,19 +78,20 @@
 
                             <tbody>
 
-                            @foreach($pharmacies as $key => $pharmacy)
+                            @foreach($healthCenters as $key => $healthCenter)
                                 <tr>
                                     <td>{{ ($key + 1) }}</td>
-                                    <td><img src="{{ $pharmacy->picture ?: asset('images/pharmacy.png') }}"
-                                             class="img-thumbnail" width="60"/></td>
-                                    <td>{{ $pharmacy->name }}</td>
-                                    <td>{{ $pharmacy->address }}</td>
-                                    <td>{{ $pharmacy->email }}</td>
-                                    <td>{{ $pharmacy->phone }}</td>
-                                    <td>{{ $pharmacy->location->name ?? 'Unassigned' }}</td>
-                                    <td>{{ $pharmacy->is_pick_up_location == 1 ? "Yes" : "No" }}</td>
-                                    <td>{{ $pharmacy->parent->name ?? 'None' }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($pharmacy->created_at)->format('h:ia F dS, Y') }}</td>
+                                    <td>{{ $healthCenter->name ?: 'Unavailable' }}</td>
+                                    <td>{{ $healthCenter->center_type ?: 'Unavailable' }}</td>
+                                    <td>{{ $healthCenter->phone ?: 'Unavailable' }}</td>
+                                    <td>{{ $healthCenter->email ?: 'Unavailable' }}</td>
+                                    <td>{{ $healthCenter->address1 ?: 'Unavailable' }}</td>
+                                    <td>{{ $healthCenter->address2 ?: 'Unavailable' }}</td>
+                                    <td>{{ $healthCenter->state ?: 'Unavailable' }}</td>
+                                    <td>{{ $healthCenter->city ?: 'Unavailable' }}</td>
+                                    <td>
+                                        <label class="badge {{ $healthCenter->is_active == true ? 'badge-success' : 'badge-warning' }}">{{ $healthCenter->is_active ? 'active' : 'inactive' }}</label>
+                                    </td>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button"
@@ -110,10 +100,16 @@
                                                 Action
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <a class="dropdown-item" href="{{ route("pharmacy-view", ['uuid' => $pharmacy->uuid]) }}">View Pharmacy</a>
-                                                <button class="dropdown-item status-toggle" data-id="{{ $pharmacy->uuid }}"
-                                                        data-status="cancelled">Delete Pharmacy
-                                                </button>
+                                                <a class="dropdown-item" href="{{ route('health-center-view', ['uuid' => $healthCenter->uuid]) }}">Edit Center</a>
+                                                @if(!empty($healthCenter->is_active == true))
+                                                    <button class="dropdown-item status-toggle" data-uuid="{{ $healthCenter->uuid }}"
+                                                            data-status="deactivate">Deactivate Center
+                                                    </button>
+                                                @else
+                                                    <button class="dropdown-item status-toggle" data-uuid="{{ $healthCenter->uuid }}"
+                                                            data-status="activate">Activate Center
+                                                    </button>
+                                                @endif
                                             </div>
                                         </div>
                                     </td>
@@ -126,19 +122,17 @@
                     </div>
 
                     <div class="table-responsive mt-3">
-                        {{ $pharmacies->links() }}
+                        {{ $healthCenters->links() }}
                     </div>
 
                 </div> <!-- end card body-->
             </div> <!-- end card -->
         </div><!-- end col-->
     </div>
-    <!-- end row-->
 
 @endsection
 
 @section('js')
-
     <script src="{{ asset('js/net-bridge/net-bridge.js') }}" type="application/javascript"></script>
 
     <script type="application/javascript">
@@ -163,9 +157,11 @@
 
         });
 
-        $("form[id='form-filter']").submit(function (e) {
+        $("form[id='filter-form']").submit(function (e) {
             e.preventDefault();
+
             let search = $("input[name='search']").val();
+
             if (search !== '') params.search = search;
             else delete params.search;
             delete params.page;
@@ -177,9 +173,11 @@
 
         $('.status-toggle').click(function (e) {
 
-            let self = $(this), uuid = self.data('id'), timeout;
+            let self = $(this), status = self.data('status'), timeout;
 
-            successMsg('Delete Pharmacy', "This pharmacy will be deleted, once done it cannot be undone, do you want proceed?",
+            let title = (status === 'deactivate' ? 'Deactivate ' : 'Activate');
+
+            successMsg(title + ' Health Center', `This health center will be ${status}d, do you want proceed?`,
                 'Yes, proceed', 'No, cancel', function ({value}) {
 
                     if (!value) return;
@@ -187,12 +185,12 @@
                     timeout = setTimeout(() => {
 
                         instance.addToRequestQueue({
-                            url: "{{ route('pharmacy-delete') }}",
+                            url: "{{ route('health-center-status') }}",
                             method: 'post',
                             timeout: 10000,
                             dataType: 'json',
                             data: {
-                                uuid,
+                                uuid: self.data('uuid'),
                                 '_token': "{{ csrf_token() }}"
                             },
                             beforeSend: () => {
@@ -203,26 +201,27 @@
                                 swal.hideLoading();
 
                                 if (data.status !== true) {
-                                    errorMsg('Pharmacy Delete Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
+                                    errorMsg(title + 'Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
                                     return false;
                                 }
 
-                                successMsg('Pharmacy Delete Successful', data.message);
+                                successMsg(title + 'Successful', data.message);
 
-                                self.closest('tr').fadeOut(600, function () {
-                                    $(this).detact();
-                                });
+                                timeout = setTimeout(() => {
+                                    window.location.reload();
+                                    clearTimeout(timeout);
+                                }, 2000);
 
                             },
                             ontimeout: () => {
                                 swal.hideLoading();
-                                errorMsg('Pharmacy Delete Failed', 'Failed to delete this pharmacy at this time as the request timed out', 'Ok');
+                                errorMsg(title + 'Failed', 'Failed to ' + status + ' this health center at this time as the request timed out', 'Ok');
                             },
                             error: (data, xhr, status, statusText) => {
 
                                 swal.hideLoading();
 
-                                errorMsg('Pharmacy Delete Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
+                                errorMsg(title + 'Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
                             }
                         });
 
@@ -230,5 +229,11 @@
                     }, 500);
                 })
         });
+
     </script>
+@endsection
+
+@section('css')
+    <!-- Datatables css -->
+    <link href="{{ asset('css/vendor/select.bootstrap4.css') }}" rel="stylesheet" type="text/css"/>
 @endsection

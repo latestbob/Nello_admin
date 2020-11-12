@@ -72,6 +72,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Picture</th>
+                                <th>Title</th>
                                 <th>Name</th>
                                 <th>Hospital</th>
                                 <th>Specialization</th>
@@ -100,6 +101,7 @@
                                     <td>{{ ($key + 1) }}</td>
                                     <td><img src="{{ $doctor->image ?: ($doctor->gender == 'Male' ? asset('images/male_doc.png') : ($doctor->gender == 'Female' ? asset('images/female_doc.png') : asset('images/neutral_doc.png'))) }}"
                                              class="img-thumbnail" width="80"/></td>
+                                    <td>{{ $doctor->title }}</td>
                                     <td>{{ $doctor->firstname }} {{ $doctor->lastname }}</td>
                                     <td>{{ $doctor->hospital ?: 'Unavailable' }}</td>
                                     <td>{{ $doctor->aos ?: 'Unavailable' }}</td>
@@ -127,13 +129,13 @@
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                 <a class="dropdown-item" href="{{ url("/doctor/{$doctor->uuid}/view") }}">Edit Account</a>
-                                                @if(!empty($doctor->active == 1))
-                                                    <button class="dropdown-item status-toggle" data-id="{{ $doctor->id }}"
-                                                            data-status="cancelled">Deactivate Account
+                                                @if(!empty($doctor->active == true))
+                                                    <button class="dropdown-item status-toggle" data-uuid="{{ $doctor->uuid }}"
+                                                            data-status="deactivate">Deactivate Account
                                                     </button>
                                                 @else
-                                                    <button class="dropdown-item status-toggle" data-id="{{ $doctor->id }}"
-                                                            data-status="cancelled">Activate Account
+                                                    <button class="dropdown-item status-toggle" data-uuid="{{ $doctor->uuid }}"
+                                                            data-status="activate">Activate Account
                                                     </button>
                                                 @endif
                                             </div>
@@ -205,67 +207,66 @@
 
         });
 
-        {{--const instance = NetBridge.getInstance();--}}
+        const instance = NetBridge.getInstance();
 
-        {{--$('.status-toggle').click(function (e) {--}}
+        $('.status-toggle').click(function (e) {
 
-        {{--    let self = $(this), status = self.data('status'), timeout;--}}
+            let self = $(this), status = self.data('status'), timeout;
 
-        {{--    let title = status === 'approved' ? 'Approve ' : (status === 'disapproved' ? 'Disapprove ' : 'Cancel ');--}}
+            let title = (status === 'deactivate' ? 'Deactivate ' : 'Activate');
 
-        {{--    successMsg(title + 'Order', "This order will be " + status + ", do you want proceed?",--}}
-        {{--        'Yes, proceed', 'No, cancel', function ({value}) {--}}
+            successMsg(title + ' Doctor', `This doctor will be ${status}d, do you want proceed?`,
+                'Yes, proceed', 'No, cancel', function ({value}) {
 
-        {{--            if (!value) return;--}}
+                    if (!value) return;
 
-        {{--            timeout = setTimeout(() => {--}}
+                    timeout = setTimeout(() => {
 
-        {{--                instance.addToRequestQueue({--}}
-        {{--                    url: "{{ url('/drugs-order/item/action') }}",--}}
-        {{--                    method: 'post',--}}
-        {{--                    timeout: 10000,--}}
-        {{--                    dataType: 'json',--}}
-        {{--                    data: {--}}
-        {{--                        id: parseInt(self.data('id')),--}}
-        {{--                        status: status,--}}
-        {{--                        '_token': "{{ csrf_token() }}"--}}
-        {{--                    },--}}
-        {{--                    beforeSend: () => {--}}
-        {{--                        swal.showLoading();--}}
-        {{--                    },--}}
-        {{--                    success: (data, status, xhr) => {--}}
+                        instance.addToRequestQueue({
+                            url: "{{ route('doctor-status') }}",
+                            method: 'post',
+                            timeout: 10000,
+                            dataType: 'json',
+                            data: {
+                                uuid: self.data('uuid'),
+                                '_token': "{{ csrf_token() }}"
+                            },
+                            beforeSend: () => {
+                                swal.showLoading();
+                            },
+                            success: (data, status, xhr) => {
 
-        {{--                        swal.hideLoading();--}}
+                                swal.hideLoading();
 
-        {{--                        if (data.status !== true) {--}}
-        {{--                            errorMsg(title + 'Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');--}}
-        {{--                            return false;--}}
-        {{--                        }--}}
+                                if (data.status !== true) {
+                                    errorMsg(title + 'Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
+                                    return false;
+                                }
 
-        {{--                        successMsg(title + 'Successful', data.message);--}}
+                                successMsg(title + 'Successful', data.message);
 
-        {{--                        timeout = setTimeout(() => {--}}
-        {{--                            window.location.reload();--}}
-        {{--                            clearTimeout(timeout);--}}
-        {{--                        }, 2000);--}}
+                                timeout = setTimeout(() => {
+                                    window.location.reload();
+                                    clearTimeout(timeout);
+                                }, 2000);
 
-        {{--                    },--}}
-        {{--                    ontimeout: () => {--}}
-        {{--                        swal.hideLoading();--}}
-        {{--                        errorMsg(title + 'Failed', 'Failed to ' + type + ' this order at this time as the request timed out', 'Ok');--}}
-        {{--                    },--}}
-        {{--                    error: (data, xhr, status, statusText) => {--}}
+                            },
+                            ontimeout: () => {
+                                swal.hideLoading();
+                                errorMsg(title + 'Failed', 'Failed to ' + status + ' this doctor at this time as the request timed out', 'Ok');
+                            },
+                            error: (data, xhr, status, statusText) => {
 
-        {{--                        swal.hideLoading();--}}
+                                swal.hideLoading();
 
-        {{--                        errorMsg(title + 'Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');--}}
-        {{--                    }--}}
-        {{--                });--}}
+                                errorMsg(title + 'Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
+                            }
+                        });
 
-        {{--                clearTimeout(timeout);--}}
-        {{--            }, 500);--}}
-        {{--        })--}}
-        {{--});--}}
+                        clearTimeout(timeout);
+                    }, 500);
+                })
+        });
 
     </script>
 @endsection

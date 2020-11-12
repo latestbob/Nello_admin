@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Locations extends Model
+class Location extends Model
 {
     protected $fillable = ['id', 'name', 'price', 'uuid'];
 
@@ -15,7 +15,7 @@ class Locations extends Model
 
     public function pharmacies() {
 
-        return $this->hasMany('App\Models\Pharmacies', 'location_id', 'id');
+        return $this->hasMany('App\Models\Pharmacy', 'location_id', 'id');
     }
 
     public function riders() {

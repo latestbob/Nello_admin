@@ -21,6 +21,8 @@ Route::prefix('/')->middleware(['auth', 'auth.allowed'])->group(function () {
 
     Route::get('/feedbacks', 'FeedbackController@index')->name('feedbacks')->middleware('auth.admin');
 
+    Route::get('/appointments', 'AppointmentController@index')->name('appointments')->middleware('auth.admin');
+
     Route::get('/drugs', 'DrugController@drugs')->name('drugs')->middleware('auth.admin');
 
     Route::match(['post', 'get'],'/drug/{uuid}/view', 'DrugController@drugView')->name('drug-view')->middleware('auth.admin');
@@ -47,7 +49,17 @@ Route::prefix('/')->middleware(['auth', 'auth.allowed'])->group(function () {
 
     Route::post('/drugs-order/item/add-doctors-prescription', 'DrugController@addDoctorsPrescription')->name('add-doctors-prescription')->middleware('auth.admin.agent.doctor');
 
+    Route::get('/health-centers', 'HealthCenterController@index')->name('health-centers')->middleware('auth.admin');
+
+    Route::post('/health-center/status', 'HealthCenterController@changeStatus')->name('health-center-status')->middleware('auth.admin');
+
+    Route::match(['post', 'get'],'/health-center/{uuid}/view', 'HealthCenterController@viewHealthCenter')->name('health-center-view')->middleware('auth.admin');
+
+    Route::match(['post', 'get'],'/health-center/add', 'HealthCenterController@addHealthCenter')->name('health-center-add')->middleware('auth.admin');
+
     Route::get('/doctors', 'DoctorController@index')->name('doctors')->middleware('auth.admin');
+
+    Route::post('/doctor/status', 'DoctorController@changeStatus')->name('doctor-status')->middleware('auth.admin');
 
     Route::match(['post', 'get'],'/doctor/{uuid}/view', 'DoctorController@viewDoctor')->name('doctor-view')->middleware('auth.admin');
 

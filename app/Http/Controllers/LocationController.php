@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Locations;
+use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -17,17 +17,14 @@ class LocationController extends Controller
         $size = empty($request->size) ? 10 : $request->size;
 
         //$locations = Locations::where('vendor_id', '=', $request->user()->vendor_id)->orderBy('name');
-        $locations = Locations::orderBy('name');
-
-        if (!empty($search = $request->search)) {
-
-            $locations = $locations->whereRaw(
+        $locations = Location::orderBy('name')->when($search = $request->search, function ($query, $search) {
+            $query->whereRaw(
                 "(name like ? or price = ?)",
                 [
                     "%{$search}%", $search
                 ]
             );
-        }
+        });
 
         $locations = $locations->paginate($size);
 
@@ -46,7 +43,7 @@ class LocationController extends Controller
             $validated['uuid'] = Str::uuid()->toString();
             $validated['vendor_id'] = $request->user()->vendor_id;
 
-            Locations::create($validated);
+            Location::create($validated);
 
             return redirect("/locations")->with('success', "Location has been added successfully");
         }
@@ -60,8 +57,7 @@ class LocationController extends Controller
             return redirect('/locations')->with('error', "Location ID missing");
         }
 
-        //$location = Locations::where(['uuid' => $request->uuid, 'vendor_id' => $request->user()->vendor_id])->first();
-        $location = Locations::where(['uuid' => $request->uuid])->first();
+        $location = Location::where(['uuid' => $request->uuid, 'vendor_id' => $request->user()->vendor_id])->first();
 
         if (empty($location)) {
             return redirect('/locations')->with('error', "Sorry, the ID '{$request->uuid}' is associated with any location");
@@ -94,7 +90,7 @@ class LocationController extends Controller
             ]);
         }
 
-        $delete = Locations::where(['uuid' => $request->uuid])->first();
+        $delete = Location::where(['uuid' => $request->uuid])->first();
 
         if (!$delete->delete()) {
 

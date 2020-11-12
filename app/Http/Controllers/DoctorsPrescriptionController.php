@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DoctorsPrescriptions;
+use App\Models\DoctorsPrescription;
 use Illuminate\Http\Request;
 
 class DoctorsPrescriptionController extends Controller
@@ -15,7 +15,7 @@ class DoctorsPrescriptionController extends Controller
             $error = "Prescription ID not found";
         }
 
-        $prescriptions = DoctorsPrescriptions::where('cart_uuid', $uuid);
+        $prescriptions = DoctorsPrescription::where('cart_uuid', $uuid);
 
         if (empty($prescriptions->first())) {
             $error = "Prescription not found";

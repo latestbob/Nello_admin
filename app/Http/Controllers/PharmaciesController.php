@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Locations;
+use App\Models\Location;
 use App\Models\Order;
-use App\Models\Pharmacies;
+use App\Models\Pharmacy;
 use App\Models\User;
 use App\Traits\FileUpload;
 use Illuminate\Http\Request;
@@ -24,7 +24,7 @@ class PharmaciesController extends Controller
 
         $size = empty($request->size) ? 10 : $request->size;
 
-        $pharmacies = Pharmacies::orderBy('name');
+        $pharmacies = Pharmacy::orderBy('name');
 
         if (!empty($search = $request->search)) {
 
@@ -52,6 +52,7 @@ class PharmaciesController extends Controller
                 'phone' => 'required|digits_between:11,16|unique:pharmacies,phone',
                 'picture' => 'nullable|image|mimes:jpeg,jpg,png',
                 'location' => 'nullable|numeric|exists:locations,id',
+                'parent_pharmacy' => 'nullable|numeric|exists:pharmacies,id',
                 'is_pick_up_location' => 'required_without:location|boolean'
             ])->validate();
 
@@ -63,18 +64,20 @@ class PharmaciesController extends Controller
 
             $validated['uuid'] = Str::uuid()->toString();
             $validated['location_id'] = $validated['location'];
+            $validated['parent_id'] = $validated['parent_pharmacy'];
             unset($validated['location']);
 
             $validated['is_pick_up_location'] = (($validated['is_pick_up_location'] ?? 0) == 1 ? true : false);
 
-            Pharmacies::create($validated);
+            Pharmacy::create($validated);
 
             return redirect("/pharmacies")->with('success', "Pharmacy has been added successfully");
         }
 
-        $locations = Locations::all();
+        $locations = Location::all();
+        $pharmacies = Pharmacy::all();
 
-        return view('pharmacy-add', compact('locations'));
+        return view('pharmacy-add', compact('locations', 'pharmacies'));
     }
 
     /**
@@ -88,7 +91,7 @@ class PharmaciesController extends Controller
             return redirect('/pharmacies')->with('error', "Pharmacy ID missing");
         }
 
-        $pharmacy = Pharmacies::where(['uuid' => $request->uuid])->first();
+        $pharmacy = Pharmacy::where(['uuid' => $request->uuid])->first();
 
         if (empty($pharmacy)) {
             return redirect('/pharmacies')->with('error', "Sorry, the ID '{$request->uuid}' is associated with any Pharmacy");
@@ -105,6 +108,7 @@ class PharmaciesController extends Controller
                     Rule::unique('pharmacies')->ignore($pharmacy->id)],
                 'picture' => 'nullable|image|mimes:jpeg,jpg,png',
                 'location' => 'nullable|numeric|exists:locations,id',
+                'parent_pharmacy' => 'nullable|numeric|exists:pharmacies,id',
                 'is_pick_up_location' => 'required_without:location|boolean'
 
             ]);
@@ -119,6 +123,7 @@ class PharmaciesController extends Controller
             }
 
             $validated['location_id'] = $validated['location'];
+            $validated['parent_id'] = $validated['parent_pharmacy'];
             unset($validated['location']);
 
             $validated['is_pick_up_location'] = (($validated['is_pick_up_location'] ?? 0) == 1 ? true : false);
@@ -141,7 +146,8 @@ class PharmaciesController extends Controller
             return redirect('/pharmacies')->with('success', "Pharmacy has been updated successfully");
         }
 
-        $locations = Locations::all();
+        $locations = Location::all();
+        $pharmacies = Pharmacy::all();
 
         $orders = Order::with('items')->whereHas('items', function ($query) use ($pharmacy) {
             $query->where('is_ready_by', $pharmacy->id);
@@ -170,7 +176,7 @@ class PharmaciesController extends Controller
             'value' => $value
         ];
 
-        return view('pharmacy-view', compact('locations', 'pharmacy', 'uuid', 'total', 'dateStart', 'dateEnd'));
+        return view('pharmacy-view', compact('locations', 'pharmacies', 'pharmacy', 'uuid', 'total', 'dateStart', 'dateEnd'));
 
     }
 
@@ -183,7 +189,7 @@ class PharmaciesController extends Controller
             ]);
         }
 
-        $delete = Pharmacies::where(['uuid' => $request->uuid])->first();
+        $delete = Pharmacy::where(['uuid' => $request->uuid])->first();
 
         if (!$delete->delete()) {
 

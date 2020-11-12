@@ -56,14 +56,15 @@ class DoctorController extends Controller
         if (strtolower($request->method()) == "post") {
 
             Validator::make($data = $request->all(), [
+                'title' => 'required|string|max:20',
                 'firstname' => 'required|string|max:50',
-                'lastname'  => 'required|string|max:50',
+                'lastname'  => 'nullable|string|max:50',
                 'middlename' => 'nullable|string|max:50',
                 'email' => ['required', 'string', 'email', 'max:255',
                     Rule::unique('users', 'email')->ignore($doctor->id)],
                 'phone' => ['required', 'digits_between:11,16',
                     Rule::unique('users', 'phone')->ignore($doctor->id)],
-                'dob' => 'required|date_format:Y-m-d|before_or_equal:today',
+                'dob' => 'nullable|date_format:Y-m-d|before_or_equal:today',
                 'about' => 'nullable|string',
                 'address' => 'nullable|string',
                 'hospital' => 'nullable|string',
@@ -103,15 +104,16 @@ class DoctorController extends Controller
         if (strtolower($request->method()) == "post") {
 
             $data = Validator::make($request->all(), [
+                'title' => 'required|string|max:20',
                 'firstname' => 'required|string|max:50',
-                'lastname'  => 'required|string|max:50',
+                'lastname'  => 'nullable|string|max:50',
                 'middlename' => 'nullable|string|max:50',
                 'email' => 'required|string|email|max:255|unique:users,email',
                 'phone' => 'required|digits_between:11,16|unique:users,phone',
                 'about' => 'nullable|string',
                 'password' => 'required|string|min:6',
                 'confirm_password' => 'required_with:password|string|same:password',
-                'dob' => 'required|date_format:Y-m-d|before_or_equal:today',
+                'dob' => 'nullable|date_format:Y-m-d|before_or_equal:today',
                 'address' => 'nullable|string',
                 'state' => 'nullable|string',
                 'city'  => 'nullable|string',
@@ -147,5 +149,36 @@ class DoctorController extends Controller
         }
 
         return view('doctor-add');
+    }
+
+    public function changeStatus(Request $request) {
+
+        if (empty($request->uuid)) {
+            return response([
+                'status' => false,
+                'message' => "Doctor ID missing"
+            ]);
+        }
+
+        $user = User::where(['uuid' => $request->uuid, 'user_type' => 'doctor'])->first();
+
+        if (empty($user)) {
+            return response([
+                'status' => false,
+                'message' => "Sorry, the ID '{$request->uuid}' is associated with any doctor"
+            ]);
+        }
+
+        if (!$user->update(['active' => !$user->active])) {
+            return response([
+                'status' => false,
+                'message' => "Sorry, we could not " . ($user->active == true ? 'activate' : 'deactivate') . " this doctor at this time."
+            ]);
+        }
+
+        return response([
+            'status' => true,
+            'message' => "This doctor is now " . ($user->active == true ? 'active' : 'inactive')
+        ]);
     }
 }

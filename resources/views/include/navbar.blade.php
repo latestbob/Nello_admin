@@ -34,6 +34,16 @@
             </li>
         @endif
 
+        @if(\Illuminate\Support\Facades\Auth::check() &&
+                \Illuminate\Support\Facades\Auth::user()->user_type == "admin")
+            <li class="side-nav-item">
+                <a href="{{ route('appointments') }}" class="side-nav-link">
+                    <i class="uil-calender"></i>
+                    <span> Appointments </span>
+                </a>
+            </li>
+        @endif
+
         <li class="side-nav-item">
             <a href="javascript: void(0);" class="side-nav-link">
                 <i class="uil-medical"></i>
@@ -66,7 +76,7 @@
         <li class="side-nav-item">
             <a href="{{ route('doctor-messages') }}" class="side-nav-link">
                 <i class="uil-message"></i>
-                <span> Messages </span>
+                <span> Doctors Messages </span>
             </a>
         </li>
         @endif
@@ -105,6 +115,22 @@
                     </li>
                     <li>
                         <a href="{{ route('pharmacy-agents') }}">Agents</a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="side-nav-item">
+                <a href="javascript: void(0);" class="side-nav-link">
+                    <i class="uil-store"></i>
+                    <span> Health Centers </span>
+                    <span class="menu-arrow"></span>
+                </a>
+                <ul class="side-nav-second-level" aria-expanded="false">
+                    <li>
+                        <a href="{{ route('health-center-add') }}">Add</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('health-centers') }}">View</a>
                     </li>
                 </ul>
             </li>

@@ -63,6 +63,7 @@
                                 <th>Quantity</th>
                                 <th>Price</th>
                                 <th>Total Price</th>
+                                <th>Has Doc Prescription</th>
                                 <th>Status</th>
                                 <th>Accepted By</th>
                                 <th>Date Ordered</th>
@@ -84,9 +85,8 @@
                                     <td>{{ $item->quantity }}</td>
                                     <td>{{ $item->drug->price }}</td>
                                     <td>{{ $item->price }}</td>
-                                    <td><label
-                                            class="badge {{ $item->status == 'approved' ? 'badge-success' : ($item->status == 'cancelled' ? 'badge-danger' : 'badge-warning') }}">{{ $item->status }}</label>
-                                    </td>
+                                    <td><label class="badge {{ $item->has_prescription == true ? 'badge-success' : 'badge-warning' }}">{{ $item->has_prescription ? 'Yes' : 'No' }}</label></td>
+                                    <td><label class="badge {{ $item->status == 'approved' ? 'badge-success' : ($item->status == 'cancelled' ? 'badge-danger' : 'badge-warning') }}">{{ $item->status }}</label></td>
                                     <td>{{ $item->accepted_by->name ?? 'None' }}</td>
                                     <td>{{ \Carbon\Carbon::parse($item->created_at)->format('h:ia F dS, Y') }}</td>
                                     <td>

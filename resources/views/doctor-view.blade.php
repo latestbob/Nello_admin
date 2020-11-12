@@ -34,7 +34,7 @@
                         <h4 class="font-13 text-uppercase">About {{ $doctor->firstname }}:</h4>
 
                         <p class="text-muted mb-2 font-13">
-                            <strong>Full Name :</strong> <span class="ml-2">{{ $doctor->lastname }} {{ $doctor->firstname }} {{ $doctor->middlename }}</span></p>
+                            <strong>Full Name :</strong> <span class="ml-2">{{ $doctor->title }}. {{ $doctor->lastname }} {{ $doctor->firstname }} {{ $doctor->middlename }}</span></p>
 
                         <p class="text-muted mb-2 font-13"><strong>Hospital :</strong><span class="ml-2">{{ $doctor->hospital ?: 'Unavailable' }}</span></p>
 
@@ -59,6 +59,22 @@
                         <h5 class="mb-4 text-uppercase"><i class="mdi mdi-account-circle mr-1"></i> Personal Info</h5>
 
                         <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="title">Title</label>
+                                    <input type="text" class="form-control @error('title') is-invalid @enderror" id="title"
+                                           value="{{ old('title', $doctor->title) }}" name="title" placeholder="Enter title">
+
+                                    @error('title')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+                        </div>
+                            <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="firstname">First Name</label>

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pharmacies;
+use App\Models\Pharmacy;
 use App\Models\User;
 use App\Traits\FileUpload;
 use Carbon\Carbon;
@@ -37,7 +37,7 @@ class CustomerController extends Controller
 
             })->paginate($size);
 
-        $pharmacies = Pharmacies::select(['id', 'name'])->get()->toJson();
+        $pharmacies = Pharmacy::select(['id', 'name'])->get()->toJson();
 
         return view('customers', compact('customers', 'pharmacies', 'search', 'gender', 'size'));
     }
