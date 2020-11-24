@@ -83,7 +83,7 @@
                                     <td>{{ ($key + 1) }}</td>
                                     <td>{{ $message->name ?: "{$message->user->firstname} {$message->user->lastname}" }}</td>
                                     <td>{{ $message->email ?: $message->user->email }}</td>
-                                    <td>{{ $message->phone ?: $message->user->phone }}</td>
+                                    <td>{{ $message->phone ?? ($message->user ? $message->user->phone : 'Unavailable') }}</td>
                                     <td>{{ $message->subject }}</td>
                                     @if(\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->user_type == "doctor")
                                         <td>{{ $message->message }}</td>
