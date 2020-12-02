@@ -149,7 +149,8 @@ class DrugController extends Controller
             ]);
         }
 
-        $drug = PharmacyDrug::where(['uuid' => $request->uuid, 'vendor_id' => $request->user()->vendor_id])->first();
+        //$drug = PharmacyDrug::where(['uuid' => $request->uuid, 'vendor_id' => $request->user()->vendor_id])->first();
+        $drug = PharmacyDrug::where(['uuid' => $request->uuid])->first();
 
         if (empty($drug)) {
             return response([
