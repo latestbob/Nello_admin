@@ -117,13 +117,13 @@ class DoctorController extends Controller
                 'address' => 'nullable|string',
                 'state' => 'nullable|string',
                 'city'  => 'nullable|string',
-                'religion' => 'required|string',
+                'religion' => 'nullable|string',
                 'gender' => 'required|string|in:Male,Female',
                 'height' => 'nullable|numeric',
                 'weight' => 'nullable|numeric',
                 'sponsor' => 'nullable|string',
                 'aos' => 'nullable|string',
-                'hospital' => 'nullable|string',
+                'hospital' => 'required|string',
                 'picture' => 'nullable|image|mimes:jpeg,jpg,png'
             ])->validate();
 
