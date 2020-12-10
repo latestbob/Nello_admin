@@ -149,7 +149,8 @@ class DrugController extends Controller
             ]);
         }
 
-        $drug = PharmacyDrug::where(['uuid' => $request->uuid, 'vendor_id' => $request->user()->vendor_id])->first();
+        //$drug = PharmacyDrug::where(['uuid' => $request->uuid, 'vendor_id' => $request->user()->vendor_id])->first();
+        $drug = PharmacyDrug::where(['uuid' => $request->uuid])->first();
 
         if (empty($drug)) {
             return response([
@@ -340,6 +341,8 @@ class DrugController extends Controller
         $item->save();
 
         $isAllApproved = true; $items = [];
+
+        $drugIds = [];
 
         foreach ($item->order->items as $it) {
             if ($it->status != 'approved') {
