@@ -79,7 +79,7 @@
                         </div> <!-- end row -->
 
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="description">Description</label>
                                     <textarea class="form-control @error('description') is-invalid @enderror"
@@ -88,6 +88,57 @@
                                               placeholder="Enter description">{{ old('description')  }}</textarea>
 
                                     @error('description')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="indications">Indications</label>
+                                    <textarea class="form-control @error('indications') is-invalid @enderror"
+                                              id="indications"
+                                              name="indications"
+                                              placeholder="Enter indications">{{ old('indications')  }}</textarea>
+
+                                    @error('indications')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+                        </div> <!-- end row -->
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="side_effects">Common Side Effects</label>
+                                    <textarea class="form-control @error('side_effects') is-invalid @enderror"
+                                              id="side_effects"
+                                              name="side_effects"
+                                              placeholder="Enter common side effects">{{ old('side_effects')  }}</textarea>
+
+                                    @error('side_effects')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="contraindications">Contraindications</label>
+                                    <textarea class="form-control @error('contraindications') is-invalid @enderror"
+                                              id="contraindications"
+                                              name="contraindications"
+                                              placeholder="Enter contraindications">{{ old('contraindications')  }}</textarea>
+
+                                    @error('contraindications')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>

@@ -9,7 +9,11 @@ class PharmacyDrug extends Model
     protected $table = 'pharmacy_drugs';
     protected $primaryKey = 'id';
 
-    protected $fillable = ['brand', 'name', 'description', 'price', 'require_prescription', 'image', 'uuid', 'vendor_id', 'category_id' , 'dosage_type', 'quantity', 'status'];
+    protected $fillable = ['brand', 'name', 'description', 'price', 
+        'require_prescription', 'image', 'uuid', 'vendor_id', 
+        'category_id' , 'dosage_type', 'quantity', 'status',
+        'indications', 'side_effects', 'contraindications'
+    ];
 
     protected $appends = ['is_out_of_stock'];
 
