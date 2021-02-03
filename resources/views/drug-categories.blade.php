@@ -85,7 +85,7 @@
                                                 Action
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <a class="dropdown-item" href="{{ route("drug-view", ['uuid' => $drug->uuid]) }}">Edit drug</a>
+                                                {{--<a class="dropdown-item" href="{{ route("drug-view", ['uuid' => $drug->uuid]) }}">Edit drug</a>--}}
                                                 <button class="dropdown-item status-toggle" data-id="{{ $drug->uuid }}" data-status="{{ $drug->status == 1 ? "unavailable" : "available" }}">
                                                     {{ $drug->status == 1 ? "Unavailable" : "Available" }}
                                                 </button>
