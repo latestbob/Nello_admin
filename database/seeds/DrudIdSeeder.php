@@ -15,7 +15,7 @@ class DrudIdSeeder extends Seeder
         $drugs = PharmacyDrug::all();
         foreach($drugs as $drug) {
             $drugId = "AN" .  random_int(100000, 999999);
-            $drug->update(['drug_id', $drugId]);
+            $drug->update(['drug_id' => $drugId]);
         }
     }
 }
