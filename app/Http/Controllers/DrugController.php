@@ -624,6 +624,9 @@ class DrugController extends Controller
 
     public function drugCategories(Request $request)
     {
+
+        $size = empty($request->size) ? 10 : $request->size;
+        $search = $request->search;
         if ($request->isMethod('post')) {
             $data = $request->validate([
                 'name' => 'required|unique:drug_categories'
@@ -632,6 +635,6 @@ class DrugController extends Controller
         }
 
         $categories = DrugCategory::orderBy('name')->paginate();
-        return view('drug-categories', ['categories' => $categories]);
+        return view('drug-categories', compact('categories', 'search', 'size'));
     }
 }
