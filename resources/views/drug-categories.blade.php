@@ -55,7 +55,7 @@
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <div class="m-auto p-auto">
-                                                <a href="{{ route('drug-categories-add') }}" class="btn btn-primary btn-sm">Add Drug Category</a>
+                                                <a href="{{ route('drug-categories-add') }}" class="mt-2 btn btn-primary btn-sm">Add Drug Category</a>
                                             </div>
                                         </div>
 
