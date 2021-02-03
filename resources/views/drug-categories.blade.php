@@ -53,9 +53,9 @@
                                             <input class="form-control" name="search" value="{{ $search }}"
                                                    placeholder="Enter Keyword"/>
                                         </div>
-                                        <div class="col-md-4 mb-3 pt-2">
+                                        <div class="col-md-4 mb-3 pt-3">
                                             <div class="m-auto p-auto">
-                                                <a href="{{ route('drug-categories-add') }}" class="mt-2 btn btn-primary btn-sm">Add Drug Category</a>
+                                                <a href="{{ route('drug-categories-add') }}" class="btn btn-primary btn-sm">Add Drug Category</a>
                                             </div>
                                         </div>
 
