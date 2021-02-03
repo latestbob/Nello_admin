@@ -34,6 +34,7 @@ Route::prefix('/')->middleware(['auth', 'auth.allowed'])->group(function () {
     Route::match(['post', 'get'],'/drug/add', 'DrugController@drugAdd')->name('drug-add')->middleware('auth.admin');
     Route::get('/drug/categories', 'DrugController@drugCategories')->name('drug-categories')->middleware('auth.admin');
     Route::match(['post', 'get'],'/drug/categories/add', 'DrugController@drugCategoryAdd')->name('drug-categories-add')->middleware('auth.admin');
+    Route::post('/drug/categories/delete', 'DrugController@drugCategoryDelete')->name('drug-categories-delete')->middleware('auth.admin');
 
     Route::get('/drugs-import', 'DrugController@drugImport')->name('drugs-import')->middleware('auth.admin');
 

@@ -54,7 +54,7 @@
                                                    placeholder="Enter Keyword"/>
                                         </div>
                                         <div class="col-md-4 mb-3">
-                                            <div>
+                                            <div class="m-auto p-auto">
                                                 <a href="{{ route('drug-categories-add') }}" class="btn btn-primary btn-sm">Add Drug Category</a>
                                             </div>
                                         </div>
@@ -93,7 +93,7 @@
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                 {{--<a class="dropdown-item" href="{{ route("drug-view", ['uuid' => $drug->uuid]) }}">Edit drug</a>--}}
                                                 @if ($drug->drugs_count == 0)
-                                                <button class="dropdown-item delete-btn" data-id="{{ $drug->uuid }}">
+                                                <button class="dropdown-item delete-btn" data-id="{{ $drug->id }}">
                                                     Delete drug category
                                                 </button>
                                                 @endif
@@ -143,15 +143,6 @@
 
         });
 
-        $("select[name='category']").change(function (e) {
-
-            let category = $(this).val();
-            if (category !== '') params.category = category;
-            else delete params.category;
-            delete params.page;
-            window.location.href = (window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + serialize(params));
-
-        });
 
         $("form[id='filter-form']").submit(function (e) {
             e.preventDefault();
@@ -168,64 +159,11 @@
 
         const instance = NetBridge.getInstance();
 
-        $('.status-toggle').click(function (e) {
-
-            let self = $(this), uuid = self.data('id'), timeout;
-
-            successMsg('Drug Status', `This drug will be marked as ${self.data('status')}, do you want proceed?`,
-                'Yes, proceed', 'No, cancel', function ({value}) {
-
-                    if (!value) return;
-
-                    timeout = setTimeout(() => {
-
-                        instance.addToRequestQueue({
-                            url: "{{ route('drug-status') }}",
-                            method: 'post',
-                            timeout: 10000,
-                            dataType: 'json',
-                            data: {
-                                uuid,
-                                '_token': "{{ csrf_token() }}"
-                            },
-                            beforeSend: () => {
-                                swal.showLoading();
-                            },
-                            success: (data, status, xhr) => {
-
-                                swal.hideLoading();
-
-                                if (data.status !== true) {
-                                    errorMsg('Drug Status Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
-                                    return false;
-                                }
-
-                                successMsg('Drug Status Successful', data.message);
-                                window.location.reload();
-
-                            },
-                            ontimeout: () => {
-                                swal.hideLoading();
-                                errorMsg('Drug Status Failed', 'Failed to switch drug status at this time as the request timed out', 'Ok');
-                            },
-                            error: (data, xhr, status, statusText) => {
-
-                                swal.hideLoading();
-
-                                errorMsg('Drug Status Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
-                            }
-                        });
-
-                        clearTimeout(timeout);
-                    }, 500);
-                })
-        });
-
         $('.delete-btn').click(function (e) {
 
-            let self = $(this), uuid = self.data('id'), timeout;
+            let self = $(this), id = self.data('id'), timeout;
 
-            successMsg('Delete Drug', "This drug will be deleted, once done it cannot be undone, do you want proceed?",
+            successMsg('Delete Drug Category', "This drug category will be deleted, once done it cannot be undone, do you want proceed?",
                 'Yes, proceed', 'No, cancel', function ({value}) {
 
                     if (!value) return;
@@ -233,12 +171,12 @@
                     timeout = setTimeout(() => {
 
                         instance.addToRequestQueue({
-                            url: "{{ route('drug-delete') }}",
+                            url: "{{ route('drug-categories-delete') }}",
                             method: 'post',
                             timeout: 10000,
                             dataType: 'json',
                             data: {
-                                uuid,
+                                id,
                                 '_token': "{{ csrf_token() }}"
                             },
                             beforeSend: () => {
@@ -249,11 +187,11 @@
                                 swal.hideLoading();
 
                                 if (data.status !== true) {
-                                    errorMsg('Drug Delete Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
+                                    errorMsg('Drug Category Delete Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
                                     return false;
                                 }
 
-                                successMsg('Drug Delete Successful', data.message);
+                                successMsg('Drug Category Delete Successful', data.message);
 
                                 self.closest('tr').fadeOut(600, function () {
                                     $(this).detact();
@@ -276,60 +214,6 @@
                     }, 500);
                 })
         });
-
-        $('.add-prescription').click(function () {
-            $(this).siblings("input[type='file']").click();
-        });
-
-        const uploadPrescription = (file, id, uuid) => {
-
-            let formData = new FormData(), timeout;
-            formData.append('_token', "{{ csrf_token() }}");
-            formData.append('file', file);
-            formData.append('uuid', uuid);
-            formData.append('id', id);
-
-            instance.addToRequestQueue({
-                url: "{{ url('/drugs-order/item/add-prescription') }}",
-                method: 'POST',
-                timeout: 20000,
-                cache: false,
-                contentType: false,
-                processData: false,
-                dataType: 'json',
-                data: formData,
-                beforeSend: function () {
-                    swal.showLoading();
-                },
-                success: (data, status, xhr) => {
-
-                    swal.hideLoading();
-
-                    if (data.status !== true) {
-                        errorMsg('Prescription Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
-                        return false;
-                    }
-
-                    successMsg('Prescription Successful', data.message);
-
-                    timeout = setTimeout(() => {
-                        window.location.reload();
-                        clearTimeout(timeout);
-                    }, 2000);
-
-                },
-                ontimeout: () => {
-                    swal.hideLoading();
-                    errorMsg('Prescription Failed', 'Failed to ' + type + ' this order at this time as the request timed out', 'Ok');
-                },
-                error: (data, xhr, status, statusText) => {
-
-                    swal.hideLoading();
-
-                    errorMsg('Prescription Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
-                }
-            });
-        }
 
     </script>
 @endsection

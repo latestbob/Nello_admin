@@ -645,4 +645,40 @@ class DrugController extends Controller
 
         return view('drug-categories-add');
     }
+
+    
+    public function drugCategoryDelete(Request $request)
+    {
+
+        if (empty($request->id)) {
+            return response([
+                'status' => false,
+                'message' => "Drug category ID missing"
+            ]);
+        }
+
+        $category = DrugCategory::where(['id' => $request->id])->first();
+
+        if (empty($category)) {
+            return response([
+                'status' => false,
+                'message' => "Sorry, the ID '{$request->id}' is associated with any drug category"
+            ]);
+        }
+
+        if ($category->drugs()->count() > 0) {
+            return response([
+                'status' => false,
+                'message' => "Sorry, this category cannot be deleted because it has drugs attached to it."
+            ]);
+        }
+
+        $category->delete();
+
+        return response([
+            'status' => true,
+            'message' => "Drug category deleted successfully"
+        ]);
+    }
+
 }
