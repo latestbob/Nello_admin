@@ -91,7 +91,7 @@
                                                 Action
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                {{--<a class="dropdown-item" href="{{ route("drug-view", ['uuid' => $drug->uuid]) }}">Edit drug</a>--}}
+                                                <a class="dropdown-item" href="{{ route('drug-categories-edit', ['id' => $drug->id]) }}">Edit drug category</a>
                                                 @if ($drug->drugs_count == 0)
                                                 <button class="dropdown-item delete-btn" data-id="{{ $drug->id }}">
                                                     Delete drug category

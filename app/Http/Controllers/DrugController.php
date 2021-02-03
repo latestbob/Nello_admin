@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class DrugController extends Controller
 {
@@ -630,6 +631,25 @@ class DrugController extends Controller
         $categories = DrugCategory::withCount(['drugs'])
             ->orderBy('name')->paginate($size);
         return view('drug-categories', compact('categories', 'search', 'size'));
+    }
+
+    public function drugCategoryUpdate(Request $request)
+    {
+        $category = DrugCategory::find($request->id);
+        if (!$category) {
+            return redirect("/drug/categories")->with('error', "Drug category not found");
+        }
+
+        if ($request->isMethod('post')) {
+            $data = $request->validate([
+                'name' => ['required', Rule::unique('drug_categories', 'name')->ignore($category->id)]
+            ]);
+            $category->update($data);
+
+            return redirect("/drug/categories")->with('success', "Drug category has been updated successfully");
+        }
+
+        return view('drug-categories-edit', compact('category'));
     }
 
     public function drugCategoryAdd(Request $request)
