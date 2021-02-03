@@ -76,7 +76,7 @@
                                 <tr>
                                     <td>{{ ($key + 1) }}</td>
                                     <td>{{ $drug->name }}</td>
-                                    <td>{{ $drug->brand ?: 'Unavailable' }}</td>
+                                    <td>{{ $drug->drugs_count }}</td>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button"
