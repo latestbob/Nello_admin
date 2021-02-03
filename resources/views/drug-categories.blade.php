@@ -29,7 +29,7 @@
                             <form method="get" class="row" id="filter-form">
                                 <div class="col-md-4 mb-3">
 
-                                    <h4 class="header-title">Drugs</h4>
+                                    <h4 class="header-title">Drug Categories</h4>
                                     <p class="text-muted font-14">
                                         Here's a list of all drug categories on the Nello platform
                                     </p>
@@ -53,6 +53,12 @@
                                             <input class="form-control" name="search" value="{{ $search }}"
                                                    placeholder="Enter Keyword"/>
                                         </div>
+                                        <div class="col-md-4 mb-3">
+                                            <div>
+                                                <a href="{{ route('drug-categories-add') }}" class="btn btn-primary btn-sm">Add Drug Category</a>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </form>
@@ -86,12 +92,11 @@
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                 {{--<a class="dropdown-item" href="{{ route("drug-view", ['uuid' => $drug->uuid]) }}">Edit drug</a>--}}
-                                                <button class="dropdown-item status-toggle" data-id="{{ $drug->uuid }}" data-status="{{ $drug->status == 1 ? "unavailable" : "available" }}">
-                                                    {{ $drug->status == 1 ? "Unavailable" : "Available" }}
-                                                </button>
+                                                @if ($drug->drugs_count == 0)
                                                 <button class="dropdown-item delete-btn" data-id="{{ $drug->uuid }}">
-                                                    Delete drug
+                                                    Delete drug category
                                                 </button>
+                                                @endif
                                             </div>
                                         </div>
                                     </td>

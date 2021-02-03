@@ -627,15 +627,22 @@ class DrugController extends Controller
 
         $size = empty($request->size) ? 10 : $request->size;
         $search = $request->search;
+        $categories = DrugCategory::withCount(['drugs'])
+            ->orderBy('name')->paginate($size);
+        return view('drug-categories', compact('categories', 'search', 'size'));
+    }
+
+    public function drugCategoryAdd(Request $request)
+    {
         if ($request->isMethod('post')) {
             $data = $request->validate([
                 'name' => 'required|unique:drug_categories'
             ]);
             DrugCategory::create($data);
+
+            return redirect("/drug/categories")->with('success', "Drug category has been added successfully");
         }
 
-        $categories = DrugCategory::withCount(['drugs'])
-            ->orderBy('name')->paginate($size);
-        return view('drug-categories', compact('categories', 'search', 'size'));
+        return view('drug-categories-add');
     }
 }
