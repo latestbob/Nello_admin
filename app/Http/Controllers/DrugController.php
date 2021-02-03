@@ -634,7 +634,8 @@ class DrugController extends Controller
             DrugCategory::create($data);
         }
 
-        $categories = DrugCategory::orderBy('name')->paginate();
+        $categories = DrugCategory::withCount(['drugs'])
+            ->orderBy('name')->paginate($size);
         return view('drug-categories', compact('categories', 'search', 'size'));
     }
 }
