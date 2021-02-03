@@ -621,4 +621,17 @@ class DrugController extends Controller
     public function drugImport(Request $request) {
         return view('drug-import');
     }
+
+    public function drugCategories(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $data = $request->validate([
+                'name' => 'required|unique:drug_categories'
+            ]);
+            DrugCategory::create($data);
+        }
+
+        $categories = DrugCategory::orderBy('name')->paginate();
+        return view('drug-categories', ['categories' => $categories]);
+    }
 }
