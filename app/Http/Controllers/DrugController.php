@@ -127,7 +127,9 @@ class DrugController extends Controller
 
             $data['require_prescription'] = $request->has('prescription') ? 1 : 0;
 
+            $drugId = "AN" .  random_int(100000, 999999);
             $data['uuid'] = Str::uuid()->toString();
+            $data['drug_id'] = $drugId;
 
             $data['vendor_id'] = $request->user()->vendor_id;
 

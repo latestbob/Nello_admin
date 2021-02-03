@@ -10,7 +10,7 @@ class PharmacyDrug extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = ['brand', 'name', 'description', 'price', 
-        'require_prescription', 'image', 'uuid', 'vendor_id', 
+        'require_prescription', 'image', 'uuid', 'vendor_id', 'drug_id',
         'category_id' , 'dosage_type', 'quantity', 'status',
         'indications', 'side_effects', 'contraindications'
     ];
