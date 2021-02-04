@@ -75,6 +75,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Image</th>
+                                <th>Drug ID</th>
                                 <th>Name</th>
                                 <th>Brand</th>
                                 <th>Category</th>
@@ -94,6 +95,7 @@
                                 <tr>
                                     <td>{{ ($key + 1) }}</td>
                                     <td><img src="{{ $drug->image ?? asset('images/drug-placeholder.png') }}" class="img-thumbnail" width="80"/></td>
+                                    <td>{{ $drug->drug_id }}</td>
                                     <td>{{ $drug->name }}</td>
                                     <td>{{ $drug->brand ?: 'Unavailable' }}</td>
                                     <td>{{ $drug->category->name ?: 'Unavailable' }}</td>

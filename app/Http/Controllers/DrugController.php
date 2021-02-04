@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class DrugController extends Controller
 {
@@ -72,7 +73,10 @@ class DrugController extends Controller
                 'dosage_type' => 'required|string|max:50',
                 'price' => 'required|numeric',
                 'quantity' => 'required|numeric',
-                'image' => 'nullable|image|mimes:jpeg,jpg,png'
+                'image' => 'nullable|image|mimes:jpeg,jpg,png',
+                'indications' => 'required|string', 
+                'side_effects' => 'required|string', 
+                'contraindications' => 'required|string'
             ])->validate();
 
             if ($request->hasFile('image')) {
@@ -109,19 +113,23 @@ class DrugController extends Controller
                 'dosage_type' => 'required|string|max:50',
                 'price' => 'required|numeric',
                 'quantity' => 'required|numeric',
-                'image' => 'nullable|image|mimes:jpeg,jpg,png'
+                'image' => 'nullable|image|mimes:jpeg,jpg,png',
+                'indications' => 'required|string', 
+                'side_effects' => 'required|string', 
+                'contraindications' => 'required|string'
             ])->validate();
 
             if ($request->hasFile('image')) {
 
                 $data['image'] = $this->uploadFile($request, 'image');
-        //            $data['image'] = 'http://www.famacare.com/img/famacare.png';
-
+                //$data['image'] = 'http://www.famacare.com/img/famacare.png';
             }
 
             $data['require_prescription'] = $request->has('prescription') ? 1 : 0;
 
+            $drugId = "AN" .  random_int(100000, 999999);
             $data['uuid'] = Str::uuid()->toString();
+            $data['drug_id'] = $drugId;
 
             $data['vendor_id'] = $request->user()->vendor_id;
 
@@ -621,4 +629,83 @@ class DrugController extends Controller
     public function drugImport(Request $request) {
         return view('drug-import');
     }
+
+    public function drugCategories(Request $request)
+    {
+
+        $size = empty($request->size) ? 10 : $request->size;
+        $search = $request->search;
+        $categories = DrugCategory::withCount(['drugs'])
+            ->orderBy('name')->paginate($size);
+        return view('drug-categories', compact('categories', 'search', 'size'));
+    }
+
+    public function drugCategoryUpdate(Request $request)
+    {
+        $category = DrugCategory::find($request->id);
+        if (!$category) {
+            return redirect("/drug/categories")->with('error', "Drug category not found");
+        }
+
+        if ($request->isMethod('post')) {
+            $data = $request->validate([
+                'name' => ['required', Rule::unique('drug_categories', 'name')->ignore($category->id)]
+            ]);
+            $category->update($data);
+
+            return redirect("/drug/categories")->with('success', "Drug category has been updated successfully");
+        }
+
+        return view('drug-categories-edit', compact('category'));
+    }
+
+    public function drugCategoryAdd(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $data = $request->validate([
+                'name' => 'required|unique:drug_categories'
+            ]);
+            DrugCategory::create($data);
+
+            return redirect("/drug/categories")->with('success', "Drug category has been added successfully");
+        }
+
+        return view('drug-categories-add');
+    }
+
+    
+    public function drugCategoryDelete(Request $request)
+    {
+
+        if (empty($request->id)) {
+            return response([
+                'status' => false,
+                'message' => "Drug category ID missing"
+            ]);
+        }
+
+        $category = DrugCategory::where(['id' => $request->id])->first();
+
+        if (empty($category)) {
+            return response([
+                'status' => false,
+                'message' => "Sorry, the ID '{$request->id}' is associated with any drug category"
+            ]);
+        }
+
+        if ($category->drugs()->count() > 0) {
+            return response([
+                'status' => false,
+                'message' => "Sorry, this category cannot be deleted because it has drugs attached to it."
+            ]);
+        }
+
+        $category->delete();
+
+        return response([
+            'status' => true,
+            'message' => "Drug category deleted successfully"
+        ]);
+    }
+
 }
