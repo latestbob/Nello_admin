@@ -74,8 +74,8 @@ class DrugController extends Controller
                 'price' => 'required|numeric',
                 'quantity' => 'required|numeric',
                 'image' => 'nullable|image|mimes:jpeg,jpg,png',
-                'indications' => 'required|string', 
-                'side_effects' => 'required|string', 
+                'indications' => 'required|string',
+                'side_effects' => 'required|string',
                 'contraindications' => 'required|string'
             ])->validate();
 
@@ -114,8 +114,8 @@ class DrugController extends Controller
                 'price' => 'required|numeric',
                 'quantity' => 'required|numeric',
                 'image' => 'nullable|image|mimes:jpeg,jpg,png',
-                'indications' => 'required|string', 
-                'side_effects' => 'required|string', 
+                'indications' => 'required|string',
+                'side_effects' => 'required|string',
                 'contraindications' => 'required|string'
             ])->validate();
 
@@ -640,9 +640,9 @@ class DrugController extends Controller
         return view('drug-categories', compact('categories', 'search', 'size'));
     }
 
-    public function drugCategoryUpdate(Request $request)
+    public function drugCategoryUpdate(Request $request, $id = null)
     {
-        $category = DrugCategory::find($request->id);
+        $category = DrugCategory::find($id ?: $request->id);
         if (!$category) {
             return redirect("/drug/categories")->with('error', "Drug category not found");
         }
@@ -673,7 +673,7 @@ class DrugController extends Controller
         return view('drug-categories-add');
     }
 
-    
+
     public function drugCategoryDelete(Request $request)
     {
 
