@@ -123,7 +123,7 @@ class CustomerController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => 'Agent has been deleted successfully',
+            'message' => "You have successfully made {$customer->firstname} an agent",
         ]);
     }
 }
