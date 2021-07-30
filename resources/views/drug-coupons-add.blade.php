@@ -77,7 +77,7 @@
                                     <label for="value">Value</label>
                                     <input type="number" step="0.1" class="form-control @error('value') is-invalid @enderror"
                                            id="value"
-                                           value="{{ old('value') }}" name="name" placeholder="Enter value">
+                                           value="{{ old('value') }}" name="value" placeholder="Enter value">
 
                                     @error('value')
                                     <span class="invalid-feedback" role="alert">
@@ -86,7 +86,7 @@
                                     @enderror
 
                                 </div>
-                                
+
                             </div>
                         </div> <!-- end row -->
 

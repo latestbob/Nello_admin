@@ -55,7 +55,7 @@
                                         </div>
                                         <div class="col-md-4 mb-3 pt-3">
                                             <div class="m-auto p-auto">
-                                                <a href="{{ route('coupons-add') }}" class="btn btn-primary btn-sm">Add Drug Category</a>
+                                                <a href="{{ route('coupons-add') }}" class="btn btn-primary btn-sm">Add Coupon</a>
                                             </div>
                                         </div>
 
@@ -165,7 +165,7 @@
 
             let self = $(this), id = self.data('id'), timeout;
 
-            successMsg('Delete Drug Category', "This coupon will be deleted, once done it cannot be undone, do you want proceed?",
+            successMsg('Delete Coupon', "This coupon will be deleted, once done it cannot be undone, do you want proceed?",
                 'Yes, proceed', 'No, cancel', function ({value}) {
 
                     if (!value) return;
@@ -189,11 +189,11 @@
                                 swal.hideLoading();
 
                                 if (data.status !== true) {
-                                    errorMsg('Drug Category Delete Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
+                                    errorMsg('Coupon Delete Failed', typeof data.message !== 'string' ? serializeMessage(data.message) : data.message, 'Ok');
                                     return false;
                                 }
 
-                                successMsg('Drug Category Delete Successful', data.message);
+                                successMsg('Coupon Delete Successful', data.message);
 
                                 self.closest('tr').fadeOut(600, function () {
                                     $(this).detact();
