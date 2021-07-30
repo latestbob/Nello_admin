@@ -31,7 +31,7 @@
 
                                     <h4 class="header-title">Coupon Codes</h4>
                                     <p class="text-muted font-14">
-                                        Here's a list of all drug categories on the Nello platform
+                                        Here's a list of all coupons on the Nello platform
                                     </p>
 
                                 </div>
@@ -55,7 +55,7 @@
                                         </div>
                                         <div class="col-md-4 mb-3 pt-3">
                                             <div class="m-auto p-auto">
-                                                <a href="{{ route('drug-categories-add') }}" class="btn btn-primary btn-sm">Add Drug Category</a>
+                                                <a href="{{ route('coupons-add') }}" class="btn btn-primary btn-sm">Add Drug Category</a>
                                             </div>
                                         </div>
 
@@ -71,18 +71,22 @@
                             <tr>
                                 <th>#</th>
                                 <th>Name</th>
-                                <th>Drugs Count</th>
+                                <th>Code</th>
+                                <th>Type</th>
+                                <th>Value</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
 
                             <tbody>
 
-                            @foreach($categories as $key => $drug)
+                            @foreach($coupons as $key => $coupon)
                                 <tr>
                                     <td>{{ ($key + 1) }}</td>
-                                    <td>{{ $drug->name }}</td>
-                                    <td>{{ $drug->drugs_count }}</td>
+                                    <td>{{ $coupon->name }}</td>
+                                    <td>{{ $coupon->code }}</td>
+                                    <td>{{ $coupon->type }}</td>
+                                    <td>{{ $coupon->value }}</td>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button"
@@ -91,12 +95,10 @@
                                                 Action
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <a class="dropdown-item" href="{{ route('drug-categories-edit', ['id' => $drug->id]) }}">Edit drug category</a>
-                                                @if ($drug->drugs_count == 0)
-                                                <button class="dropdown-item delete-btn" data-id="{{ $drug->id }}">
-                                                    Delete drug category
+                                                <a class="dropdown-item" href="{{ route('coupons-edit', ['coupon' => $coupon->id]) }}">Edit coupon</a>
+                                                <button class="dropdown-item delete-btn" data-id="{{ $coupon->id }}">
+                                                    Delete coupon
                                                 </button>
-                                                @endif
                                             </div>
                                         </div>
                                     </td>
@@ -108,7 +110,7 @@
                     </div>
 
                     <div class="table-responsive mt-3">
-                        {{ $categories->links() }}
+                        {{ $coupons->links() }}
                     </div>
 
                 </div> <!-- end card body-->
@@ -163,7 +165,7 @@
 
             let self = $(this), id = self.data('id'), timeout;
 
-            successMsg('Delete Drug Category', "This drug category will be deleted, once done it cannot be undone, do you want proceed?",
+            successMsg('Delete Drug Category', "This coupon will be deleted, once done it cannot be undone, do you want proceed?",
                 'Yes, proceed', 'No, cancel', function ({value}) {
 
                     if (!value) return;
@@ -171,7 +173,7 @@
                     timeout = setTimeout(() => {
 
                         instance.addToRequestQueue({
-                            url: "{{ route('drug-categories-delete') }}",
+                            url: "{{ route('coupons-delete') }}",
                             method: 'post',
                             timeout: 10000,
                             dataType: 'json',

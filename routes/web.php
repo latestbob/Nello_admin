@@ -53,6 +53,12 @@ Route::prefix('/')->middleware(['auth', 'auth.allowed'])->group(function () {
 
     Route::post('/drugs-order/item/add-doctors-prescription', 'DrugController@addDoctorsPrescription')->name('add-doctors-prescription')->middleware('auth.admin.agent.doctor');
 
+    Route::get('/drug/coupons', 'CouponController@index')->name('coupons')->middleware('auth.admin');
+    Route::match(['post', 'get'],'/drug/coupons/add', 'CouponController@create')->name('coupons-add')->middleware('auth.admin');
+    Route::match(['post', 'get'],'/drug/coupons/{coupon}/edit', 'CouponController@update')->name('coupons-edit')->middleware('auth.admin');
+    Route::post('/drug/coupons/delete', 'CouponController@delete')->name('coupons-delete')->middleware('auth.admin');
+
+
     Route::get('/health-centers', 'HealthCenterController@index')->name('health-centers')->middleware('auth.admin');
 
     Route::post('/health-center/status', 'HealthCenterController@changeStatus')->name('health-center-status')->middleware('auth.admin');

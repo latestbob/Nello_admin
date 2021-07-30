@@ -64,6 +64,9 @@
                         <a href="{{ route('drug-categories') }}">Categories</a>
                     </li>
                     <li>
+                        <a href="{{ route('coupons') }}">Coupons</a>
+                    </li>
+                    <li>
                         <a href="{{ route('drugs-import') }}">Import</a>
                     </li>
                 @endif
