@@ -28,7 +28,7 @@
                         <h5 class="mb-4 text-uppercase"><i class="uil-location mr-1"></i> Location Info</h5>
 
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="name">Location</label>
                                     <input type="text" class="form-control @error('name') is-invalid @enderror"
