@@ -31,13 +31,16 @@ class LocationController extends Controller
         return view('locations', compact('locations', 'size', 'search'));
     }
 
-    public function addLocation(Request $request) {
+    public function addLocation(Request $request)
+    {
 
         if (strtolower($request->method()) == "post") {
 
             $validated = Validator::make($request->all(), [
                 'name' => 'required|string|min:2|max:255|unique:locations,name',
-                'price' => 'required|numeric'
+                'standard_price' => 'required|numeric',
+                'same_day_price' => 'required|numeric',
+                'next_day_price' => 'required|numeric'
             ])->validate();
 
             $validated['uuid'] = Str::uuid()->toString();
@@ -51,7 +54,8 @@ class LocationController extends Controller
         return view('location-add');
     }
 
-    public function viewLocation(Request $request) {
+    public function viewLocation(Request $request)
+    {
 
         if (empty($uuid = $request->uuid)) {
             return redirect('/locations')->with('error', "Location ID missing");
@@ -67,22 +71,25 @@ class LocationController extends Controller
         if (strtolower($request->method()) == "post") {
 
             $validated = Validator::make($request->all(), [
-                'name' => ['required', 'string', 'min:2', 'max:255',
-                    Rule::unique('locations', 'id')->ignore($location->id)],
-                'price' => 'required|numeric'
+                'name' => [
+                    'required', 'string', 'min:2', 'max:255',
+                    Rule::unique('locations', 'id')->ignore($location->id)
+                ],
+                'standard_price' => 'required|numeric',
+                'same_day_price' => 'required|numeric',
+                'next_day_price' => 'required|numeric'
             ])->validate();
 
             $location->update($validated);
 
             return redirect('/locations')->with('success', "Location has been updated successfully");
-
         }
 
         return view('location-view', compact('location', 'uuid'));
-
     }
 
-    public function deleteLocation(Request $request) {
+    public function deleteLocation(Request $request)
+    {
 
         if (!$request->uuid) {
             return response()->json([
@@ -105,6 +112,5 @@ class LocationController extends Controller
             'status' => true,
             'message' => 'Location has been deleted successfully',
         ]);
-
     }
 }
