@@ -57,7 +57,8 @@ class LocationController extends Controller
             return redirect('/locations')->with('error', "Location ID missing");
         }
 
-        $location = Location::where(['uuid' => $request->uuid, 'vendor_id' => $request->user()->vendor_id])->first();
+        //$location = Location::where(['uuid' => $request->uuid, 'vendor_id' => $request->user()->vendor_id])->first();
+        $location = Location::where(['uuid' => $request->uuid])->first();
 
         if (empty($location)) {
             return redirect('/locations')->with('error', "Sorry, the ID '{$request->uuid}' is associated with any location");
