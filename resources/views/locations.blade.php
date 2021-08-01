@@ -74,7 +74,9 @@
                             <tr>
                                 <th>#</th>
                                 <th>Location</th>
-                                <th>Price</th>
+                                <th>Standard Price</th>
+                                <th>Same Day Price</th>
+                                <th>Next Day Price</th>
                                 <th>Date Added</th>
                                 <th>Action</th>
                             </tr>
@@ -87,7 +89,9 @@
                                 <tr>
                                     <td>{{ ($key + 1) }}</td>
                                     <td>{{ $location->name }}</td>
-                                    <td>{{ $location->price }}</td>
+                                    <td>{{ $location->standard_price }}</td>
+                                    <td>{{ $location->same_day_price }}</td>
+                                    <td>{{ $location->next_day_price }}</td>
                                     <td>{{ \Carbon\Carbon::parse($location->created_at)->format('h:ia F dS, Y') }}</td>
                                     <td>
                                         <div class="dropdown">

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Location extends Model
 {
-    protected $fillable = ['id', 'name', 'price', 'uuid'];
+    protected $fillable = ['id', 'name', 'standard_price', 'same_day_price', 'next_day_price', 'uuid'];
 
     public function orders() {
 

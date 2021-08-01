@@ -29,7 +29,7 @@
                     <form method="post" action="{{ route('location-add') }}">
 
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="name">Location</label>
                                     <input type="text" class="form-control @error('name') is-invalid @enderror"
@@ -43,14 +43,44 @@
 
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="price">Price</label>
+                                    <label for="standard_price">Standard Price</label>
                                     <input type="number"
-                                           class="form-control @error('price') is-invalid @enderror" id="price"
-                                           value="{{ old('price')  }}" name="price" placeholder="Enter price">
+                                           class="form-control @error('standard_price') is-invalid @enderror" id="standard_price"
+                                           value="{{ old('standard_price')  }}" name="standard_price" placeholder="Enter standard price">
 
-                                    @error('price')
+                                    @error('standard_price')
+                                    <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="same_day_price">Same Day Price</label>
+                                    <input type="number"
+                                           class="form-control @error('same_day_price') is-invalid @enderror" id="same_day_price"
+                                           value="{{ old('same_day_price')  }}" name="same_day_price" placeholder="Enter same day price">
+
+                                    @error('same_day_price')
+                                    <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="next_day_price">Next Day Price</label>
+                                    <input type="number"
+                                           class="form-control @error('next_day_price') is-invalid @enderror" id="next_day_price"
+                                           value="{{ old('next_day_price')  }}" name="next_day_price" placeholder="Enter next day price">
+
+                                    @error('next_day_price')
                                     <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
                                             </span>
