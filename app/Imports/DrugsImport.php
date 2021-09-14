@@ -18,6 +18,8 @@ class DrugsImport implements ToModel, WithHeadingRow
 
     public function model(array $row)
     {
+        print_r($row);
+        return;
         $category = DrugCategory::where('name', $row['category'])->first();
         if (!$category) {
             $category = DrugCategory::create([
