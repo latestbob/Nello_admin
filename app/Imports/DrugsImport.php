@@ -36,7 +36,7 @@ class DrugsImport implements ToModel, WithHeadingRow
                     'sku' => $row['drug_id'],
                     'name' => $row['item_name'],
                     'brand' => $row['brand'],
-                    'quantity' => $row['quantity'],
+                    'quantity' =>  0, //$row['quantity'],
                     'category_id' => $category->id,
                     'dosage_type' => $row['dosage_form'],
                     'price' => (float) str_replace(',', '', $row['price']),
