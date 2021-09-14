@@ -20,7 +20,7 @@ class DrugsImport implements ToModel, WithHeadingRow
 
     public function model(array $row)
     {
-        if (!is_numeric($row['category']) && empty($row['category'])) {
+        if (!is_numeric($row['category']) && !empty($row['category'])) {
             $this->count++;
             print_r($row);
             echo "\n{$this->count} \n";
