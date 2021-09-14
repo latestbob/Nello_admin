@@ -14,6 +14,6 @@ class DrugController extends Controller
     public function import(Request $request)
     {
         Excel::import(new DrugsImport, request()->file('drugs_file'));
-        return ['msg' => 'Drugs imported successfully'];
+        return ['message' => 'Drugs imported successfully', 'status' => true ];
     }
 }
