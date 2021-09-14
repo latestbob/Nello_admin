@@ -34,17 +34,16 @@ class RiderController extends Controller
                         "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%"
                     ]
                 );
-
             })->when($gender, function ($query, $gender) {
 
                 $query->where('gender', '=', "{$gender}");
-
             })->paginate($size);
 
         return view('riders', compact('riders', 'search', 'gender', 'size'));
     }
 
-    public function viewRider(Request $request) {
+    public function viewRider(Request $request)
+    {
 
         if (empty($uuid = $request->uuid)) {
             return redirect('/riders')->with('error', "Rider ID missing");
@@ -62,10 +61,14 @@ class RiderController extends Controller
                 'firstname' => 'required|string|max:50',
                 'lastname'  => 'required|string|max:50',
                 'middlename' => 'nullable|string|max:50',
-                'email' => ['required', 'string', 'email', 'max:255',
-                    Rule::unique('users', 'email')->ignore($rider->id)],
-                'phone' => ['required', 'digits_between:11,16',
-                    Rule::unique('users', 'phone')->ignore($rider->id)],
+                'email' => [
+                    'required', 'string', 'email', 'max:255',
+                    Rule::unique('users', 'email')->ignore($rider->id)
+                ],
+                'phone' => [
+                    'required', 'digits_between:11,16',
+                    Rule::unique('users', 'phone')->ignore($rider->id)
+                ],
                 'location' => 'required|numeric|exists:locations,id',
                 'dob' => 'required|date_format:Y-m-d|before_or_equal:today',
                 'address' => 'nullable|string',
@@ -83,7 +86,7 @@ class RiderController extends Controller
             if ($request->hasFile('picture')) {
 
                 $data['picture'] = $this->uploadFile($request, 'picture');
-//            $data['image'] = 'http://www.famacare.com/img/famacare.png';
+                //$data['image'] = 'http://www.famacare.com/img/famacare.png';
 
             }
 
@@ -96,7 +99,6 @@ class RiderController extends Controller
             $rider->update($data);
 
             session()->put('success', "{$rider->firstname}'s profile has been updated successfully");
-
         }
 
         $locations = Location::all();
@@ -104,7 +106,8 @@ class RiderController extends Controller
         return view('rider-view', compact('rider', 'locations', 'uuid'));
     }
 
-    public function addRider(Request $request) {
+    public function addRider(Request $request)
+    {
 
         if (strtolower($request->method()) == "post") {
 
@@ -132,7 +135,7 @@ class RiderController extends Controller
             if ($request->hasFile('picture')) {
 
                 $data['picture'] = $this->uploadFile($request, 'picture');
-//            $data['image'] = 'http://www.famacare.com/img/famacare.png';
+                //            $data['image'] = 'http://www.famacare.com/img/famacare.png';
 
             }
 
@@ -150,11 +153,9 @@ class RiderController extends Controller
             if (!$rider) {
 
                 return redirect("/riders")->with('error', "Sorry, we couldn't create a rider at this time. Please try again later.");
-
             } else $rider->notify(new NotifyCreatedRider());
 
             return redirect("/riders")->with('success', "Rider has been added successfully");
-
         }
 
         $locations = Location::all();
@@ -162,7 +163,8 @@ class RiderController extends Controller
         return view('rider-add', compact('locations'));
     }
 
-    public function deleteRider(Request $request) {
+    public function deleteRider(Request $request)
+    {
 
         if (!$request->uuid) {
             return response()->json([
@@ -185,6 +187,5 @@ class RiderController extends Controller
             'status' => true,
             'message' => 'Rider has been deleted successfully',
         ]);
-
     }
 }

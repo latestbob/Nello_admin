@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Models\DrugCategory;
 use Illuminate\Support\Str;
 use App\Models\PharmacyDrug;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -17,13 +18,20 @@ class DrugsImport implements ToModel, WithHeadingRow
 
     public function model(array $row)
     {
+        $category = DrugCategory::where('name', $row['category'])->first();
+        if (!$category) {
+            $category = DrugCategory::create([
+                'name' => $row['category']
+            ]);
+        }
+
         if (isset($row['drug_id'])) {
             return new PharmacyDrug([
                 'sku' => $row['drug_id'],
                 'name' => $row['item_name'],
                 'brand' => $row['brand'],
                 'quantity' => $row['quantity'],
-                'category_id' => $row['category_id'],
+                'category_id' => $category->id,
                 'dosage_type' => $row['dosage_form'],
                 'price' => (double) str_replace(',', '', $row['price']),
                 'require_prescription' => strtolower($row['require_prescription']) == 'no' ? 0 : 1,
