@@ -11,6 +11,8 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 class DrugsImport implements ToModel, WithHeadingRow
 {
 
+    private $count = 0;
+
     public function headingRow() : int
     {
         return 1;
@@ -18,7 +20,9 @@ class DrugsImport implements ToModel, WithHeadingRow
 
     public function model(array $row)
     {
+        $this->count++;
         print_r($row);
+        echo "\n{$this->count} \n";
         return;
         $category = DrugCategory::where('name', $row['category'])->first();
         if (!$category) {
