@@ -31,7 +31,7 @@ class DrugsImport implements ToModel, WithHeadingRow
                 ]);
             }
 
-            if (isset($row['drug_id']) && !empty($row['name'])) {
+            if (isset($row['drug_id']) && !empty($row['item_name'])) {
                 return new PharmacyDrug([
                     'sku' => $row['drug_id'],
                     'name' => $row['item_name'],
