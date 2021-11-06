@@ -24,7 +24,7 @@
 
         <li class="side-nav-title side-nav-item">Modules</li>
 
-        @if(\Illuminate\Support\Facades\Auth::check() &&
+        {{-- @if(\Illuminate\Support\Facades\Auth::check() &&
                 \Illuminate\Support\Facades\Auth::user()->user_type == "admin")
             <li class="side-nav-item">
                 <a href="{{ route('feedbacks') }}" class="side-nav-link">
@@ -32,7 +32,7 @@
                     <span> Feedbacks </span>
                 </a>
             </li>
-        @endif
+        @endif --}}
 
         @if(\Illuminate\Support\Facades\Auth::check() &&
                 \Illuminate\Support\Facades\Auth::user()->user_type == "admin")
@@ -76,7 +76,7 @@
             </ul>
         </li>
 
-        @if(\Illuminate\Support\Facades\Auth::check() &&
+        {{-- @if(\Illuminate\Support\Facades\Auth::check() &&
                 (\Illuminate\Support\Facades\Auth::user()->user_type == "admin" ||
                 \Illuminate\Support\Facades\Auth::user()->user_type == "doctor"))
         <li class="side-nav-item">
@@ -85,7 +85,7 @@
                 <span> Doctors Messages </span>
             </a>
         </li>
-        @endif
+        @endif --}}
 
         @if(\Illuminate\Support\Facades\Auth::check() &&
                 \Illuminate\Support\Facades\Auth::user()->user_type == "admin")
