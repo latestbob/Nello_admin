@@ -22,4 +22,14 @@ class Location extends Model
 
         return $this->hasMany('App\Models\User', 'location_id', 'id');
     }
+
+    public function agents()
+    {
+        return $this->hasManyThrough(
+            'App\Models\User', 
+            'App\Models\Pharmacy',
+            'location_id',
+            'pharmacy_id'
+        );
+    }
 }

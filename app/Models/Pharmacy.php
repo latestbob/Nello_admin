@@ -16,7 +16,8 @@ class Pharmacy extends Model
         return $this->belongsTo(Pharmacy::class, 'parent_id', 'id');
     }
 
-    public function agents() {
+    public function agents() 
+    {
         return $this->hasMany('App\Models\User', 'pharmacy_id', 'id');
     }
 }
