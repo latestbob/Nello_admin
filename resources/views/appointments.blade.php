@@ -65,7 +65,7 @@
                                 <th>Customer Name</th>
                                 <th>Customer Email</th>
                                 <th>Reason for Visit</th>
-                                <th>Center</th>
+                                <th>Center/Doctor</th>
                                 <th>Date</th>
                                 <th>Time</th>
                             </tr>
@@ -80,7 +80,14 @@
                                     <td>{{ $appointment->user->firstname }} {{ $appointment->user->lastname }}</td>
                                     <td>{{ $appointment->user->email }}</td>
                                     <td>{{ $appointment->reason }}</td>
-                                    <td>{{ $appointment->center->name }}</td>
+                                    <td>
+                                        @if($appointment->center)
+                                        {{ $appointment->center->name }}
+                                        @endif
+                                        @if($appointment->doctor)
+                                        Dr. {{ $appointment->doctor->firstname }} {{ $appointment->doctor->lastname }}
+                                        @endif
+                                    </td>
                                     <td>{{ \Carbon\Carbon::parse($appointment->date)->format('F dS, Y') }}</td>
                                     <td>{{ \Carbon\Carbon::parse($appointment->time)->format('h:ia') }}</td>
                                 </tr>
