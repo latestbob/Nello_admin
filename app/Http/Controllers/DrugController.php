@@ -372,6 +372,7 @@ class DrugController extends Controller
 
 
             $agents = $item->order->location->agents()->whereNotNull('device_token')->pluck('device_token');
+            print_r($agents);
             // $agents = [];
             // foreach (($item->order->location->pharmacies ?? []) as $pharmacy) {
             //     foreach ($pharmacy->agents as $agent) $agents[] = $agent->device_token;
