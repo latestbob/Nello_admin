@@ -316,7 +316,6 @@ class DrugController extends Controller
 
     public function drugOrderItemAction(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'id' => 'required|numeric|exists:carts,id',
             'status' => 'required|string|in:approved,disapproved,cancelled',
@@ -329,7 +328,8 @@ class DrugController extends Controller
             ]);
         }
 
-        $item = Cart::where(['id' => $request->id, 'vendor_id' => $request->user()->vendor_id])->first();
+        $item = Cart::where(['id' => $request->id, 'vendor_id' => $request->user()->vendor_id])
+            ->with('drug')->first();
 
         if (empty($item)) {
             return response([
@@ -338,7 +338,7 @@ class DrugController extends Controller
             ]);
         }
 
-        if ($request->status == 'approved' && !$item->has_prescription) {
+        if ($request->status == 'approved' && $item->drug->require_prescription && !$item->has_prescription) {
             return response([
                 'status' => false,
                 'message' => "Sorry, you can't approve an item with no prescription"
