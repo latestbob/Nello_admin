@@ -21,7 +21,7 @@ class CustomerController extends Controller
         $gender = $request->gender;
         $size = empty($request->size) ? 10 : $request->size;
 
-        $customers = User::where('user_type', 'customer')
+        $customers = User::whereIn('user_type', ['customer', 'agent'])
             ->when($search, function ($query, $search) {
 
                 $query->whereRaw(
