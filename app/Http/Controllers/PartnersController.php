@@ -21,7 +21,7 @@ class PartnersController extends Controller
     public function create(PartnerRequest $request)
     {
         $data = $request->validated();
-        $data['api_key'] = Str::lower(Str::random(16));
+        $data['api_key'] = bcrypt(Str::random(64));
         Partner::create($data);
     }
 
