@@ -12,7 +12,7 @@
                         <li class="breadcrumb-item active">Doctors</li>
                     </ol>
                 </div>
-                <h4 class="page-title">Doctors</h4>
+                <h4 class="page-title">Registered Doctors -  {{ \DB::table('users')->where(['user_type' => 'doctor'])->count() }}</h4>
             </div>
         </div>
     </div>
@@ -71,21 +71,18 @@
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Picture</th>
-                                <th>Title</th>
+                               
                                 <th>Name</th>
                                 <th>Hospital</th>
                                 <th>Specialization</th>
                                 <th>Phone</th>
                                 <th>Email</th>
-                                <th>Address</th>
+                             
                                 <th>Gender</th>
                                 <th>Dob</th>
                                 <th>State</th>
                                 <th>City</th>
-                                <th>Religion</th>
-                                <th>Height</th>
-                                <th>Weight</th>
+                                <th>Consulting Fee</th>
                                 <th>Sponsor</th>
                                 <th>Total Prescriptions Issued</th>
                                 <th>Status</th>
@@ -99,22 +96,18 @@
                             @foreach($doctors as $key => $doctor)
                                 <tr>
                                     <td>{{ ($key + 1) }}</td>
-                                    <td><img src="{{ $doctor->image ?: ($doctor->gender == 'Male' ? asset('images/male_doc.png') : ($doctor->gender == 'Female' ? asset('images/female_doc.png') : asset('images/neutral_doc.png'))) }}"
-                                             class="img-thumbnail" width="80"/></td>
-                                    <td>{{ $doctor->title }}</td>
+                                    
                                     <td>{{ $doctor->firstname }} {{ $doctor->lastname }}</td>
                                     <td>{{ $doctor->hospital ?: 'Unavailable' }}</td>
                                     <td>{{ $doctor->aos ?: 'Unavailable' }}</td>
                                     <td>{{ $doctor->phone }}</td>
                                     <td>{{ $doctor->email }}</td>
-                                    <td>{{ $doctor->address ?: 'Unavailable' }}</td>
+                                    
                                     <td>{{ $doctor->gender ?: 'Unavailable' }}</td>
                                     <td>{{ $doctor->dob ? \Carbon\Carbon::parse($doctor->dob)->format('F dS, Y') : 'Unavailable' }}</td>
                                     <td>{{ $doctor->state ?: 'Unavailable' }}</td>
                                     <td>{{ $doctor->city ?: 'Unavailable' }}</td>
-                                    <td>{{ $doctor->religion ?: 'Unavailable' }}</td>
-                                    <td>{{ $doctor->height ?: 'Unavailable' }}</td>
-                                    <td>{{ $doctor->weight ?: 'Unavailable' }}</td>
+                                    <td>{{ $doctor->fee ?: 'Unavailable'}}</td>
                                     <td>{{ $doctor->sponsor ?: 'Unavailable' }}</td>
                                     <td>{{ $doctor->prescriptions->count() ?: 0 }}</td>
                                     <td>

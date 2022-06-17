@@ -41,6 +41,8 @@ class HealthCenterController extends Controller
 
         $healthCenter = HealthCenter::where('uuid', $request->uuid)->first();
 
+        //dd($healthCenter);
+
         if (empty($healthCenter)) {
             return redirect('/health-centers')->with('error', "Sorry, the ID '{$request->uuid}' is not associated with any health center");
         }
@@ -51,20 +53,29 @@ class HealthCenterController extends Controller
                 'name' => 'required|string|max:50',
                 'email' => ['required', 'string', 'email', 'max:255',
                     Rule::unique('health_centers', 'email')->ignore($healthCenter->id)],
-                'phone' => ['required', 'digits_between:11,16',
-                    Rule::unique('health_centers', 'phone')->ignore($healthCenter->id)],
+                'phone' => 'required',
                 'address1' => 'nullable|string',
-                'address2' => 'nullable|string',
+           
                 'state' => 'nullable|string',
                 'city'  => 'nullable|string',
-                'logo' => 'nullable|image|mimes:jpeg,jpg,png'
+                'logo' => 'nullable|image|mimes:jpeg,jpg,png',
+                'fee' => 'nullable'
             ])->validate();
 
             if ($request->hasFile('logo')) {
                 $data['logo'] = $this->uploadFile($request, 'logo');
             }
 
-            $healthCenter->update($data);
+            // $healthCenter->update($data);
+            $healthCenterr = HealthCenter::where('uuid', $request->uuid)->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'address1' => $request->address1,
+                'state' => $request->state,
+                'city' => $request->city,
+                'fee' => $request->fee
+            ]);
 
             return redirect("/health-centers")->with('success', "Health center has been updated successfully");
 

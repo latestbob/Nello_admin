@@ -16,8 +16,10 @@ class CreateLocationsTable extends Migration
         Schema::create('locations', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name')->unique();
-            $table->float('price');
+            $table->float('standard_price');
             $table->string('uuid')->unique('locations_uuid');
+            $table->float('same_day_price')->nullable();
+            $table->float('next_day_price')->nullable();
             $table->unsignedBigInteger('vendor_id');
             $table->foreign('vendor_id')->references('id')
                 ->on('vendors')->onDelete('cascade')->onUpdate('cascade');

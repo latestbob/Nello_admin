@@ -135,7 +135,7 @@
                         </div> <!-- end row -->
 
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="address1">First Address</label>
                                     <input type="text" class="form-control @error('address1') is-invalid @enderror" id="address1"
@@ -150,7 +150,7 @@
                                 </div>
                             </div> <!-- end col -->
 
-                            <div class="col-md-6">
+                            <!-- <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="address2">Second Address</label>
                                     <input type="text" class="form-control @error('address2') is-invalid @enderror" id="address2"
@@ -163,11 +163,11 @@
                                     @enderror
 
                                 </div>
-                            </div> <!-- end col -->
-                        </div> <!-- end row -->
+                            </div> end col -->
+                        </div> 
 
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="logo">Logo <small>(*optional)</small></label>
 
@@ -186,11 +186,23 @@
 
                                 </div>
                             </div>
+
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="aos">Consulting Fee</label>
+                                    <input type="text" class="form-control " id="consultingfee"
+                                           value="{{ old('fee', $healthCenter->fee) }}" name="fee" placeholder="Enter Consulting">
+
+                                    
+
+                                </div>
+                            </div>
                         </div> <!-- end row -->
 
                         @csrf
 
-                        <div class="col-md-2 offset-md-5 text-center mt-2">
+                        <div class="col-md-4  m-auto text-center mt-2">
                             <button type="submit" class="btn btn-success btn-block btn-rounded"><i
                                     class="mdi mdi-content-save"></i> Save
                             </button>

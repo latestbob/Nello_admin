@@ -19,6 +19,37 @@
     <!-- end page title -->
 
     @if(($userType == 'admin' || $userType == 'agent'))
+
+    <div class="row">
+            <div class="col-xl-6 col-lg-12">
+                <div class="card tilebox-one">
+                    <div class="card-body">
+                        
+                        <i class="uil uil-user float-right"></i>
+                        <h6 class="text-uppercase mt-0">Total Customers</h6>
+                        <h2 class="my-2" id="active-users-count"> {{ \DB::table('users')->where(['user_type' => 'customer'])->count() }}</h2>
+                        <p class="mb-0 text-muted">
+                            <span class="text-nowrap">Total Registered Customers</span>
+                        </p>
+                    </div> <!-- end card-body-->
+                </div>
+                <!--end card-->
+            </div>
+            <div class="col-xl-6 col-lg-12">
+                <div class="card tilebox-one">
+                    <div class="card-body">
+                        <i class="mdi mdi-cash float-right"></i>
+                        <h6 class="text-uppercase mt-0">Total Doctors</h6>
+                        <h2 class="my-2" id="active-users-count">{{ \DB::table('users')->where(['user_type' => 'doctor'])->count() }}</h2>
+                        <p class="mb-0 text-muted">
+                            <span class="text-nowrap">Total Registered Medical Doctors</span>
+                        </p>
+                    </div> <!-- end card-body-->
+                </div>
+                <!--end card-->
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-xl-3 col-lg-12">
                 <div class="card tilebox-one">
@@ -73,6 +104,10 @@
                 <!--end card-->
             </div>
         </div>
+
+
+        
+      
 
         <div class="row">
             <div class="col-xl-6 col-lg-12">

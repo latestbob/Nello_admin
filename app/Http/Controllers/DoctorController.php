@@ -11,6 +11,12 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
+// Doctor Controller handle all doctors request
+
+// This is handle every doctor api calls and request from the 
+//Admin Backend.
+
+
 class DoctorController extends Controller
 {
 
@@ -62,21 +68,21 @@ class DoctorController extends Controller
                 'middlename' => 'nullable|string|max:50',
                 'email' => ['required', 'string', 'email', 'max:255',
                     Rule::unique('users', 'email')->ignore($doctor->id)],
-                'phone' => ['required', 'digits_between:11,16',
-                    Rule::unique('users', 'phone')->ignore($doctor->id)],
+                
+                    
                 'dob' => 'nullable|date_format:Y-m-d|before_or_equal:today',
                 'about' => 'nullable|string',
                 'address' => 'nullable|string',
-                'hospital' => 'required|string',
+                'hospital' => 'nullable|string',
                 'state' => 'nullable|string',
                 'city'  => 'nullable|string',
-                'religion' => 'nullable|string',
+                
                 'gender' => 'required|string|in:Male,Female',
-                'height' => 'nullable|numeric',
-                'weight' => 'nullable|numeric',
+               
                 'sponsor' => 'nullable|string',
                 'aos' => 'nullable|string',
-                'picture' => 'nullable|image|mimes:jpeg,jpg,png'
+                // 'picture' => 'nullable|image|mimes:jpeg,jpg,png',
+                'fee' => 'nullable'
             ])->validate();
 
             if ($request->hasFile('picture')) {
@@ -90,9 +96,24 @@ class DoctorController extends Controller
                 $data['dob'] = Carbon::parse($data['dob'])->toDateString();
             }
 
-            $doctor->update($data);
+            
+            $doctorr = User::where(['user_type' => 'doctor', 'uuid' => $request->uuid])->update([
+                'title'=> $request->title,
+                'firstname'=>$request->firstname,
+                'lastname'=>$request->lastname,
+                'email' =>$request->email,
+                'about' => $request->about,
+                'gender' => $request->gender,
+                'state' => $request->state,
+                'city' => $request->city,
+                'address' => $request->address,
+                'hospital'=>$request->hospital,
+                'sponsor' =>$request->sponsor,
+                'aos' => $request->aos,
+                'fee' => $request->fee
 
-            session()->put('success', "{$doctor->firstname}'s profile has been updated successfully");
+            ]);
+            session()->put('success', "Doctor's profile has been updated successfully");
 
         }
 

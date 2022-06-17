@@ -67,9 +67,10 @@
                                 <th>Phone</th>
                                 <th>Email</th>
                                 <th>Address One</th>
-                                <th>Address Two</th>
+                            
                                 <th>State</th>
                                 <th>City</th>
+                                <th>Consultation Fee</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -86,9 +87,10 @@
                                     <td>{{ $healthCenter->phone ?: 'Unavailable' }}</td>
                                     <td>{{ $healthCenter->email ?: 'Unavailable' }}</td>
                                     <td>{{ $healthCenter->address1 ?: 'Unavailable' }}</td>
-                                    <td>{{ $healthCenter->address2 ?: 'Unavailable' }}</td>
+                                   
                                     <td>{{ $healthCenter->state ?: 'Unavailable' }}</td>
                                     <td>{{ $healthCenter->city ?: 'Unavailable' }}</td>
+                                    <td>{{ $healthCenter->fee ?: 'Unavailable' }}</td>
                                     <td>
                                         <label class="badge {{ $healthCenter->is_active == true ? 'badge-success' : 'badge-warning' }}">{{ $healthCenter->is_active ? 'active' : 'inactive' }}</label>
                                     </td>

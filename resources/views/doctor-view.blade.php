@@ -120,7 +120,7 @@
                         </div> <!-- end row -->
 
                         <div class="row">
-                            <div class="col-md-6">
+                            <!-- <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="phone">Phone Number</label>
                                     <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="phone"
@@ -133,7 +133,7 @@
                                     @enderror
 
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="email">Email Address</label>
@@ -275,7 +275,7 @@
 
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <!-- <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="religion">Religion</label>
                                     <input type="text" class="form-control @error('religion') is-invalid @enderror" id="religion"
@@ -288,11 +288,11 @@
                                     @enderror
 
                                 </div>
-                            </div>
+                            </div> -->
                         </div> <!-- end row -->
 
                         <div class="row">
-                            <div class="col-md-6">
+                            <!-- <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="height">Height</label>
                                     <input type="text" class="form-control @error('height') is-invalid @enderror" id="height"
@@ -305,8 +305,8 @@
                                     @enderror
 
                                 </div>
-                            </div>
-                            <div class="col-md-6">
+                            </div> -->
+                            <!-- <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="weight">Weight</label>
                                     <input type="text" class="form-control @error('weight') is-invalid @enderror" id="weight"
@@ -319,7 +319,7 @@
                                     @enderror
 
                                 </div>
-                            </div>
+                            </div> -->
                         </div> <!-- end row -->
 
                         <div class="row">
@@ -337,11 +337,11 @@
 
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <!-- <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="picture">Picture <small>(*optional)</small></label>
 
-                                    <div class="custom-file">
+                                    <!<div class="custom-file">
                                         <input type="file"
                                                class="custom-file-input @error('picture') is-invalid @enderror"
                                                name="picture" id="picture-input">
@@ -352,16 +352,29 @@
                                             <strong>{{ $message }}</strong>
                                         </span>
                                         @enderror
-                                    </div>
+                                    </div> -->
+
+                                <!-- </div>
+                            </div>  -->
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="aos">Consulting Fee</label>
+                                    <input type="text" class="form-control " id="consultingfee"
+                                           value="{{ old('fee', $doctor->fee) }}" name="fee" placeholder="Enter Consulting">
+
+                                    
 
                                 </div>
                             </div>
+
+                           
                         </div> <!-- end row -->
 
                         @csrf
 
                         <div class="col-md-2 offset-md-5 text-center mt-2">
-                            <button type="submit" class="btn btn-success btn-block btn-rounded"><i
+                            <button type="submit" class="btn btn-success  btn-rounded"><i
                                     class="mdi mdi-content-save"></i> Save
                             </button>
                         </div>

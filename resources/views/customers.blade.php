@@ -12,7 +12,7 @@
                         <li class="breadcrumb-item active">Customers</li>
                     </ol>
                 </div>
-                <h4 class="page-title">Customers</h4>
+                <h4 class="page-title">Total Customers {{ \DB::table('users')->where(['user_type' => 'customer'])->count() }} </h4>
             </div>
         </div>
     </div>
@@ -71,9 +71,9 @@
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Picture</th>
+                             
                                 <th>Name</th>
-                                <th>Specialization</th>
+                               
                                 <th>Phone</th>
                                 <th>Email</th>
                                 <th>Address</th>
@@ -96,10 +96,9 @@
                             @foreach($customers as $key => $customer)
                                 <tr>
                                     <td>{{ ($key + 1) }}</td>
-                                    <td><img src="{{ $customer->image ?: ($customer->gender == 'Male' ? asset('images/male_doc.png') : ($customer->gender == 'Female' ? asset('images/female_doc.png') : asset('images/neutral_doc.png'))) }}"
-                                             class="img-thumbnail" width="80"/></td>
+                                  
                                     <td class="name">{{ $customer->firstname }} {{ $customer->lastname }}</td>
-                                    <td>{{ $customer->aos ?: 'Unavailable' }}</td>
+                                   
                                     <td>{{ $customer->phone }}</td>
                                     <td>{{ $customer->email }}</td>
                                     <td>{{ $customer->address ?: 'Unavailable' }}</td>
