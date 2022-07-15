@@ -164,6 +164,14 @@
                 </a>
             </li>
 
+
+            <li class="side-nav-item">
+                <a href="{{route('transaction-view')}}" class="side-nav-link">
+                    <i class="uil-money-bill"></i>
+                    <span> Transactions </span>
+                </a>
+            </li>
+
             <li class="side-nav-item">
                 <a href="javascript: void(0);" class="side-nav-link">
                     <i class="uil-book-medical"></i>

@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Http;
 
 class CustomerController extends Controller
 {
@@ -94,7 +95,11 @@ class CustomerController extends Controller
 
         }
 
-        return view('customer-view', compact('customer', 'uuid'));
+        $response = Http::get('https://locationsng-api.herokuapp.com/api/v1/states');
+
+        $states =  $response->json();
+
+        return view('customer-view', compact('customer', 'uuid', 'states'));
     }
 
     public function makeAgent(Request $request)

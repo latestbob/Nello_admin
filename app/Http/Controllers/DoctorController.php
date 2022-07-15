@@ -119,7 +119,10 @@ class DoctorController extends Controller
 
         }
 
-        return view('doctor-view', compact('doctor', 'uuid'));
+        $response = Http::get('https://locationsng-api.herokuapp.com/api/v1/states');
+
+        $states =  $response->json();
+        return view('doctor-view', compact('doctor', 'uuid', 'states'));
     }
 
     public function addDoctor(Request $request) {

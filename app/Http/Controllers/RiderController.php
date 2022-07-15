@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Http;
+
 
 class RiderController extends Controller
 {
@@ -103,7 +105,11 @@ class RiderController extends Controller
 
         $locations = Location::all();
 
-        return view('rider-view', compact('rider', 'locations', 'uuid'));
+        $response = Http::get('https://locationsng-api.herokuapp.com/api/v1/states');
+
+        $states =  $response->json();
+
+        return view('rider-view', compact('rider', 'locations', 'uuid','states'));
     }
 
     public function addRider(Request $request)
@@ -160,7 +166,11 @@ class RiderController extends Controller
 
         $locations = Location::all();
 
-        return view('rider-add', compact('locations'));
+
+        $response = Http::get('https://locationsng-api.herokuapp.com/api/v1/states');
+
+        $states =  $response->json();
+        return view('rider-add', compact('locations','states'));
     }
 
     public function deleteRider(Request $request)

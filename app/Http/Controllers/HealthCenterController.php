@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Http;
 
+
 class HealthCenterController extends Controller
 {
 
@@ -82,7 +83,10 @@ class HealthCenterController extends Controller
 
         }
 
-        return view('health-center-view', compact('healthCenter', 'uuid'));
+        $response = Http::get('https://locationsng-api.herokuapp.com/api/v1/states');
+
+        $states =  $response->json();
+        return view('health-center-view', compact('healthCenter', 'uuid','states'));
     }
 
     public function addHealthCenter(Request $request) {

@@ -184,10 +184,18 @@
 
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group">
+                            <div class="form-group">
                                     <label for="state">State</label>
-                                    <input type="text" class="form-control @error('state') is-invalid @enderror" id="state"
-                                           value="{{ old('state') }}" name="state" placeholder="Enter state">
+                                    <!-- <input type="text" class="form-control @error('state') is-invalid @enderror" id="state"
+                                           value="{{ old('state') }}" name="state" placeholder="Enter state"> -->
+
+                                           <select name="state" class="form-control @error('state') is-invalid @enderror" id="state">
+                                               <option value="">Select State</option>
+
+                                               @foreach($states as $state)
+                                                    <option value="{{$state['name']}}">{{$state['name']}}</option>
+                                               @endforeach
+                                           </select>
 
                                     @error('state')
                                     <span class="invalid-feedback" role="alert">
@@ -198,10 +206,14 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="city">City</label>
-                                    <input type="text" class="form-control @error('city') is-invalid @enderror" id="city"
-                                           value="{{ old('city') }}" name="city" placeholder="Enter city">
+                            <div class="form-group">
+                                    <label for="city">L.G.A</label>
+                                    <!-- <input type="text" class="form-control @error('city') is-invalid @enderror" id="city"
+                                           value="{{ old('city') }}" name="city" placeholder="Enter city"> -->
+
+                                           <select name="city"class="form-control @error('city') is-invalid @enderror" id="city" >
+                                               <option value="">Select LGA</option>
+                                           </select>
 
                                     @error('city')
                                     <span class="invalid-feedback" role="alert">
@@ -268,10 +280,17 @@
 
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="form-group">
+                            <div class="form-group">
                                     <label for="religion">Religion</label>
-                                    <input type="text" class="form-control @error('religion') is-invalid @enderror" id="religion"
-                                           value="{{ old('religion') }}" name="religion" placeholder="Enter religion">
+                                    <!-- <input type="text" class="form-control @error('religion') is-invalid @enderror" id="religion"
+                                           value="{{ old('religion') }}" name="religion" placeholder="Enter religion"> -->
+
+                                    <select name="religion" class="form-control @error('religion') is-invalid @enderror" id="religion">
+                                        <option value="">Select Religion</option>
+                                        <option value="Christian">Christian</option>
+                                        <option value="Muslim">Muslim</option>
+                                        <option value="Others">Others</option>
+                                    </select>
 
                                     @error('religion')
                                     <span class="invalid-feedback" role="alert">
@@ -362,5 +381,51 @@
             </div> <!-- end card -->
         </div> <!-- end col -->
     </div>
+
+@endsection
+
+
+
+
+@section('js')
+
+<script type="application/javascript">
+
+$("select[name='state']").change(function (e) {
+
+let states = $(this).val();
+console.log(states)
+
+// $.ajax({
+//   url: 'http://locationsng-api.herokuapp.com/api/v1/states',
+  
+//   success: function(),
+  
+// });
+let apivalue =`https://locationsng-api.herokuapp.com/api/v1/states/${states}/lgas`;
+
+$('#city').empty()
+
+fetch(`https://locationsng-api.herokuapp.com/api/v1/states/${states}/lgas`)
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      console.log(data)
+
+      data.map(function(lga, i){
+        $('#city').append($('<option>', {
+            value: lga,
+            text: lga
+        }));
+      })
+    })
+
+
+
+});
+
+</script>
+
 
 @endsection

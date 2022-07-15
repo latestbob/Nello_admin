@@ -128,3 +128,6 @@ Route::prefix('/')->middleware(['auth', 'auth.allowed'])->group(function () {
 });
 
 Route::get('/doctors-prescription/{uuid}', 'DoctorsPrescriptionController@index')->name('doctors-prescription');
+
+
+Route::match(['post', 'get'],'/transactions', 'TransactionController@index')->name('transaction-view')->middleware('auth.admin');
