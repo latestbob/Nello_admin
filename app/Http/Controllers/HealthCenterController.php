@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Http;
 
 class HealthCenterController extends Controller
 {
@@ -97,7 +98,8 @@ class HealthCenterController extends Controller
                 'state' => 'required|string',
                 'city'  => 'required|string',
                 'center_type'  => 'required|alpha|min:3',
-                'logo' => 'nullable|image|mimes:jpeg,jpg,png'
+                'logo' => 'nullable|image|mimes:jpeg,jpg,png',
+                'fee' => 'required|numeric'
             ])->validate();
 
             if ($request->hasFile('logo')) {
@@ -112,7 +114,11 @@ class HealthCenterController extends Controller
 
         }
 
-        return view('health-center-add');
+        $response = Http::get('http://locationsng-api.herokuapp.com/api/v1/states');
+
+        $states =  $response->json();
+
+        return view('health-center-add',compact('states'));
     }
 
     public function changeStatus(Request $request) {

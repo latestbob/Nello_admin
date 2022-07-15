@@ -68,6 +68,9 @@
                                 <th>Center/Doctor</th>
                                 <th>Date</th>
                                 <th>Time</th>
+
+                                <th>CreatedAt</th>
+                                <th>Link</th>
                             </tr>
                             </thead>
 
@@ -90,6 +93,15 @@
                                     </td>
                                     <td>{{ \Carbon\Carbon::parse($appointment->date)->format('F dS, Y') }}</td>
                                     <td>{{ \Carbon\Carbon::parse($appointment->time)->format('h:ia') }}</td>
+                                    <td>{{ $appointment->created_at->diffForHumans() }}</td>
+                                    <td>
+                                    @if($appointment->doctor)
+                                        {{ $appointment->link }}
+
+                                        @else
+                                        Unavailable
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
 

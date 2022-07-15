@@ -87,6 +87,7 @@
                                 <th>Total Prescriptions Issued</th>
                                 <th>Status</th>
                                 <th>Action</th>
+                                <th>Remove</th>
                             </tr>
                             </thead>
 
@@ -133,6 +134,14 @@
                                                 @endif
                                             </div>
                                         </div>
+                                    </td>
+                                    <td> 
+                                        <form action="{{route('doctordelete',$doctor->id)}}"method="POST">
+                                            @csrf 
+                                            {{method_field('delete')}}
+
+                                            <button class="btn btn-sm btn-danger">Remove</button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach

@@ -71,6 +71,10 @@ Route::prefix('/')->middleware(['auth', 'auth.allowed'])->group(function () {
 
     Route::post('/doctor/status', 'DoctorController@changeStatus')->name('doctor-status')->middleware('auth.admin');
 
+    //remove doctor
+
+    Route::delete('/doctor/delete/{id}', 'DoctorController@deleteDoctor')->name('doctordelete')->middleware('auth.admin');
+
     Route::match(['post', 'get'],'/doctor/{uuid}/view', 'DoctorController@viewDoctor')->name('doctor-view')->middleware('auth.admin');
 
     Route::match(['post', 'get'],'/doctor/add', 'DoctorController@addDoctor')->name('doctor-add')->middleware('auth.admin');

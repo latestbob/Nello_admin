@@ -205,8 +205,16 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="state">State</label>
-                                    <input type="text" class="form-control @error('state') is-invalid @enderror" id="state"
-                                           value="{{ old('state') }}" name="state" placeholder="Enter state">
+                                    <!-- <input type="text" class="form-control @error('state') is-invalid @enderror" id="state"
+                                           value="{{ old('state') }}" name="state" placeholder="Enter state"> -->
+
+                                           <select name="state" class="form-control @error('state') is-invalid @enderror" id="state">
+                                               <option value="">Select State</option>
+
+                                               @foreach($states as $state)
+                                                    <option value="{{$state['name']}}">{{$state['name']}}</option>
+                                               @endforeach
+                                           </select>
 
                                     @error('state')
                                     <span class="invalid-feedback" role="alert">
@@ -218,9 +226,13 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="city">City</label>
-                                    <input type="text" class="form-control @error('city') is-invalid @enderror" id="city"
-                                           value="{{ old('city') }}" name="city" placeholder="Enter city">
+                                    <label for="city">L.G.A</label>
+                                    <!-- <input type="text" class="form-control @error('city') is-invalid @enderror" id="city"
+                                           value="{{ old('city') }}" name="city" placeholder="Enter city"> -->
+
+                                           <select name="city"class="form-control @error('city') is-invalid @enderror" id="city" >
+                                               <option value="">Select LGA</option>
+                                           </select>
 
                                     @error('city')
                                     <span class="invalid-feedback" role="alert">
@@ -249,9 +261,18 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="hospital">Hospital</label>
-                                    <input type="text" class="form-control @error('hospital') is-invalid @enderror" id="hospital"
-                                           value="{{ old('hospital') }}" name="hospital" placeholder="Enter hospital">
+                                    <label for="hospital">Hospital/Clinic</label>
+                                    <!-- <input type="text" class="form-control @error('hospital') is-invalid @enderror" id="hospital"
+                                           value="{{ old('hospital') }}" name="hospital" placeholder="Enter hospital"> -->
+
+                                           <select name="hospital" class="form-control @error('hospital') is-invalid @enderror" id="hospital">
+                                               <option value="">Select Medical Center</option>
+                                               @foreach($healthcenter as $centers)
+
+                                               <option value="{{$centers->name}}">{{$centers->name}}</option>
+
+                                               @endforeach
+                                           </select>
 
                                     @error('hospital')
                                     <span class="invalid-feedback" role="alert">
@@ -276,10 +297,30 @@
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="form-group">
+                                <!-- <div class="form-group">
                                     <label for="religion">Religion</label>
                                     <input type="text" class="form-control @error('religion') is-invalid @enderror" id="religion"
                                            value="{{ old('religion') }}" name="religion" placeholder="Enter religion">
+
+                                    @error('religion')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+                                </div> -->
+
+                                <div class="form-group">
+                                    <label for="religion">Religion</label>
+                                    <!-- <input type="text" class="form-control @error('religion') is-invalid @enderror" id="religion"
+                                           value="{{ old('religion') }}" name="religion" placeholder="Enter religion"> -->
+
+                                    <select name="religion" class="form-control @error('religion') is-invalid @enderror" id="religion">
+                                        <option value="">Select Religion</option>
+                                        <option value="Christian">Christian</option>
+                                        <option value="Muslim">Muslim</option>
+                                        <option value="Others">Others</option>
+                                    </select>
 
                                     @error('religion')
                                     <span class="invalid-feedback" role="alert">
@@ -323,11 +364,48 @@
                         </div> <!-- end row -->
 
                         <div class="row">
-                            <div class="col-md-6">
+                            <!-- <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="aos">Specialization</label>
                                     <input type="text" class="form-control @error('aos') is-invalid @enderror" id="aos"
                                            value="{{ old('aos') }}" name="aos" placeholder="Enter specialization">
+
+                                    @error('aos')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+                                </div>
+                            </div> -->
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="aos">Specialization</label>
+                                    <!-- <input type="text" class="form-control @error('aos') is-invalid @enderror" id="aos"
+                                           value="{{ old('aos') }}" name="aos" placeholder="Enter specialization"> -->
+
+                                           <select name="aos" class="form-control @error('aos') is-invalid @enderror" id="aos">
+                                               <option value="">Select Specialization</option>
+                                               <option value="General Practitioner">General Practitioner</option>
+                                               <option value="Dentist">Dentist</option>
+                                               <option value="Oncology">Oncology</option>
+                                               <option value="Internal Medicine">Internal Medicine</option>
+                                               <option value="Pediatrics">Pediatrics</option>
+                                               <option value="Neurology">Neurology</option>
+                                               <option value="Family Doctor">Family Doctor</option>
+                                               <option value="Orthopedics">Orthopedics</option>
+                                               <option value="Dermatology">Dermatology</option>
+                                               <option value="Opthalmology">Opthalmology</option>
+                                               <option value="Anesthesiology">Anesthesiology</option>
+                                               <option value="Psychiatry">Psychiatry</option>
+                                               <option value="Cardiology">Cardiology</option>
+                                               <option value="Gynaecology">Gynaecology</option>
+                                               <option value="General Surgery">General Surgery</option>
+                                               <option value="Neurosurgery">Neurosurgery</option>
+                                               <option value="Pathology">Pathology</option>
+
+                                           </select>
 
                                     @error('aos')
                                     <span class="invalid-feedback" role="alert">
@@ -358,6 +436,23 @@
                             </div>
                         </div> <!-- end row -->
 
+                       <div class="row">
+                       <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="fee">Consultation Fee</label>
+                                    <input type="number" class="form-control @error('fee') is-invalid @enderror" id="fee"
+                                           value="{{ old('fee') }}" name="fee" placeholder="Enter Consultation Fee">
+
+                                    @error('fee')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+
+                       </div>
                         @csrf
 
                         <div class="col-md-2 offset-md-5 text-center mt-2">
@@ -370,5 +465,49 @@
             </div> <!-- end card -->
         </div> <!-- end col -->
     </div>
+
+@endsection
+
+
+@section('js')
+
+<script type="application/javascript">
+
+$("select[name='state']").change(function (e) {
+
+let states = $(this).val();
+console.log(states)
+
+// $.ajax({
+//   url: 'http://locationsng-api.herokuapp.com/api/v1/states',
+  
+//   success: function(),
+  
+// });
+let apivalue =`http://locationsng-api.herokuapp.com/api/v1/states/${states}/lgas`;
+
+$('#city').empty()
+
+fetch(`http://locationsng-api.herokuapp.com/api/v1/states/${states}/lgas`)
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      console.log(data)
+
+      data.map(function(lga, i){
+        $('#city').append($('<option>', {
+            value: lga,
+            text: lga
+        }));
+      })
+    })
+
+
+
+});
+
+</script>
+
 
 @endsection

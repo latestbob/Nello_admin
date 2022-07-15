@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use App\Models\HealthCenter;
+use Illuminate\Support\Facades\Http;
 
 // Doctor Controller handle all doctors request
 
@@ -145,13 +147,16 @@ class DoctorController extends Controller
                 'sponsor' => 'nullable|string',
                 'aos' => 'nullable|string',
                 'hospital' => 'required|string',
-                'picture' => 'nullable|image|mimes:jpeg,jpg,png'
+                'picture' => 'nullable|image|mimes:jpeg,jpg,png',
+                'fee' => 'required'
             ])->validate();
 
-            if ($request->hasFile('picture')) {
+          
 
-                $data['picture'] = $this->uploadFile($request, 'picture');
-//            $data['image'] = 'http://www.famacare.com/img/famacare.png';
+      if ($request->hasFile('picture')) {
+
+             $data['picture'] = $this->uploadFile($request, 'picture');
+           $data['image'] = 'http://www.famacare.com/img/famacare.png';
 
             }
 
@@ -163,13 +168,19 @@ class DoctorController extends Controller
             $data['vendor_id'] = $request->user()->vendor_id;
             $data['uuid'] = Str::uuid()->toString();
             $data['user_type'] = 'doctor';
+                $data['fee'] = $request->fee;
             User::create($data);
 
-            return redirect("/doctors")->with('success', "Doctor has been added successfully");
+          return redirect("/doctors")->with('success', "Doctor has been added successfully");
 
         }
+        ///add here
 
-        return view('doctor-add');
+        $healthcenter = HealthCenter::all();
+        $response = Http::get('http://locationsng-api.herokuapp.com/api/v1/states');
+
+       $states =  $response->json();
+        return view('doctor-add',compact('healthcenter','states'));
     }
 
     public function changeStatus(Request $request) {
@@ -201,5 +212,13 @@ class DoctorController extends Controller
             'status' => true,
             'message' => "This doctor is now " . ($user->active == true ? 'active' : 'inactive')
         ]);
+    }
+
+
+    public function deleteDoctor($id){
+        $user = User::find($id)->delete();
+
+        return back()->with('success', "Doctor has removed successfully");
+        
     }
 }
