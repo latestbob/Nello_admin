@@ -105,9 +105,16 @@ class RiderController extends Controller
 
         $locations = Location::all();
 
-        $response = Http::get('https://locationsng-api.herokuapp.com/api/v1/states');
+        // $response = Http::get('https://locationsng-api.herokuapp.com/api/v1/states');
 
-        $states =  $response->json();
+        // $states =  $response->json();
+
+        $response = Http::withoutVerifying()->withHeaders([
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+            
+        ])->get('https://api.facts.ng/v1/states');
+         $states =  $response->json();
 
         return view('rider-view', compact('rider', 'locations', 'uuid','states'));
     }
@@ -167,9 +174,17 @@ class RiderController extends Controller
         $locations = Location::all();
 
 
-        $response = Http::get('https://locationsng-api.herokuapp.com/api/v1/states');
+        // $response = Http::get('https://locationsng-api.herokuapp.com/api/v1/states');
 
-        $states =  $response->json();
+        // $states =  $response->json();
+
+        $response = Http::withoutVerifying()->withHeaders([
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+            
+        ])->get('https://api.facts.ng/v1/states');
+         $states =  $response->json();
+
         return view('rider-add', compact('locations','states'));
     }
 

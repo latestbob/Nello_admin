@@ -119,9 +119,17 @@ class DoctorController extends Controller
 
         }
 
-        $response = Http::get('https://locationsng-api.herokuapp.com/api/v1/states');
+        // $response = Http::get('https://locationsng-api.herokuapp.com/api/v1/states');
 
-        $states =  $response->json();
+        // $states =  $response->json();
+
+        $response = Http::withoutVerifying()->withHeaders([
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+            
+        ])->get('https://api.facts.ng/v1/states');
+         $states =  $response->json();
+         
         return view('doctor-view', compact('doctor', 'uuid', 'states'));
     }
 
@@ -180,9 +188,18 @@ class DoctorController extends Controller
         ///add here
 
         $healthcenter = HealthCenter::all();
-        $response = Http::get('http://locationsng-api.herokuapp.com/api/v1/states');
+    //     $response = Http::get('http://locationsng-api.herokuapp.com/api/v1/states');
 
-       $states =  $response->json();
+    //    $states =  $response->json();
+
+    $response = Http::withoutVerifying()->withHeaders([
+        'Content-Type' => 'application/json',
+        'Accept' => 'application/json',
+        
+    ])->get('https://api.facts.ng/v1/states');
+     $states =  $response->json();
+
+
         return view('doctor-add',compact('healthcenter','states'));
     }
 

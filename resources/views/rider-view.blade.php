@@ -181,7 +181,7 @@
                                                <option value="">Select State</option>
 
                                                @foreach($states as $state)
-                                                    <option value="{{$state['name']}}">{{$state['name']}}</option>
+                                                    <option value="{{$state['id']}}">{{$state['name']}}</option>
                                                @endforeach
                                            </select>
 
@@ -367,7 +367,6 @@
 
 
 @section('js')
-
 <script type="application/javascript">
 
 $("select[name='state']").change(function (e) {
@@ -381,22 +380,22 @@ console.log(states)
 //   success: function(),
   
 // });
-let apivalue =`https://locationsng-api.herokuapp.com/api/v1/states/${states}/lgas`;
+let apivalue =`http://api.facts.ng/v1/states/${states}`;
 
 $('#city').empty()
 
-fetch(`https://locationsng-api.herokuapp.com/api/v1/states/${states}/lgas`)
+fetch(`http://api.facts.ng/v1/states/${states}`)
     .then((response) => {
       return response.json();
     })
     .then((data) => {
-      console.log(data)
+      console.log(data["lgas"])
 
-      data.map(function(lga, i){
-        $('#city').append($('<option>', {
-            value: lga,
-            text: lga
-        }));
+        data["lgas"].map(function(lga, i){
+            $('#city').append($('<option>', {
+                value: lga,
+                text: lga
+            }));
       })
     })
 

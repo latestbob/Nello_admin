@@ -106,7 +106,7 @@
                                                <option value="">Select State</option>
 
                                                @foreach($states as $state)
-                                                    <option value="{{$state['name']}}">{{$state['name']}}</option>
+                                                    <option value="{{$state['id']}}">{{$state['name']}}</option>
                                                @endforeach
                                            </select>
 
@@ -209,6 +209,36 @@
                                 </div>
                             </div>
 
+                            <!-- To be included later -->
+
+                            <div class="col-md-6">
+                            <div class="form-group">
+                                    <label for="aos">Specialization</label>
+                                    <!-- <input type="text" class="form-control @error('aos') is-invalid @enderror" id="aos"
+                                           value="{{ old('aos') }}" name="aos" placeholder="Enter specialization"> -->
+
+                                           <select name="aos" class="form-control @error('aos') is-invalid @enderror" id="aos">
+                                               <option value="">Select Specialization</option>
+
+                                               
+                                         
+                                               <option value="Family Medicine">Family Medicine</option>
+                                               <option value="Internal Medicine">Internal Medicine</option>
+                                               <option value="Pediatric Medicine">Pediatric Medicine</option>
+                                               <option value="Dentistry">Dentistry</option>
+                                               <option value="Preventive medicine">Preventive medicine</option>
+                                               <option value="Ophthalmology">Ophthalmology</option>
+                                               <option value="Obstetrics & gynecology">Obstetrics & gynecology</option>
+                                               <option value="Emergency medicine">Emergency medicine</option>
+                                               
+
+                                           </select>
+
+                                 
+
+                                </div>
+                            </div>
+
                        </div>
 
                         @csrf
@@ -242,22 +272,22 @@ console.log(states)
 //   success: function(),
   
 // });
-let apivalue =`http://locationsng-api.herokuapp.com/api/v1/states/${states}/lgas`;
+let apivalue =`https://api.facts.ng/v1/states/${states}`;
 
 $('#city').empty()
 
-fetch(`http://locationsng-api.herokuapp.com/api/v1/states/${states}/lgas`)
+fetch(`https://api.facts.ng/v1/states/${states}`)
     .then((response) => {
       return response.json();
     })
     .then((data) => {
-      console.log(data)
+      console.log(data["lgas"])
 
-      data.map(function(lga, i){
-        $('#city').append($('<option>', {
-            value: lga,
-            text: lga
-        }));
+        data["lgas"].map(function(lga, i){
+            $('#city').append($('<option>', {
+                value: lga,
+                text: lga
+            }));
       })
     })
 
