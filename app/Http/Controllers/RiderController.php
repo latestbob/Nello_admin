@@ -125,7 +125,7 @@ class RiderController extends Controller
         if (strtolower($request->method()) == "post") {
 
             $data = Validator::make($request->all(), [
-                'username' => 'required|string|max:30|regex:/^[a-z0-9._-]+$/|not_in:admin,rider,agent,doctor|unique:users,username',
+                'username' => 'required|string|max:30|not_in:admin,rider,agent,doctor|unique:users,username',
                 'firstname' => 'required|string|max:50',
                 'lastname'  => 'required|string|max:50',
                 'middlename' => 'nullable|string|max:50',
@@ -166,7 +166,7 @@ class RiderController extends Controller
             if (!$rider) {
 
                 return redirect("/riders")->with('error', "Sorry, we couldn't create a rider at this time. Please try again later.");
-            } else $rider->notify(new NotifyCreatedRider());
+            } else 
 
             return redirect("/riders")->with('success', "Rider has been added successfully");
         }
