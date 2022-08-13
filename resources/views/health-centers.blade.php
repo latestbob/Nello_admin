@@ -112,6 +112,8 @@
                                                             data-status="activate">Activate Center
                                                     </button>
                                                 @endif
+
+                                                <a class="dropdown-item"href="{{route('health-center-specschedule',$healthCenter->uuid)}}">Spec & Schedule</a>
                                             </div>
                                         </div>
                                     </td>

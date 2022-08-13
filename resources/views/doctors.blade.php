@@ -132,6 +132,8 @@
                                                             data-status="activate">Activate Account
                                                     </button>
                                                 @endif
+
+                                                <a class="dropdown-item"href="{{route('doctorschedule',$doctor->uuid)}}">Schedules</a>
                                             </div>
                                         </div>
                                     </td>

@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use App\Models\HealthCenter;
 use Illuminate\Support\Facades\Http;
-
+use App\DocSchedule;
 // Doctor Controller handle all doctors request
 
 // This is handle every doctor api calls and request from the 
@@ -240,5 +240,41 @@ class DoctorController extends Controller
 
         return back()->with('success', "Doctor has removed successfully");
         
+    }
+
+    public function doctorschedule($uuid){
+        $doctor = User::where('uuid',$uuid)->first();
+        $schedule = DocSchedule::where('doc_uuid',$uuid)->get();
+        return view('doctor-schedule',compact('doctor','schedule'));
+    }
+
+
+    public function doctorscheduleadd(Request $request,$uuid){
+        $this->validate($request,[
+            'specialization' => 'required',
+            'day' => 'required',
+            'time' => 'required'
+            
+        ]);
+
+        $schedule= new DocSchedule;
+        $schedule->doc_uuid = $uuid;
+        $schedule->day = $request->day;
+        $schedule->time = $request->time;
+        $schedule->specialization = $request->specialization;
+
+        $schedule->save();
+
+        return back()->with('success','Schedule Created Successfully');
+    }
+
+
+
+    //doctor schedule delete
+
+    public function doctorscheduledelete($id){
+        $schedule = DocSchedule::find($id)->delete();
+
+       return back()->with('success','Schedule removed successfully');
     }
 }

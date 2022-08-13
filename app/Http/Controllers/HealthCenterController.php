@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Http;
+use App\Specialization;
+use App\MedSchedule;
 
 
 class HealthCenterController extends Controller
@@ -169,5 +171,105 @@ class HealthCenterController extends Controller
             'status' => true,
             'message' => "This health center is now " . ($healthCenter->is_active == true ? 'active' : 'inactive')
         ]);
+    }
+
+
+    //go to spec schedule page
+
+
+    public function specschedule($uuid){
+        $healthCenter = HealthCenter::where('uuid',$uuid)->first();
+
+        $spec = Specialization::where('med_center_uuid',$uuid)->get();
+
+        $schedule = MedSchedule::where('med_uuid',$uuid)->get();
+
+
+        return view('health-center-specschedule',compact('healthCenter','spec','schedule'));
+        
+    }
+
+    //add specialization 
+
+
+    public function addspec(Request $request,$uuid){
+
+        $this->validate($request ,[
+            'specialization' => 'required'
+        ]);
+
+        $existed = Specialization::where('med_center_uuid',$uuid)->where('specialization',$request->specialization)->exists();
+
+        if($existed){
+            return back()->with('error','Specialization already exists for this Medical Center');
+        }
+
+        $healthCenter = HealthCenter::where('uuid', $uuid)->exists();
+
+        if($healthCenter){
+         
+
+            $spec = new Specialization;
+            $spec->med_center_uuid = $uuid;
+            $spec->specialization = $request->specialization;
+            $spec->save();
+
+            return back()->with('success', "Specialization added successfully");
+        }
+
+    }
+
+
+    //delete specialization
+
+
+    public function deletespec($id){
+        $spec = Specialization::find($id)->delete();
+
+        return back()->with('success','Specialization Removed successfully');
+
+        
+    }
+
+    //add schedule healthcenter
+
+    public function addschedule(Request $request,$uuid){
+        $this->validate($request,[
+            'specialization' => 'required',
+            'day' => 'required',
+            'time' => 'required'
+            
+        ]);
+
+
+        $state = HealthCenter::where('uuid',$uuid)->value('state');
+        $lga = HealthCenter::where('uuid',$uuid)->value('city');
+ 
+        $schedule = new MedSchedule;
+        
+        $schedule->med_uuid = $uuid;
+        $schedule->day = $request->day;
+        $schedule->time = $request->time;
+        $schedule->state= $state;
+        $schedule->lga = $lga;
+        $schedule->specialization=$request->specialization;
+
+        $schedule->save();
+
+        return back()->with('success','Schedule added successfully');
+
+        
+    }
+
+    //delete medical center schedule
+
+
+    public function deleteschedule($id){
+        $schedule = MedSchedule::find($id)->delete();
+
+        return back()->with('success','Schedule removed successfully');
+
+        
+        
     }
 }

@@ -65,6 +65,25 @@ Route::prefix('/')->middleware(['auth', 'auth.allowed'])->group(function () {
 
     Route::match(['post', 'get'],'/health-center/{uuid}/view', 'HealthCenterController@viewHealthCenter')->name('health-center-view')->middleware('auth.admin');
 
+    Route::get('/health-center/{uuid}/spec-schedule','HealthCenterController@specschedule')->name('health-center-specschedule')->middleware('auth.admin');
+
+    // Add specialization
+
+    Route::post('/health-center/{uuid}/addspec','HealthCenterController@addspec')->name('health-center-addspec')->middleware('auth.admin');
+
+    //Remove Specialization
+
+    Route::delete('/health-center/spec/{id}','HealthCenterController@deletespec')->name('health-center-delete-spec')->middleware('auth.admin');
+
+    //add medical center schedule
+
+    Route::post('/health-center/{uuid}/addschedule','HealthCenterController@addschedule')->name('health-center-addschedule')->middleware('auth.admin');
+
+    //delete medical center schedule
+
+    Route::delete('/health-center/{id}/schedule','HealthCenterController@deleteschedule')->name('health-center-deleteschedule')->middleware('auth.admin');
+
+
     Route::match(['post', 'get'],'/health-center/add', 'HealthCenterController@addHealthCenter')->name('health-center-add')->middleware('auth.admin');
 
     Route::get('/doctors', 'DoctorController@index')->name('doctors')->middleware('auth.admin');
@@ -74,6 +93,19 @@ Route::prefix('/')->middleware(['auth', 'auth.allowed'])->group(function () {
     //remove doctor
 
     Route::delete('/doctor/delete/{id}', 'DoctorController@deleteDoctor')->name('doctordelete')->middleware('auth.admin');
+
+
+    //doctor schedule page
+
+    Route::get('/doctor/{uuid}/schedule','DoctorController@doctorschedule')->name('doctorschedule')->middleware('auth.admin');
+
+    //doctor schedule add
+
+    Route::post('/doctor/{uuid}/schedule','DoctorController@doctorscheduleadd')->name('doctor-schedule-add')->middleware('auth.admin');
+
+    //doctor schedule remove
+
+    Route::delete('/doctor/schedule/{id}','DoctorController@doctorscheduledelete')->name('doctor-schedule-delete')->middleware('auth.admin');
 
     Route::match(['post', 'get'],'/doctor/{uuid}/view', 'DoctorController@viewDoctor')->name('doctor-view')->middleware('auth.admin');
 
