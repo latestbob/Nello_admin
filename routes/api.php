@@ -24,3 +24,49 @@ Route::post('doctors/import', 'Api\DoctorController@import')->name('doctor-impor
 Route::post('/gen/otp','Otpcontroller@generateotp');
 
 Route::post('/validate/otp','Otpcontroller@validateotp');
+
+
+//Embanqo controller here
+
+//OnlineDoctorList api
+
+Route::get('/onlinedoctors','EmbanqoController@getonlinedoctors');
+
+
+//DraftOnlineBooking API doctor
+
+Route::post('/draftbooking','EmbanqoController@draftonlinebooking');
+
+
+//complete Online Booking
+
+Route::post('/completeonlinebook','EmbanqoController@completeOnlineBooking');
+
+
+//getstates
+
+Route::get('/getstates','EmbanqoController@getStates');
+
+//get Locations
+Route::get('/getlocation','EmbanqoController@getLocations');
+
+
+//get Facilities
+
+Route::get('/getfacilities','EmbanqoController@getFacilities');
+
+
+//checkavailability
+
+Route::get('/checkavailability','EmbanqoController@checkavailability');
+
+// draft Facility visit
+
+Route::post('/facilitybook','EmbanqoController@draftfacilitybooking');
+
+
+//complete facility visit
+
+Route::post('/completefacilitybooking','EmbanqoController@completefacilityvisit');
+
+
