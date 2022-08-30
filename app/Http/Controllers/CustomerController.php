@@ -10,7 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Http;
-use App\Passwordactivity;
+
+use DB;
 
 class CustomerController extends Controller
 {
@@ -180,8 +181,8 @@ class CustomerController extends Controller
     public function activities(){
 
 
-        
-        $activity = Passwordactivity::all();
+
+        $activity = DB::table('passwordactivities')->get();
         return view('passwordactivity',compact('activity'));
 
 
