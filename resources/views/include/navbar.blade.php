@@ -173,6 +173,13 @@
             </li>
 
             <li class="side-nav-item">
+                <a href="{{route('password-activity')}}" class="side-nav-link">
+                    <i class="uil uil-user"></i>
+                    <span> Password Activity </span>
+                </a>
+            </li>
+
+            <li class="side-nav-item">
                 <a href="javascript: void(0);" class="side-nav-link">
                     <i class="uil-book-medical"></i>
                     <span> Health Tips </span>

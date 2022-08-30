@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Http;
+use App\Passwordactivity;
 
 class CustomerController extends Controller
 {
@@ -131,4 +132,60 @@ class CustomerController extends Controller
             'message' => "You have successfully made {$customer->firstname} an agent",
         ]);
     }
+
+    public function activitiesonpassword(Request $request){
+        
+        $validate = Validator::make($request->all(), [
+            'uuid' => 'required|exists:users,uuid',
+            'firstname' => 'required',
+            'lastname' => 'required'
+        ]);
+
+        if ($validate->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validate->errors(),
+            ]);
+        }
+
+
+        $existed = User::where('upi',$request->upi)->exists();
+        $alreadychanged = Passwordactivity::where('upi',$request->upi)->exists();
+
+        //check if upi exists in users table
+        if($existed){
+
+                //check if password has not been changed 
+                // $table->string('upi');
+                // $table->string('email');
+                // $table->string('firstname');
+                // $table->string('lastname');
+
+            if(!$alreadychanged){
+                $activity = new Passwordactivity;
+                $activity->upi = $request->upi;
+                $activity->email = $request->email;
+                $activity->firstname = $request->firstname;
+                $activity->lastname = $request->lastname;
+                $activity->save();
+            }
+
+            
+
+        }
+
+    }
+
+
+    public function activities(){
+
+
+        
+        $activity = Passwordactivity::all();
+        return view('passwordactivity',compact('activity'));
+
+
+    }
+
+
 }

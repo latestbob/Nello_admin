@@ -70,3 +70,14 @@ Route::post('/facilitybook','EmbanqoController@draftfacilitybooking');
 Route::post('/completefacilitybooking','EmbanqoController@completefacilityvisit');
 
 
+//Embanqo Webhook Url
+
+Route::post('/webhooksend','EmbanqoController@webhook');
+
+Route::post('/webhook','EmbanqoController@webhookreceive');
+
+
+
+Route::post('/famacarepassword','CustomerController@activitiesonpassword');
+
+

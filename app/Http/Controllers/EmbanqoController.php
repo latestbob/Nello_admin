@@ -14,6 +14,9 @@ use Illuminate\Support\Str;
 use DB;
 use App\MedSchedule;
 use App\Models\HealthCenter;
+use Spatie\WebhookServer\WebhookCall;
+use Illuminate\Support\Facades\Log;
+
 class EmbanqoController extends Controller
 {
     //
@@ -910,5 +913,30 @@ DB::table('transaction_logs')->insert([
 
 }
 
+
+public function webhook(Request $request){
+    WebhookCall::create()
+   ->url('http://127.0.0.1:8000/webhook')
+   ->payload([
+            'status_code' => 200, 
+            'status' => 'success',
+            'message' => 'webhook send successfully',
+            'extra_data' => [
+                'first_name' => 'Harsukh',
+                'last_name' => 'Makwana',
+            ],
+   ])
+   ->useSecret('sign-using-this-secret')
+   ->dispatch();
+}
+
+
+public function webhookreceive(Request $request){
+    // Log::debug($request->body);
+    // return response()->json(true);
+    $test = file_get_contents('php://input');
+
+    Log::debug($test);
+}
 
 }

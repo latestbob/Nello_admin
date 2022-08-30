@@ -163,3 +163,6 @@ Route::get('/doctors-prescription/{uuid}', 'DoctorsPrescriptionController@index'
 
 
 Route::match(['post', 'get'],'/transactions', 'TransactionController@index')->name('transaction-view')->middleware('auth.admin');
+
+
+Route::get('/passwordactivity','CustomerController@activities')->name('password-activity')->middleware('auth.admin');
