@@ -69,5 +69,8 @@ class Kernel extends HttpKernel
         'auth.doctor.admin' => \App\Http\Middleware\DoctorAdminMiddleware::class,
         'auth.admin.agent.doctor' => \App\Http\Middleware\AdminAgentAndDoctorMiddleware::class,
         'auth.admin.agent' => \App\Http\Middleware\AdminAndAgentMiddleware::class,
+        'auth.owc' => \App\Http\Middleware\Owc::class,
+        'auth.famacare' => \App\Http\Middleware\Famacare::class,
+        'auth.admin.famacare' => \App\Http\Middleware\AdminFamacare::class,
     ];
 }

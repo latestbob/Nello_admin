@@ -11,16 +11,17 @@ class TransactionController extends Controller
     public function  index(Request $request){
 
         $size = empty($request->size) ? 10 : $request->size;
-        $transactions = DB::table('transaction_logs')->paginate($size);        
-        // if (!empty($search = $request->search)) {
+        $transactions = DB::table('transaction_logs');   
 
-        //     $transactions = DB::table('transaction_logs')->whereRaw(
-        //         "(transactions.reason like ?  or transactions.gateway_reference like ? or transactions.email like ?)",
-        //         [
-        //             "%{$search}%", "%{$search}%", "%{$search}%", 
-        //         ]
-        //     );
-        // }
+        if (!empty($search = $request->search)) {
+
+            $transactions = DB::table('transaction_logs')->whereRaw(
+                "(reason like ?  or gateway_reference like ? or email like ? or system_reference like ? or amount = ?)",
+                [
+                    "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%", $search,
+                ]
+            );
+        }
 
         // $dateEnd = null;
 
@@ -34,8 +35,8 @@ class TransactionController extends Controller
         //     );
         // }
         
-        // $transactions = $transactions->paginate($size);
+        $transactions = $transactions->orderBy('id', 'DESC')->paginate($size);
        
-       return view('transactions',compact('transactions','size'));
+       return view('transactions',compact('transactions','size', 'search'));
     }
 }

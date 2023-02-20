@@ -344,9 +344,11 @@
 
                                            <select name="aos" class="form-control @error('aos') is-invalid @enderror" id="aos">
                                                <option value="">Select Specialization</option>
-                                               <option value="General Practitioner">General Practitioner</option>
+                                               <option value="General Practitioner(GP)">General Practitioner(GP)</option>
                                                <option value="Dentist">Dentist</option>
                                                <option value="Oncology">Oncology</option>
+                                               <option value="Nurse"> Nurse  </option>
+                                          
                                                <option value="Internal Medicine">Internal Medicine</option>
                                                <option value="Pediatrics">Pediatrics</option>
                                                <option value="Neurology">Neurology</option>
@@ -372,25 +374,25 @@
 
                                 </div>
                             </div>
-                            <!-- <div class="col-md-6">
+                            <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="picture">Picture <small>(*optional)</small></label>
+                                    <label for="picture">Picture </label>
 
-                                    <!<div class="custom-file">
-                                        <input type="file"
-                                               class="custom-file-input @error('picture') is-invalid @enderror"
-                                               name="picture" id="picture-input">
-                                        <label class="custom-file-label" for="picture-input">Choose file</label>
+                                   
+                                        <input type="text"
+                                               class="form-control @error('picture') is-invalid @enderror"
+                                               name="picture" id="picture-input"placeholder="Insert image url">
+                                       
 
                                         @error('picture')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                         @enderror
-                                    </div> -->
+                                   
 
-                                <!-- </div>
-                            </div>  -->
+                                 </div>
+                            </div> 
 
                             <div class="col-md-6">
                                 <div class="form-group">

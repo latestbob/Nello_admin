@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Coupon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use DB;
 
 class CouponController extends Controller
 {
@@ -13,7 +14,12 @@ class CouponController extends Controller
         $size = empty($request->size) ? 10 : $request->size;
         $search = $request->search;
         $coupons = Coupon::when($search, function($query, $search){
-            $query->where('name', 'LIKE', "%{$search}%");
+            $query->where('name', 'LIKE', "%{$search}%")
+            ->orWhere('code', 'LIKE', "%{$search}%")
+            ->orWhere('type', 'LIKE', "%{$search}%")
+            ->orWhere('value', 'LIKE', "%{$search}%")
+            ;
+            ;
         })->paginate($size);
 
         return view('drug-coupons', compact('size', 'search', 'coupons'));

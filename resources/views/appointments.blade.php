@@ -56,6 +56,7 @@
                         </div>
                     </div>
 
+                    @if($appointments->count() > 0 )
                     <div class="table-responsive">
 
                         <table class="table dataTable w-100">
@@ -65,12 +66,15 @@
                                 <th>Customer Name</th>
                                 <th>Customer Email</th>
                                 <th>Reason for Visit</th>
-                                <th>Center/Doctor</th>
+                                <th>Center/Specialist</th>
+                                <th>Payment Ref </th>
                                 <th>Date</th>
                                 <th>Time</th>
+                                <th>Status</th>
 
                                 <th>CreatedAt</th>
                                 <th>Link</th>
+                                <th>Actions</th>
                             </tr>
                             </thead>
 
@@ -78,9 +82,18 @@
                             <tbody>
 
                             @foreach($appointments as $key => $appointment)
+
+                            @if($appointment->user)
                                 <tr>
                                     <td>{{ ($key + 1) }}</td>
+
+                                    @if($appointment->user->firstname)
                                     <td>{{ $appointment->user->firstname }} {{ $appointment->user->lastname }}</td>
+
+                                    @else
+                                    <td>Unavailable</td>
+                                    @endif
+                                    
                                     <td>{{ $appointment->user->email }}</td>
                                     <td>{{ $appointment->reason }}</td>
                                     <td>
@@ -88,11 +101,22 @@
                                         {{ $appointment->center->name }}
                                         @endif
                                         @if($appointment->doctor)
-                                        Dr. {{ $appointment->doctor->firstname }} {{ $appointment->doctor->lastname }}
+                                        {{$appointment->doctor->title}}. {{ $appointment->doctor->firstname }} {{ $appointment->doctor->lastname }}
                                         @endif
                                     </td>
+                                    <td>{{$appointment->ref_no}} </td>
                                     <td>{{ \Carbon\Carbon::parse($appointment->date)->format('F dS, Y') }}</td>
                                     <td>{{ \Carbon\Carbon::parse($appointment->time)->format('h:ia') }}</td>
+                                    <td> @if($appointment->status == "completed") 
+
+                                        <p class="badge badge-success text-light">{{$appointment->status}}</p>
+
+                                        @else 
+                                        <p class="badge badge-secondary text-light">{{$appointment->status}}</p>
+
+                                    @endif
+
+                                    </td>
                                     <td>{{ $appointment->created_at->diffForHumans() }}</td>
                                     <td>
                                     @if($appointment->doctor)
@@ -102,13 +126,62 @@
                                         Unavailable
                                         @endif
                                     </td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button"
+                                                    id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                                    aria-expanded="false">
+                                                Action
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <!-- <a class="dropdown-item" href="">View More</a> -->
+                                                
+                                                @if(!empty($appointment->status == "pending"))
+                                                
+                                                <form action="{{route('appointmentupdate',$appointment->id)}}"method="POST">
+                                                    @csrf
+                                                    {{method_field('PUT')}}
+
+                                                    <button  class="dropdown-item status-toggle" 
+                                                            data-status="cancelled">Mark As Complete
+                                                    </button>
+                                                </form>
+                                         
+                                                @else
+                                                   <form action="{{route('appointmentpending',$appointment->id)}}"method="POST">
+                                                    @csrf 
+
+                                                    {{method_field('PUT')}}
+
+                                                    <button class="dropdown-item status-toggle" 
+                                                            data-status="cancelled">Mark as pending
+                                                    </button>
+                                                   </form>
+                                                @endif
+
+                                                <a href="{{route('appointmentreschedule',$appointment->id)}}" class="dropdown-item " 
+                                                            >Re-Schedule
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
+
+                                @endif
                             @endforeach
 
                             </tbody>
                         </table>
 
                     </div>
+
+                    @else 
+
+                    <div class="alert alert-warning text-center py-3 mt-3">No record was found</div>
+
+                    @endif
+
+
 
                     <div class="table-responsive mt-3">
                         {{ $appointments->links() }}

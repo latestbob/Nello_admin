@@ -108,7 +108,7 @@
                                     <td>{{ $doctor->dob ? \Carbon\Carbon::parse($doctor->dob)->format('F dS, Y') : 'Unavailable' }}</td>
                                     <td>{{ $doctor->state ?: 'Unavailable' }}</td>
                                     <td>{{ $doctor->city ?: 'Unavailable' }}</td>
-                                    <td>{{ $doctor->fee ?: 'Unavailable'}}</td>
+                                    <td>₦{{ $doctor->fee ?: 'Unavailable'}}</td>
                                     <td>{{ $doctor->sponsor ?: 'Unavailable' }}</td>
                                     <td>{{ $doctor->prescriptions->count() ?: 0 }}</td>
                                     <td>
@@ -134,6 +134,9 @@
                                                 @endif
 
                                                 <a class="dropdown-item"href="{{route('doctorschedule',$doctor->uuid)}}">Schedules</a>
+
+
+                                                <a class="dropdown-item"href="{{route('specialistcalendar',$doctor->id)}}">Calendar</a>
                                             </div>
                                         </div>
                                     </td>

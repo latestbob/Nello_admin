@@ -22,6 +22,14 @@ class RedirectIfAuthenticated
             return redirect(RouteServiceProvider::HOME);
         }
 
+        elseif (($check = Auth::guard($guard)->check()) && Auth::user()->email == 'admin@owcappointment.com') {
+            return redirect(route('owcadmin'));
+        }
+
+        elseif (($check = Auth::guard($guard)->check()) && Auth::user()->email == 'admin@famacare.com') {
+            return redirect(route('famacareadmin'));
+        }
+
         if ($check) Auth::logout();
 
         return $next($request);

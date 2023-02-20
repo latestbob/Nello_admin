@@ -83,8 +83,8 @@
                                     <td>{{ $item->drug->category->name }}</td>
                                     <td>{{ $item->drug->brand }}</td>
                                     <td>{{ $item->quantity }}</td>
-                                    <td>{{ $item->drug->price }}</td>
-                                    <td>{{ $item->price }}</td>
+                                    <td>₦{{ $item->drug->price }}</td>
+                                    <td>₦{{ $item->drug->price *  $item->quantity }}</td>
                                     <td><label class="badge {{ $item->has_prescription == true ? 'badge-success' : 'badge-warning' }}">{{ $item->has_prescription ? 'Yes' : 'No' }}</label></td>
                                     <td><label class="badge {{ $item->status == 'approved' ? 'badge-success' : ($item->status == 'cancelled' ? 'badge-danger' : 'badge-warning') }}">{{ $item->status }}</label></td>
                                     <td>{{ $item->accepted_by->name ?? 'None' }}</td>

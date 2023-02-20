@@ -13,6 +13,7 @@ use Illuminate\Validation\Rule;
 use App\Models\HealthCenter;
 use Illuminate\Support\Facades\Http;
 use App\DocSchedule;
+use App\Models\Appointment;
 // Doctor Controller handle all doctors request
 
 // This is handle every doctor api calls and request from the 
@@ -30,13 +31,24 @@ class DoctorController extends Controller
         $gender = $request->gender;
         $size = empty($request->size) ? 10 : $request->size;
 
-        $doctors = User::with('prescriptions')->where('user_type', 'doctor')
+
+        if($search == "active"){
+            $doctors = User::where('user_type','doctor')->where('active',true)->paginate($size);
+        }
+
+        elseif($search == "inactive"){
+            $doctors = User::where('user_type','doctor')->where('active',false)->paginate($size);
+        }
+
+        else{
+
+            $doctors = User::with('prescriptions')->where('user_type', 'doctor')
             ->when($search, function ($query, $search) {
 
                 $query->whereRaw(
-                    "(firstname like ? or lastname like ? or phone like ? or email like ? or aos like ? or hospital like ?)",
+                    "(firstname like ? or lastname like ? or phone like ? or email like ? or aos like ? or hospital like ? or city like ? or state like ? or sponsor like ?)",
                     [
-                        "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%"
+                        "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%"
                     ]
                 );
 
@@ -45,6 +57,8 @@ class DoctorController extends Controller
                 $query->where('gender', '=', "{$gender}");
 
             })->paginate($size);
+        }
+  
 
         return view('doctors', compact('doctors', 'search', 'gender', 'size'));
     }
@@ -84,15 +98,16 @@ class DoctorController extends Controller
                 'sponsor' => 'nullable|string',
                 'aos' => 'nullable|string',
                 // 'picture' => 'nullable|image|mimes:jpeg,jpg,png',
-                'fee' => 'nullable'
+                'fee' => 'nullable',
+                'picture' => 'required'
             ])->validate();
 
-            if ($request->hasFile('picture')) {
+//             if ($request->hasFile('picture')) {
 
-                $data['picture'] = $this->uploadFile($request, 'picture');
-//            $data['image'] = 'http://www.famacare.com/img/famacare.png';
+//                 $data['picture'] = $this->uploadFile($request, 'picture');
+// //            $data['image'] = 'http://www.famacare.com/img/famacare.png';
 
-            }
+//             }
 
             if (!empty($data['dob'])) {
                 $data['dob'] = Carbon::parse($data['dob'])->toDateString();
@@ -112,7 +127,8 @@ class DoctorController extends Controller
                 'hospital'=>$request->hospital,
                 'sponsor' =>$request->sponsor,
                 'aos' => $request->aos,
-                'fee' => $request->fee
+                'fee' => $request->fee,
+                'picture' => $request->picture
 
             ]);
             session()->put('success', "Doctor's profile has been updated successfully");
@@ -277,4 +293,142 @@ class DoctorController extends Controller
 
        return back()->with('success','Schedule removed successfully');
     }
+
+
+
+    // nello website doctor calendar days
+
+    public function nellodoctorscalendardays($uuid){
+        
+        $days = DocSchedule::where("doc_uuid",$uuid)->distinct()->get(['day']);
+
+        //return response()->json($days);
+        $output = [];
+
+        foreach($days as $number){
+            $day_of_week = (int) date('N', strtotime($number["day"]));
+
+            array_push($output,$day_of_week);
+        }
+
+        return $output;
+    }
+
+
+
+    // nello website doctor booked time 
+//     public function nellodoctortimes(Request $request){
+//         $validator = Validator::make($request->all(), [
+//             'specialization'=> "required",
+//             'uuid' => 'required|exists:users',
+//             'date'=> 'required|date_format:d-m-Y',
+// ]);
+
+//         if($validator->fails()){
+//             return response([
+//                 'status' => 'failed',
+//                 'message' => $validator->errors()
+//             ]);
+//         }
+
+
+//         $dayname = Carbon::parse($request->date)->format('l');
+
+//         return $dayname;
+//     }
+
+
+public function getdoctorappointmenttime(Request $request){
+    $validator = Validator::make($request->all(), [
+                    'specialization'=> "required",
+                    'uuid' => 'required|exists:users',
+                    'date'=> 'required|date_format:d-m-Y',
+        ]);
+        
+                if($validator->fails()){
+                    return response([
+                        'status' => 'failed',
+                        'message' => $validator->errors()
+                    ]);
+                }
+          date_default_timezone_set('Africa/Lagos');
+        
+                $dayname = Carbon::parse($request->date)->format('l');
+                $doctor_id = User::where("id",$request->uuid)->value("id");
+        
+               // return $dayname;
+
+               $all_time = DocSchedule::where("doc_uuid",$request->uuid)->where('day',$dayname)->distinct()->get(['time']);
+
+               $all_time_array = [];
+
+               foreach($all_time as $time){
+                array_push($all_time_array,$time);
+               }
+           
+              // return response()->json($all_time);
+
+              //change date format 
+
+              $today = date('d-m-Y');
+
+              $date_format = Carbon::parse($request->date)->format('Y-m-d');
+
+              $booked_time = Appointment::where("doctor_id",$doctor_id)->where("date",$date_format)->distinct()->get(['time']);
+
+              $booked_time_array = [];
+
+              foreach($booked_time as $booked){
+                  array_push($booked_time_array, $booked);
+              }
+
+            //   return response()->json([
+            //       'all_time' => $all_time,
+            //       'booked_time' => $booked_time
+            //   ]);
+
+             $diff = array_diff(array_column($all_time_array, 'time'), array_column($booked_time_array, 'time'));
+             $diff = array_values($diff);
+
+             //return $today;
+
+             if($request->date == $today){
+                 //filter out passed time from diff array
+               
+                 $current_time = time();
+                 foreach ($diff as $key => $time) {
+                     if (strtotime($time) < $current_time) {
+                         unset($diff[$key]);
+                     }
+                 }
+
+                 return $diff;
+              
+             }
+
+             else{
+                 return $diff;
+             }
+
+             
+
+           
+
+
+}
+
+
+//delete users
+
+public function deleteUsers(Request $request, $email){
+    $user = User::where("email",$email)->delete();
+
+    return "user deleted";
+
+  
+
+}
+
+
+
 }

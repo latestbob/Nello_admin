@@ -13,7 +13,7 @@
                         <li class="breadcrumb-item active">View</li>
                     </ol>
                 </div>
-                <h4 class="page-title">Dr. {{$doctor->firstname}} {{$doctor->lastname}} Appointment Schedule</h4>
+                <h4 class="page-title">{{$doctor->title}}. {{$doctor->firstname}} {{$doctor->lastname}} Appointment Schedule</h4>
             </div>
         </div>
     </div>
@@ -25,7 +25,7 @@
 
 
         <div class="col-md-8 col-lg-8 m-auto">
-            <div class="card-heading text-center bg-secondary py-2 font-weight-bold my-3"style="color:white;">Create Calendar Schedule for Dr. {{$doctor->firstname}}</div>
+            <div class="card-heading text-center bg-secondary py-2 font-weight-bold my-3"style="color:white;">Create Calendar Schedule for {{$doctor->title}}. {{$doctor->firstname}}</div>
 
                 <form class="form-inline"action="{{route('doctor-schedule-add',$doctor->uuid)}}"method="POST">
                     @csrf
@@ -54,6 +54,7 @@
                         <select name="time"class="form-control" id=""required>
                             <option value="">Time Available</option>
                             
+                            
                             <option value="8:00:00">8:00 am</option>
                             <option value="9:00:00">9:00 am</option>
                             <option value="10:00:00">10:00 am</option>
@@ -78,7 +79,7 @@
                  <hr>
                  <br>
 
-                <h4 class="text-center py-2">Registered Schedule for Dr. {{$doctor->firstname}} {{$doctor->lastname}}</h4>
+                <h4 class="text-center py-2">Registered Schedule for {{$doctor->title}}. {{$doctor->firstname}} {{$doctor->lastname}}</h4>
 
 
                 @if($schedule->count() > 0)

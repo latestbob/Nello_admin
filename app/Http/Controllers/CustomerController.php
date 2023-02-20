@@ -22,15 +22,25 @@ class CustomerController extends Controller
     {
         $search = $request->search;
         $gender = $request->gender;
+        $status = $request->status;
         $size = empty($request->size) ? 10 : $request->size;
 
-        $customers = User::whereIn('user_type', ['customer', 'agent'])
+        if($search == "active"){
+            $customers = User::where('user_type','customer')->where('active',true)->paginate($size);
+        }
+
+        elseif($search == "inactive"){
+            $customers = User::where('user_type','customer')->where('active',false)->paginate($size);
+        }
+
+        else{
+            $customers = User::whereIn('user_type', ['customer', 'agent'])
             ->when($search, function ($query, $search) {
 
                 $query->whereRaw(
-                    "(firstname like ? or lastname like ? or phone like ? or email like ? or aos like ?)",
+                    "(firstname like ? or lastname like ? or phone like ? or email like ? or aos like ? or state like ?)",
                     [
-                        "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%"
+                        "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%",
                     ]
                 );
 
@@ -39,10 +49,13 @@ class CustomerController extends Controller
                 $query->where('gender', '=', "{$gender}");
 
             })->paginate($size);
+        }
+
+      
 
         $pharmacies = Pharmacy::select(['id', 'name'])->get()->toJson();
 
-        return view('customers', compact('customers', 'pharmacies', 'search', 'gender', 'size'));
+        return view('customers', compact('customers', 'pharmacies', 'search', 'gender', 'size', 'status'));
     }
 
     public function viewCustomer(Request $request) {
@@ -186,6 +199,32 @@ class CustomerController extends Controller
         return view('passwordactivity',compact('activity'));
 
 
+    }
+
+
+    //deactivate customer account 
+
+    public function deactivateaccount($id){
+        $customer = User::find($id)->update([
+            'active' => false
+        ]);
+
+        return back()->with('success','Status Updated successfully');
+
+        
+    }
+
+     //activate customer account 
+
+     public function activateaccount($id){
+        $customer = User::find($id)->update([
+            'active' => true
+        ]);
+
+         return back()->with('success','Status Updated successfully');
+        //     $customer = User::find($id);
+        //     dd($customer);
+        
     }
 
 

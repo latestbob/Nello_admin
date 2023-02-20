@@ -19,7 +19,7 @@ class LocationController extends Controller
         //$locations = Locations::where('vendor_id', '=', $request->user()->vendor_id)->orderBy('name');
         $locations = Location::orderBy('name')->when($search = $request->search, function ($query, $search) {
             $query->whereRaw(
-                "(name like ? or price = ?)",
+                "(name like ? or same_day_price = ?)",
                 [
                     "%{$search}%", $search
                 ]

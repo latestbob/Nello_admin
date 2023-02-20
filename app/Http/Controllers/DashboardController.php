@@ -7,6 +7,8 @@ use App\Models\Order;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Owcappointment;
+use PDF;
 
 class DashboardController extends Controller
 {
@@ -105,6 +107,55 @@ class DashboardController extends Controller
 
         $feedbacks = !$locationID ? Feedback::where('vendor_id', '=', $request->user()->vendor_id)->orderByDesc('id')->limit(10)->get() : null;
 
-        return view('dashboard', compact('total', 'orders', 'feedbacks', 'userType'));
+        $search = $request->search;
+        $type = $request->type;
+
+        $size = empty($request->size) ? 10 : $request->size;
+
+        $appointments = Owcappointment::where( function ($query) use ($search) {
+
+                $query->when($search, function ($query, $search) {
+
+                    $query->whereRaw(
+                        "(user_firstname like ? or user_lastname like ? or phone like ? or email like ?)",
+                        [
+                            "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%"
+                        ]
+                    );
+                });
+
+                // })->whereHas('center', function ($query) use ($search) {
+
+                //     $query->when($search, function ($query, $search) {
+
+                //         $query->whereRaw(
+                //             "(name like ? or state like ? or phone like ? or email like ?)",
+                //             [
+                //                 "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%"
+                //             ]
+                //         );
+
+                //     });
+
+            })
+            ->when($type, function ($query, $type) {
+
+                $query->whereRaw(
+                    "(caretype like ? )",
+                    [
+                        "%{$type}%"
+                    ]
+                );
+            })
+            ->orderBy('date', 'DESC')
+            ->orderBy('time', 'DESC')
+            ->paginate($size);
+
+
+        return view('dashboard', compact('total', 'orders', 'feedbacks', 'userType','appointments','size','search','type'));
+    }
+
+    public function myaccount(){
+        return view('myaccount');
     }
 }

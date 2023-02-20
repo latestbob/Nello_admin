@@ -93,7 +93,7 @@
                                 <div class="form-group">
                                     <label for="phone">Phone Number</label>
                                     <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="phone"
-                                           value="{{ old('phone')  }}" name="phone" placeholder="Enter phone">
+                                           value="{{ old('phone')  }}" name="phone" placeholder="Enter phone" maxlength="11"minlength="11">
 
                                     @error('phone')
                                     <span class="invalid-feedback" role="alert">
@@ -107,7 +107,7 @@
                                 <div class="form-group">
                                     <label for="email">Email Address</label>
                                     <input type="email" class="form-control @error('email') is-invalid @enderror" id="email"
-                                           value="{{ old('email') }}" name="email" placeholder="Enter email">
+                                           name="email" placeholder="Enter email"autocomplete="off">
 
                                     @error('email')
                                     <span class="invalid-feedback" role="alert">
@@ -141,7 +141,7 @@
                                 <div class="form-group">
                                     <label for="password">Password</label>
                                     <input type="password" class="form-control @error('password') is-invalid @enderror" id="password"
-                                           value="{{ old('password')  }}" name="password" placeholder="Enter password">
+                                          name="password" placeholder="Enter password"autocomplete="new-password">
 
                                     @error('password')
                                     <span class="invalid-feedback" role="alert">
@@ -387,7 +387,8 @@
 
                                            <select name="aos" class="form-control @error('aos') is-invalid @enderror" id="aos">
                                                <option value="">Select Specialization</option>
-                                               <option value="General Practitioner">General Practitioner</option>
+                                               <option value="General Practitioner(GP)">General Practitioner(GP)</option>
+                                               <option value="Nurse">Nurse</option>
                                                <option value="Dentist">Dentist</option>
                                                <option value="Oncology">Oncology</option>
                                                <option value="Internal Medicine">Internal Medicine</option>
@@ -421,9 +422,9 @@
 
                                     <div class="custom-file">
                                         <input type="file"
-                                               class="custom-file-input @error('picture') is-invalid @enderror"
+                                               class="@error('picture') is-invalid @enderror"
                                                name="picture" id="picture-input">
-                                        <label class="custom-file-label" for="picture-input">Choose file</label>
+                                       
 
                                         @error('picture')
                                         <span class="invalid-feedback" role="alert">

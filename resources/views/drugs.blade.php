@@ -69,6 +69,7 @@
                         </div>
                     </div>
 
+                    @if($drugs->count() > 0)
                     <div class="table-responsive">
                         <table class="table dataTable w-100">
                             <thead>
@@ -82,8 +83,9 @@
                                 <th>Description</th>
                                 <th>Dosage Type</th>
                                 <th>Prescription</th>
-                                <th>Quantity</th>
+                                
                                 <th>Availability</th>
+                                <th>Quantity</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -95,15 +97,16 @@
                                 <tr>
                                     <td>{{ ($key + 1) }}</td>
                                     <td><img src="{{ $drug->image ?? asset('images/drug-placeholder.png') }}" class="img-thumbnail" width="80"/></td>
-                                    <td>{{ $drug->drug_id }}</td>
+                                    <td>{{ $drug->id }}</td>
                                     <td>{{ $drug->name }}</td>
                                     <td>{{ $drug->brand ?: 'Unavailable' }}</td>
                                     <td>{{ $drug->category->name ?: 'Unavailable' }}</td>
                                     <td>{{ $drug->description ?: 'Unavailable' }}</td>
                                     <td>{{ $drug->dosage_type ?: 'Unavailable' }}</td>
                                     <td>{{ $drug->require_prescription == 1 ? 'Required' : 'Not required' }}</td>
-                                    <td>{{ $drug->quantity }}</td>
+                                
                                     <td>{{ $drug->is_out_of_stock == true ? 'Unavailable (Out of stock)' : 'Available' }}</td>
+                                    <td>{{$drug->quantity}}</td>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button"
@@ -128,6 +131,13 @@
                             </tbody>
                         </table>
                     </div>
+                        @else 
+                        
+                        <div class="text-center py-3">
+                            <h3 >Search result not found</h3>
+                        </div>
+
+                    @endif
 
                     <div class="table-responsive mt-3">
                         {{ $drugs->links() }}

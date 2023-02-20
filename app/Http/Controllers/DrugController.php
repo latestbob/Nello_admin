@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Http;
+
 
 class DrugController extends Controller
 {
@@ -28,20 +30,42 @@ class DrugController extends Controller
         $category = $request->category;
         $search = $request->search;
 
-        $drugs = PharmacyDrug::when($search, function ($query, $search) {
 
-            $query->whereRaw(
-                "(name like ? or brand like ? or uuid = ?)",
-                [
-                    "%{$search}%", "%{$search}%", $search
-                ]
-            );
+        if($search == "Unavailable"){
+            $drugs = PharmacyDrug::where("status",false)->paginate($size);
+        }
 
-        })->when($category, function ($query, $category) {
+        elseif($search == "Available"){
+            $drugs = PharmacyDrug::where("status",true)->paginate($size);
+        }
 
-            $query->where('category_id', $category);
+        elseif($search == "Prescription"){
+            $drugs = PharmacyDrug::where("require_prescription",true)->paginate($size);
+        }
 
-        })->where('vendor_id', $request->user()->vendor_id)->orderBy('name')->paginate($size);
+        elseif($search == "Not required"){
+            $drugs = PharmacyDrug::where("require_prescription",false)->paginate($size);
+        }
+
+        else {
+
+            $drugs = PharmacyDrug::when($search, function ($query, $search) {
+
+                $query->whereRaw(
+                    "(name like ? or brand like ? or id like ? or dosage_type like ? )",
+                    [
+                        "%{$search}%", "%{$search}%", $search, "%{$search}%"
+                    ]
+                );
+    
+            })->when($category, function ($query, $category) {
+    
+                $query->where('category_id', $category);
+    
+            })->where('vendor_id', $request->user()->vendor_id)->orderBy('name')->paginate($size);
+        }
+
+        
 
         $categories = DrugCategory::groupBy('name')->get();
 
@@ -224,16 +248,27 @@ class DrugController extends Controller
 
         if (!empty($search = $request->search)) {
 
-            $orders = $orders->whereRaw(
-                "(orders.firstname like ? or orders.lastname like ? or
-                orders.phone like ? or orders.email like ? or
-                orders.company like ? or orders.city = ? or
-                orders.order_ref = ? or orders.cart_uuid = ?)",
-                [
-                    "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%",
-                    "%{$search}%", $search, $search, $search
-                ]
-            );
+
+            if($search == "Delivered"){
+                $orders = $orders->where('delivery_status',true);
+            }
+            elseif($search == "Not Delivered"){
+                $orders = $orders->where('delivery_status',false);
+            }
+            else {
+
+                $orders = $orders->whereRaw(
+                    "(orders.firstname like ? or orders.lastname like ? or
+                    orders.phone like ? or orders.email like ? or
+                    orders.company like ? or orders.city = ? or
+                    orders.order_ref = ? or orders.cart_uuid = ? or orders.address1 like ? or orders.delivery_method like ?  or orders.delivery_status = ?)",
+                    [
+                        "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%",
+                        "%{$search}%", $search, $search, $search, "%{$search}%", "%{$search}%", $search
+                    ]
+                );
+            }
+          
         }
 
         if (!empty($payment = $request->payment) && ($payment == 'paid' || $payment == 'unpaid')) {
@@ -491,52 +526,42 @@ class DrugController extends Controller
         ]);
     }
 
-    public function drugOrderPickedUp(Request $request)
+    public function drugOrderPickedUp(Request $request,$ref)
     {
+        $deliver = [];
+        $order = Order::where("order_ref", $ref)->first();
 
-        $validator = Validator::make($request->all(), [
-            'id' => 'required|numeric|exists:orders,id'
-        ]);
+     
 
-        if ($validator->fails()) {
-            return response([
-                'status' => false,
-                'message' => $validator->errors()
-            ]);
-        }
+    $deliver = [
+        'firstname' => $order->firstname,
+        'ref' => $ref,
+        'id' => $order->id,
+        
+    ];
 
-        $order = Order::where('id', $request->id)->first();
+    // 
 
-        if ($order->location_id != ($user = $request->user())->pharmacy->location_id) {
-            return [
-                'status' => false,
-                'message' => "Sorry, your assigned pharmacy is not assigned to that order's location"
-            ];
-        }
 
-        if ($order->delivery_method != 'pickup') {
-            return [
-                'status' => false,
-                'message' => "Sorry, you can't deliver that order, it's not a pick up order"
-            ];
-        }
+
+       $responsed = Http::post('https://mw.asknello.com/api/confirmme',[
+        "deliver" => $deliver,
+        
+    ]);
+
+    
 
         if ($order->delivery_status == true) {
-            return [
-                'status' => false,
-                'message' => "Sorry, this order has already been delivered"
-            ];
+            
+            return back()->with("error", "Sorry, order has already been marked as delivered");
         }
 
         $order->update([
             'delivery_status' => true,
-            'delivered_by' => $user->id
+            'delivered_by' => Auth::user()->id
         ]);
 
-        return [
-            'status' => true,
-            'message' => 'Successfully marked order as delivered'
-        ];
+        return back()->with("msg",'Ordered was updated to delivered');
     }
 
     public function addPrescription(Request $request)
@@ -629,6 +654,8 @@ class DrugController extends Controller
             'message' => "Prescription added successfully"
         ]);
 
+        
+
     }
 
     public function drugImport(Request $request) {
@@ -641,7 +668,17 @@ class DrugController extends Controller
         $size = empty($request->size) ? 10 : $request->size;
         $search = $request->search;
         $categories = DrugCategory::withCount(['drugs'])
-            ->orderBy('name')->paginate($size);
+            
+            ->where( function($query) use ($search){
+                $query->where('name', 'LIKE', '%'.$search.'%')
+
+
+                 ->having('drugs_count', 'LIKE', $search)
+                ;
+                
+                     
+            })->orderBy('name')->paginate($size);
+
         return view('drug-categories', compact('categories', 'search', 'size'));
     }
 
@@ -711,6 +748,16 @@ class DrugController extends Controller
             'status' => true,
             'message' => "Drug category deleted successfully"
         ]);
+    }
+
+
+
+    //delivered status update
+
+    public function delivered($id){
+        $orders = Order::find($id);
+
+        dd($orders);
     }
 
 }

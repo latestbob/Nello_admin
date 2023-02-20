@@ -15,13 +15,21 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
+
+
 Route::prefix('/')->middleware(['auth', 'auth.allowed'])->group(function () {
 
     Route::get('/', 'DashboardController@index')->name('dashboard');
 
+    Route::get('/account','DashboardController@myaccount')->name('myaccount')->middleware('auth.admin');
+
     Route::get('/feedbacks', 'FeedbackController@index')->name('feedbacks')->middleware('auth.admin');
 
     Route::get('/appointments', 'AppointmentController@index')->name('appointments')->middleware('auth.admin');
+
+    //appointment reschedule
+
+    Route::get("/appointment/reschedule/{id}","AppointmentController@appointmentreschedule")->name("appointmentreschedule")->middleware("auth.admin.famacare");
 
     Route::get('/drugs', 'DrugController@drugs')->name('drugs')->middleware('auth.admin');
 
@@ -47,7 +55,7 @@ Route::prefix('/')->middleware(['auth', 'auth.allowed'])->group(function () {
 
     Route::post('/drugs-order/item/ready', 'DrugController@drugOrderItemReady')->middleware('auth.agent');
 
-    Route::post('/drugs-order/delivered', 'DrugController@drugOrderPickedUp')->middleware('auth.agent');
+    Route::post('/drugs-order/delivered/{ref}', 'DrugController@drugOrderPickedUp')->name("delivered_drugs")->middleware('auth.admin');
 
     Route::post('/drugs-order/item/add-prescription', 'DrugController@addPrescription')->name('add-prescription')->middleware('auth.admin.agent.doctor');
 
@@ -166,3 +174,141 @@ Route::match(['post', 'get'],'/transactions', 'TransactionController@index')->na
 
 
 Route::get('/passwordactivity','CustomerController@activities')->name('password-activity')->middleware('auth.admin');
+
+//appointment vistation route
+
+Route::get('/visitation/{ref}','AppointmentController@visitation');
+
+
+Route::get('/owcappointment','OwcController@getappointment')->middleware('auth')->name('owcappointment');
+
+
+//delete OWCappoint
+
+
+Route::delete("/owcdelete/{id}",'OwcController@deleteappointment')->middleware("auth.admin")->name("deleteowcappointment");
+
+//download 
+
+Route::get('/booking/{ref}','OwcController@download')->name('bookingref');
+
+
+//OWC DASHBOARD
+
+Route::get('/owc-dashboard','OwcController@dashboard')->middleware('auth.owc')->name('owcadmin');
+
+
+
+///FAMACARE DASHBOARD
+
+Route::get('/famacare-dashboard','FamacareController@dashboard')->middleware("auth.famacare")->name("famacareadmin");
+
+
+
+//deactivate customer account
+
+Route::put('/deactiveaccount/{id}','CustomerController@deactivateaccount')->name('deactivateaccount')->middleware('auth.admin');
+
+//Activate user account
+Route::put('/activeaccount/{id}','CustomerController@activateaccount')->name('activateaccount')->middleware('auth.admin');
+
+
+//Update order delivery status
+
+
+Route::put('/delivered/{id}','DrugController@delivered')->name('delivered')->middleware('auth.admin');
+
+
+//Nello Embanqo passsworod
+
+Route::get('/embanqo/password','ChatBotController@password')->name('passwordroute');
+
+
+//post of NEllo emBANQO password
+
+
+
+//Admin appointment status update
+Route::put('/appointment/status/{id}','AppointmentController@updatestatus')->name('appointmentupdate');
+
+//update to pending
+
+Route::put('/appointment/pending/{id}','AppointmentController@updatepending')->name('appointmentpending');
+
+
+//OWC medical schedule
+
+Route::get('/calendar','OwcController@medicalcalendar')->middleware('auth.owc')->name('owcmedicalcalender');
+
+// Owc Medical schedule create
+
+Route::post("/calendarpost",'OwcController@medicalcalendarpost')->middleware("auth.owc")->name("owcmedicalcalendarpost");
+
+//OWC APPOINTMENT MANAGE TIME
+
+Route::get("/caleandarpostime/{id}",'OwcController@owcmanagetime')->middleware("auth.owc")->name("owcascheduletime");
+
+//OWC APPOINTMENT MANAGE TIME POST
+
+Route::post("/calendarposttimepost",'OwcController@owcmanagetimepost')->middleware("auth.owc")->name("owcscheduletimepost");
+
+//OWC APPOINTMENT MANAGE TIME DELETE
+
+Route::delete("/calendarpostimedelete/{id}",'OwcController@owcmanagetimedelete')->middleware("auth.owc")->name("owcscheduletimedelete");
+
+//Delete date
+
+Route::delete('/calendar/{id}','OwcController@deletecalendardate')->middleware("auth.owc")->name("deletecalendardate");
+
+//Delete Entire Calendar
+
+Route::post('/delete/owcalendar','OwcController@calendardelete')->middleware("auth.owc")->name("calendardelete");
+
+//reschedule neello admin appointment
+Route::put("/reschedule/admin","AppointmentController@rescheduleadmin")->middleware("auth.admin.famacare")->name("rescheduleadmin");
+
+
+
+//////////////////////////////////////FAMACARE DASHBOARD ROUTES////////////////////////////////////
+
+Route::get("/famacare/appointment",'FamacareController@appointment')->middleware("auth.famacare")->name("famacareappointment");
+
+//physical appointment
+
+Route::get("/famacare/physical","FamacareController@physicalappointment")->middleware("auth.famacare")->name("famacarephysicalappointment");
+
+//specialist schedule famacare page
+
+Route::get("/famacare/specialist","FamacareController@specialist")->middleware("auth.famacare")->name("famacarespecialist");
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//Specialist Calendar
+
+Route::get("/specialist/calendar/{id}","AppointmentController@specialistcalendar")->middleware("auth.admin.famacare")->name("specialistcalendar");
+
+//specialist calendar post
+
+Route::post("/specialistcalendarpost","AppointmentController@specialistcalendarpost")->middleware("auth.admin.famacare")->name("specialistcalendarpost");
+
+//Delete Specialist Schedule
+
+Route::delete("/specialistcalendardelete/{id}","AppointmentController@deletespecialistcalender")->middleware("auth.admin.famacare")->name("deletespecialistcalendar");
+
+//manage time
+
+Route::get("/specialistcalendertime/{id}","AppointmentController@specialistcalendertime")->middleware("auth.admin.famacare")->name("specialistcalendertime");
+
+//manage time post
+
+Route::post("/specialistcalendertimepost","AppointmentController@specialistcalendertimepost")->middleware("auth.admin.famacare")->name("specialistcalendertimepost");
+
+//remove time
+
+Route::delete("/specialistcalendertimedelete/{id}","AppointmentController@specialistcalendertimedelete")->middleware("auth.admin.famacare")->name("specialistcalendertimedelete");
+
+//delete dates and time for a particular specialist
+
+Route::delete("/deletedoctorschedule/{uuid}","AppointmentController@deletespecificspecialistschedules")->middleware("auth.admin.famacare")->name("deletespecificspecialistschedules");

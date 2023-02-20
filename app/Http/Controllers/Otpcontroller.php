@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Otp;
+use Illuminate\Support\Facades\Validator;
 
 class Otpcontroller extends Controller
 {
@@ -12,7 +13,7 @@ class Otpcontroller extends Controller
     public function generateotp(Request $request){
 
 $validator = Validator::make($request->all(), [
-            'phone' => 'required|string'
+            'phone' => 'required|digits:11'
         ]);
 
 
@@ -20,7 +21,7 @@ if ($validator->fails()) {
             return response([
                 'status' => 'failed',
                 'message' => $validator->errors()
-            ]);
+            ],400);
         }
 
         $otp = new Otp;

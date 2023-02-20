@@ -28,12 +28,37 @@ class PharmaciesController extends Controller
 
         if (!empty($search = $request->search)) {
 
-            $pharmacies = $pharmacies->whereRaw(
-                "(name like ? or address like ? or email like ? or phone like ?)",
-                [
-                    "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%",
-                ]
-            );
+            if($search == "Yes"){
+                $pharmacies = Pharmacy::where("is_pick_up_location",true);
+            }
+
+            elseif($search == "No"){
+                $pharmacies = Pharmacy::where("is_pick_up_location",false);
+            }
+
+            else {
+            //      $pharmacies = $pharmacies->whereRaw(
+            //     "(name like ? or address like ? or email like ? or phone like ?)",
+            //     [
+            //         "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%",
+            //     ]
+            // );
+
+            $pharmacies= Pharmacy::with('location')
+            ->whereHas('location', function($query) use ($search){
+                $query->where('name', 'LIKE', '%'.$search.'%');
+            }) 
+
+            ->orWhere( function($query) use ($search){
+                $query->where('name', 'LIKE', '%'.$search.'%')
+                ->orWhere('email', 'LIKE', '%'.$search.'%')
+                      ->orWhere('phone', 'LIKE', '%'.$search.'%');
+                     
+            });
+
+
+            }
+           
         }
 
         $pharmacies = $pharmacies->paginate($size);

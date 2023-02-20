@@ -149,6 +149,8 @@
                         </div>
                     </div>
 
+                    @if($orders->count() > 0)
+
                     <div class="table-responsive">
 
                         <table class="table dataTable w-100">
@@ -162,16 +164,16 @@
                                 <th>Order Ref</th>
                                 <th>Address</th>
                                 <th>Location</th>
-                                <th>City</th>
-                                <th>State</th>
+                               
                                 <th>Delivery Method</th>
                                 <th>Accepted Pickup</th>
                                 <th>Accepted Pickup By</th>
                                 <th>Pick Status</th>
                                 <th>Picked up By</th>
                                 <th>Delivery Status</th>
-                                <th>Delivered By</th>
+                                <!-- <th>Delivered By</th> -->
                                 <th>Date Ordered</th>
+                                <th>Cart_Uuid</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -184,23 +186,23 @@
                                     <td>{{ ($key + 1) }}</td>
                                     <td>{{ $order->firstname }} {{ $order->lastname }}</td>
                                     <td>{{ $order->phone }}, {{ $order->email }}</td>
-                                    <td>{{ $order->amount }}</td>
+                                    <td>₦{{ $order->amount }}</td>
                                     <td><label
                                             class="badge {{ $order->payment_confirmed == 1 ? 'badge-success' : 'badge-warning' }}">{{ $order->payment_confirmed == 1 ? 'Paid' : 'Unpaid' }}</label>
                                     </td>
                                     <td>{{ $order->order_ref }}</td>
                                     <td>{{ $order->address1 ?? 'Unavailable' }}</td>
                                     <td>{{ ($order->delivery_method == 'pickup' ? ($order->pickup_location->address ?? 'Unavailable') : ($order->location->name ?? 'Unavailable')) }}</td>
-                                    <td>{{ $order->city ?? 'Unavailable' }}</td>
-                                    <td>{{ $order->state ?? 'Unavailable' }}</td>
+                                    
                                     <td>{{ \Illuminate\Support\Str::ucfirst($order->delivery_method) }}</td>
                                     <td>{{ $order->delivery_method == "shipping" ? ($order->accepted_pick_up == 1 ? "Accepted" : "Not Accepted") : 'Not Applicable' }}</td>
                                     <td>{{ $order->delivery_method == "shipping" ? ($order->accepted_pickup ? "{$order->accepted_pickup->firstname} {$order->accepted_pickup->lastname}" : 'None') : 'Not Applicable' }}</td>
                                     <td>{{ $order->delivery_method == "shipping" ? ($order->is_picked_up == 1 ? 'Picked up' : 'Not Picked up') : 'Not Applicable' }}</td>
                                     <td>{{ $order->delivery_method == "shipping" ? ($order->picked_up ? "{$order->picked_up->firstname} {$order->picked_up->lastname}"  : 'None') : 'Not Applicable' }}</td>
                                     <td>{{ $order->delivery_status == 1 ? 'Delivered' : 'Not Delivered' }}</td>
-                                    <td>{{ $order->delivered ? ("{$order->delivered->firstname} {$order->delivered->lastname} - (" . \Illuminate\Support\Str::ucfirst($order->delivered->user_type) . ")")  : 'None' }}</td>
+                                 
                                     <td>{{ \Carbon\Carbon::parse($order->created_at)->format('h:ia F dS, Y') }}</td>
+                                    <td>{{$order->cart_uuid}}</td>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button"
@@ -210,16 +212,24 @@
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
-                                                @if($userType == 'agent' && $order->delivery_method == 'pickup' && $order->delivery_status != true)
-                                                    <button class="dropdown-item order-delivered"
-                                                            data-id="{{ $order->id }}">
-                                                        Order Delivered
+                                                @if($userType =='admin' && $order->delivery_status != true)
+                                                <form action="{{route('delivered_drugs',$order->order_ref)}}"method="POST">
+                                                    @csrf
+
+                                                    <!-- <input type="hidden"name="id"value="{{ $order->id }}"> -->
+                                                    <button type="submit" class="dropdown-item order-delivered"
+                                                            >
+                                                        Order Delivered 
                                                     </button>
+
+                                                <form>
                                                 @endif
 
                                                 <a href="{{ url("/drugs-order/{$order->cart_uuid}/items") }}"
                                                    class="dropdown-item">View Items</a>
 
+
+                                                 
                                             </div>
                                         </div>
                                     </td>
@@ -230,6 +240,12 @@
                         </table>
 
                     </div>
+
+                    @else
+
+                    <div class="alert alert-warning py-3 text-center mt-4">No result found</div>
+
+                    @endif
 
                     <div class="table-responsive mt-3">
                         {{ $orders->links() }}

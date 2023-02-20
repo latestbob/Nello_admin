@@ -34,14 +34,24 @@
 
                                                
                                          
-                                    <option value="Family Medicine">Family Medicine</option>
+                                    <!-- <option value="Family Medicine">Family Medicine</option>
                                     <option value="Internal Medicine">Internal Medicine</option>
                                     <option value="Pediatric Medicine">Pediatric Medicine</option>
                                     <option value="Dentistry">Dentistry</option>
                                     <option value="Preventive medicine">Preventive medicine</option>
                                     <option value="Ophthalmology">Ophthalmology</option>
                                     <option value="Obstetrics & gynecology">Obstetrics & gynecology</option>
-                                    <option value="Emergency medicine">Emergency medicine</option>
+                                    <option value="Emergency medicine">Emergency medicine</option> -->
+                                    <option value="Clinical Services">Clinical Services</option>
+                                    <option value="Antenatal">Antenatal</option>
+                                    <option value="Immunisation">Immunisation</option>
+                                    <option value="Laboratory Services">Laboratory Services</option>
+                                    <option value="Ultrasound Scan">Ultrasound Scan</option>
+                                    <option value="Pharmacy Services">Pharmacy Services</option>
+                                    <option value="Preventive Cancer Screening">Preventive Cancer Screening</option>
+                                    <option value="Chronic Disease Management">Chronic Disease Management</option>
+                                    <option value="Rehabilitation">Rehabilitation</option>
+                                    <option value="Counseling">Counseling</option>
                             </select>
                         </div>
                         

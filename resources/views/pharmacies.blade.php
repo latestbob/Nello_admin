@@ -67,6 +67,8 @@
                         </div>
                     </div>
 
+                    @if($pharmacies->count() > 0)
+
                     <div class="table-responsive">
 
                         <table class="table dataTable w-100">
@@ -92,8 +94,22 @@
                             @foreach($pharmacies as $key => $pharmacy)
                                 <tr>
                                     <td>{{ ($key + 1) }}</td>
-                                    <td><img src="{{ $pharmacy->picture ?: asset('images/pharmacy.png') }}"
-                                             class="img-thumbnail" width="60"/></td>
+                                    <td>
+                                        @if($pharmacy->picture)
+                                        <img src="{{ $pharmacy->picture }}"
+                                             class="img-thumbnail" width="60"/>
+
+
+                                        @elseif($pharmacy->email == "Famacare Limited")
+                                        <img src="https://famacare.com/img/famacare.png"
+                                             class="img-thumbnail" width="60"/>
+
+                                        @else
+                                        <img src="https://famacare.com/img/famacare.png"
+                                             class="img-thumbnail" width="60"/>
+
+                                        @endif
+                                    </td>
                                     <td>{{ $pharmacy->name }}</td>
                                     <td>{{ $pharmacy->address }}</td>
                                     <td>{{ $pharmacy->email }}</td>
@@ -124,6 +140,13 @@
                         </table>
 
                     </div>
+
+                    @else 
+
+                    <div class="text-center py-3">
+                            <h3 class="font-weight-bold">Search Result not found</h3>
+                    </div>
+                    @endif
 
                     <div class="table-responsive mt-3">
                         {{ $pharmacies->links() }}

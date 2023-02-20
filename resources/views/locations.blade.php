@@ -89,9 +89,9 @@
                                 <tr>
                                     <td>{{ ($key + 1) }}</td>
                                     <td>{{ $location->name }}</td>
-                                    <td>{{ $location->standard_price }}</td>
-                                    <td>{{ $location->same_day_price }}</td>
-                                    <td>{{ $location->next_day_price }}</td>
+                                    <td>₦{{ $location->standard_price }}</td>
+                                    <td>₦{{ $location->same_day_price }}</td>
+                                    <td>₦{{ $location->next_day_price }}</td>
                                     <td>{{ \Carbon\Carbon::parse($location->created_at)->format('h:ia F dS, Y') }}</td>
                                     <td>
                                         <div class="dropdown">

@@ -29,10 +29,16 @@
                             <form method="get" class="row" id="filter-form">
                                 <div class="col-md-3 mb-3">
 
-                                    <h4 class="header-title">Customers</h4>
+                                    <!-- <h4 class="header-title">Customers</h4>
                                     <p class="text-muted font-14">
                                         Here's a list of all customers on the Nello platform
-                                    </p>
+                                    </p> -->
+                                    <label>Filter by Status</label>
+                                    <select name="status" class="form-control">
+                                        <option value="">Select Status</option>
+                                        <option value=""@if($size == '') selected @endif>True</option>
+                                        <option value="false"@if($size == 'false') selected @endif>False</option>
+                                    </select>
 
                                 </div>
 
@@ -87,11 +93,14 @@
                                 <th>Sponsor</th>
                                 <th>Status</th>
                                 <th>Action</th>
+                                
                             </tr>
                             </thead>
 
 
                             <tbody>
+
+                            @if($customers->count() > 0)
 
                             @foreach($customers as $key => $customer)
                                 <tr>
@@ -126,19 +135,38 @@
                                                     Make Pharmacy Agent
                                                 </button>
                                                 @if(!empty($customer->active == 1))
-                                                    <button class="dropdown-item status-toggle" data-id="{{ $customer->id }}"
+                                                
+                                                <form action="{{route('deactivateaccount',$customer->id)}}"method="POST">
+                                                    @csrf
+                                                    {{method_field('PUT')}}
+
+                                                    <button  class="dropdown-item status-toggle" data-id="{{ $customer->id }}"
                                                             data-status="cancelled">Deactivate Account
                                                     </button>
+                                                </form>
+                                         
                                                 @else
+                                                   <form action="{{route('activateaccount',$customer->id)}}"method="POST">
+                                                    @csrf 
+
+                                                    {{method_field('PUT')}}
+
                                                     <button class="dropdown-item status-toggle" data-id="{{ $customer->id }}"
                                                             data-status="cancelled">Activate Account
                                                     </button>
+                                                   </form>
                                                 @endif
                                             </div>
                                         </div>
                                     </td>
                                 </tr>
                             @endforeach
+
+                            @else
+
+                            <div class="text-center py-3 font-weight-bold">No Result Found.</div>
+
+                            @endif
 
                             </tbody>
                         </table>
@@ -180,6 +208,16 @@
             else delete params.gender;
             delete params.page;
             window.location.href = (window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + serialize(params));
+
+        });
+
+        $("select[name='status']").change(function (e) {
+
+        let status = $(this).val();
+        if (status !== '') params.status = status;
+        else delete params.status;
+        delete params.page;
+        window.location.href = (window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + serialize(params));
 
         });
 

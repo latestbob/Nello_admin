@@ -204,9 +204,9 @@
 
                                     <div class="custom-file">
                                         <input type="file"
-                                               class="custom-file-input @error('image') is-invalid @enderror"
+                                               class="form-control @error('image') is-invalid @enderror"
                                                name="image" id="inputGroupFile04">
-                                        <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+                                        <!-- <label class="custom-file-label" for="inputGroupFile04">Choose file</label> -->
 
                                         @error('image')
                                         <span class="invalid-feedback" role="alert">

@@ -21,6 +21,15 @@ class AllowedAdminMiddleware
                 $userType == 'agent' || $userType == 'doctor') {
                 return $next($request);
             }
+
+            elseif (($userType = $request->user()->email) == 'admin@owcappointment.com') {
+                return $next($request);
+            }
+
+            elseif (($userType = $request->user()->email) == 'admin@famacare.com') {
+                return $next($request);
+            }
+            
             Auth::logout();
             return redirect($userType == 'customer' ? '/login' : '/')
                 ->with('error', "Sorry only administrators are allowed to login from this section.");

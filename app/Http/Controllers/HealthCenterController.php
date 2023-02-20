@@ -11,6 +11,8 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Http;
 use App\Specialization;
 use App\MedSchedule;
+use Carbon\Carbon;
+use App\Models\Appointment;
 
 
 class HealthCenterController extends Controller
@@ -23,16 +25,27 @@ class HealthCenterController extends Controller
         $search = $request->search;
         $size = empty($request->size) ? 10 : $request->size;
 
+        if($search == "active"){
+            $healthCenters = HealthCenter::where("is_active",true)->paginate($size);
+        }
+
+        elseif($search =="inactive"){
+            $healthCenters = HealthCenter::where("is_active",false)->paginate($size);
+        }
+
+      else {
         $healthCenters = HealthCenter::when($search, function ($query, $search) {
 
-                $query->whereRaw(
-                    "(name like ? or phone like ? or email like ? or city like ? or state like ?)",
-                    [
-                        "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%"
-                    ]
-                );
+            $query->whereRaw(
+                "(name like ? or phone like ? or email like ? or city like ? or state like ? or address1 like ?)",
+                [
+                    "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%"
+                ]
+            );
 
-            })->paginate($size);
+        })->paginate($size);
+      }
+
 
         return view('health-centers', compact('healthCenters', 'search', 'size'));
     }
@@ -272,4 +285,109 @@ class HealthCenterController extends Controller
         
         
     }
+
+     // nello website facility calendar days
+
+     public function nellofacilitycalendardays($uuid){
+        
+        $days = MedSchedule::where("med_uuid",$uuid)->distinct()->get(['day']);
+
+        //return response()->json($days);
+        $output = [];
+
+        foreach($days as $number){
+            $day_of_week = (int) date('N', strtotime($number["day"]));
+
+            array_push($output,$day_of_week);
+        }
+
+        return $output;
+    }
+
+    //Nello website medical center appointment booked time for medical centers
+
+    public function getmedicalappointmenttime(Request $request){
+        $validator = Validator::make($request->all(), [
+            'specialization'=> "required",
+            'uuid' => 'required|exists:health_centers',
+            'date'=> 'required|date_format:d-m-Y',
+]);
+
+        if($validator->fails()){
+            return response([
+                'status' => 'failed',
+                'message' => $validator->errors()
+            ]);
+        }
+  date_default_timezone_set('Africa/Lagos');
+
+  $dayname = Carbon::parse($request->date)->format('l');
+  //$doctor_id = User::where("id",$request->uuid)->value("id");
+
+  //return $dayname;
+
+  $all_time = MedSchedule::where("med_uuid",$request->uuid)->where('day',$dayname)->distinct()->get(['time']);
+
+               $all_time_array = [];
+
+               foreach($all_time as $time){
+                array_push($all_time_array,$time);
+               }
+
+
+               //return $all_time_array;
+
+               $today = date('d-m-Y');
+
+               $date_format = Carbon::parse($request->date)->format('Y-m-d');
+ 
+               $booked_time = Appointment::where("center_uuid",$request->uuid)->where("date",$date_format)->distinct()->get(['time']);
+ 
+               $booked_time_array = [];
+ 
+               foreach($booked_time as $booked){
+                   array_push($booked_time_array, $booked);
+               }
+
+               //return $booked_time_array;
+
+
+
+              //med_time
+
+              $diff = array_diff(array_column($all_time_array, 'time'), array_column($booked_time_array, 'time'));
+             $diff = array_values($diff);
+
+             //return $today;
+
+             if($request->date == $today){
+                 //filter out passed time from diff array
+               
+                 $current_time = time();
+                 foreach ($diff as $key => $time) {
+                     if (strtotime($time) < $current_time) {
+                         unset($diff[$key]);
+                     }
+                 }
+
+                 //return $diff;
+                 return  array_slice($diff, 0, 9);
+              
+             }
+
+             else{
+                return  array_slice($diff, 0, 9);
+             }
+
+             //get array of available the
+
+             
+
+
+
+
+    }
+
+
+
 }

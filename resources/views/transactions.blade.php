@@ -66,6 +66,12 @@
                                                     </select>
                                                 </div>
 
+                                                <div class="col-md-6 mb-3">
+                                            <label>Filter by Keyword</label>
+                                            <input class="form-control" name="search" value="{{ $search }}"
+                                                   placeholder="Enter keyword"/>
+                                        </div>
+
                                                
 
                                               
@@ -107,7 +113,7 @@
                             @foreach($transactions as $key => $tranx)
                                 <tr>
                                     <td>{{ ($key + 1) }}</td>
-                                    <td>{{ $tranx->amount }} </td>
+                                    <td>₦{{ $tranx->amount }} </td>
                                     <td>{{ $tranx-> email }}</td>
                                     <td>{{ $tranx->gateway_reference }}</td>
                                     <td><label

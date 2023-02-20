@@ -21,6 +21,7 @@
     <link href="{{ asset('css/icons.min.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ asset('css/app.min.css') }}" rel="stylesheet" type="text/css" id="light-style"/>
     <link href="{{ asset('css/app-dark.min.css') }}" rel="stylesheet" type="text/css" id="dark-style"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
     <!-- Scripts -->
     <script src="{{ asset('js/bootbox/bootbox.min.js') }}"></script>
@@ -192,19 +193,19 @@
                            role="button" aria-haspopup="false"
                            aria-expanded="false">
                                     <span class="account-user-avatar">
-                                        <img src="{{ Auth::user()->picture }}" alt="user-image"
+                                        <img src="https://res.cloudinary.com/edifice-solutions/image/upload/v1665056651/ladynello_uyzc9g.png"style="width:50px; height:50px;" alt="user-image"
                                              class="rounded-circle">
                                     </span>
                             <span>
-                                <span class="account-user-name">{{ Auth::user()->firstname }} {{ Auth::user()->lastname }}</span>
-                                <span class="account-position">{{ Auth::user()->vendor->name }} - ({{ Auth::user()->user_type }})</span>
+                                <span class="account-user-name ml-3 mt-2">{{ Auth::user()->firstname }} {{ Auth::user()->lastname }}</span>
+                                <!-- <span class="account-position">{{ Auth::user()->vendor->name }} - ({{ Auth::user()->user_type }})</span> -->
                             </span>
                         </a>
                         <div
                             class="dropdown-menu dropdown-menu-right dropdown-menu-animated topbar-dropdown-menu profile-dropdown">
 
                             <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item notify-item">
+                            <a href="{{route('myaccount')}}" class="dropdown-item notify-item">
                                 <i class="mdi mdi-account-circle mr-1"></i>
                                 <span>My Account</span>
                             </a>
@@ -250,11 +251,7 @@
                         {{ config('app.year', '2020') }} © {{ config('app.name', 'Laravel') }}
                     </div>
                     <div class="col-md-6">
-                        <div class="text-md-right footer-links d-none d-md-block">
-                            <a href="javascript: void(0);">About</a>
-                            <a href="javascript: void(0);">Support</a>
-                            <a href="javascript: void(0);">Contact Us</a>
-                        </div>
+                       
                     </div>
                 </div>
             </div>
@@ -366,8 +363,11 @@
 <!-- end page -->
 
 <!-- bundle -->
+
 <script src="{{ asset('js/vendor.min.js') }}"></script>
 <script src="{{ asset('js/app.min.js') }}"></script>
+
+
 @yield('js')
 
 </body>

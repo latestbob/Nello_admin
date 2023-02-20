@@ -42,6 +42,10 @@
                         <p class="text-muted mb-1 font-13"><strong>First Address:</strong> <span class="ml-2">{{ $healthCenter->address1 ?: 'Unavailable' }}</span></p>
 
                         <p class="text-muted mb-1 font-13"><strong>Second Address:</strong> <span class="ml-2">{{ $healthCenter->address2 ?: 'Unavailable' }}</span></p>
+
+                        <p class="text-muted mb-1 font-13"><strong>State:</strong> <span class="ml-2">{{ $healthCenter->state ?: 'Unavailable' }}</span></p>
+
+                        <p class="text-muted mb-1 font-13"><strong>LGA</strong> <span class="ml-2">{{ $healthCenter->city ?: 'Unavailable' }}</span></p>
                     </div>
 
                 </div> <!-- end card-body -->

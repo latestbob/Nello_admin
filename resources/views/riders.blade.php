@@ -130,13 +130,26 @@
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                 <a class="dropdown-item" href="{{ url("/rider/{$rider->uuid}/view") }}">Edit Account</a>
                                                 @if(!empty($rider->active == 1))
-                                                    <button class="dropdown-item status-toggle" data-id="{{ $rider->id }}"
+                                                
+                                                <form action="{{route('deactivateaccount',$rider->id)}}"method="POST">
+                                                    @csrf
+                                                    {{method_field('PUT')}}
+
+                                                    <button  class="dropdown-item " data-id="{{ $rider->id }}"
                                                             data-status="cancelled">Deactivate Account
                                                     </button>
+                                                </form>
+                                         
                                                 @else
-                                                    <button class="dropdown-item status-toggle" data-id="{{ $rider->id }}"
+                                                   <form action="{{route('activateaccount',$rider->id)}}"method="POST">
+                                                    @csrf 
+
+                                                    {{method_field('PUT')}}
+
+                                                    <button class="dropdown-item " data-id="{{ $rider->id }}"
                                                             data-status="cancelled">Activate Account
                                                     </button>
+                                                   </form>
                                                 @endif
                                             </div>
                                         </div>

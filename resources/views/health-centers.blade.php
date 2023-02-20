@@ -29,9 +29,9 @@
                             <form method="get" class="row" id="filter-form">
                                 <div class="col-md-4 mb-3">
 
-                                    <h4 class="header-title">Doctors</h4>
+                                    <h4 class="header-title">Health Centers</h4>
                                     <p class="text-muted font-14">
-                                        Here's a list of all doctors on the Nello platform
+                                        Here's a list of all medical health centers on the Nello platform
                                     </p>
 
                                 </div>
@@ -56,6 +56,7 @@
                         </div>
                     </div>
 
+                    @if($healthCenters ->count() > 0)
                     <div class="table-responsive">
 
                         <table class="table dataTable w-100">
@@ -76,7 +77,7 @@
                             </tr>
                             </thead>
 
-
+                       
                             <tbody>
 
                             @foreach($healthCenters as $key => $healthCenter)
@@ -90,7 +91,7 @@
                                    
                                     <td>{{ $healthCenter->state ?: 'Unavailable' }}</td>
                                     <td>{{ $healthCenter->city ?: 'Unavailable' }}</td>
-                                    <td>{{ $healthCenter->fee ?: 'Unavailable' }}</td>
+                                    <td>₦{{ $healthCenter->fee ?: 'Unavailable' }}</td>
                                     <td>
                                         <label class="badge {{ $healthCenter->is_active == true ? 'badge-success' : 'badge-warning' }}">{{ $healthCenter->is_active ? 'active' : 'inactive' }}</label>
                                     </td>
@@ -121,9 +122,18 @@
                             @endforeach
 
                             </tbody>
+
+                       
                         </table>
 
                     </div>
+                    @else
+
+                    <div class="text-center py-3 ">
+                        <h3>No result fetched</h3>
+                    </div>
+
+                    @endif
 
                     <div class="table-responsive mt-3">
                         {{ $healthCenters->links() }}
