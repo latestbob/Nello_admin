@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Http;
+use DB;
+use Carbon\Carbon;
 
 
 class DrugController extends Controller
@@ -115,6 +117,10 @@ class DrugController extends Controller
             $data['category_id'] = $data['category'];
             unset($data['category']);
 
+            if($request->vendor){
+                $data['vendor'] = $request->vendor;
+            }
+
             $drug->update($data);
 
             return redirect(route('drugs'))->with('success', "Drug has been updated successfully");
@@ -140,7 +146,8 @@ class DrugController extends Controller
                 'image' => 'nullable|image|mimes:jpeg,jpg,png',
                 'indications' => 'required|string',
                 'side_effects' => 'required|string',
-                'contraindications' => 'required|string'
+                'contraindications' => 'required|string',
+                
             ])->validate();
 
             if ($request->hasFile('image')) {
@@ -159,6 +166,10 @@ class DrugController extends Controller
 
             $data['category_id'] = $data['category'];
             unset($data['category']);
+
+            if($request->vendor){
+                $data['vendor'] = $request->vendor;
+            }
 
             $drug = PharmacyDrug::create($data);
 
@@ -380,8 +391,41 @@ class DrugController extends Controller
             ]);
         }
 
+        $salesreport = DB::table("sales_reports")->where("cart_uuid",$item->cart_uuid)->where("product_name",$item->drug->name)->update([
+            'status' => $request->status
+        ]);
+//i dey
+
+//$user = User::wjere
+
+        if ($request->status == 'approved') {
+            
+            DB::table('sales_reports')->insert([
+                'customer' =>"Zainab",
+                'product_name' => $item->drug->name,
+                'unit_price' => $item->drug->price,
+                'vendor' => $item->drug->vendor,
+                'initial_quantity' => $item->drug->quantity + $item->quantity,
+                'purchased_quantity' => $item->quantity,
+                'total_amount' => $item->price,
+                'cart_uuid' => $item->cart_uuid,
+                'month' => 'March',
+                'status' => 'approved',
+                'created_at' => $item->created_at,
+            ]);
+        
+            
+        }
+       
+
         $item->status = $request->status;
         $item->save();
+
+
+
+
+
+
 
         $isAllApproved = true; $items = [];
 
@@ -538,7 +582,9 @@ class DrugController extends Controller
         'ref' => $ref,
         'id' => $order->id,
         
+        
     ];
+    $email = $order->email;
 
     // 
 
@@ -546,6 +592,7 @@ class DrugController extends Controller
 
        $responsed = Http::post('https://mw.asknello.com/api/confirmme',[
         "deliver" => $deliver,
+        "email" => $email
         
     ]);
 
@@ -760,4 +807,120 @@ class DrugController extends Controller
         dd($orders);
     }
 
+    //drug controller update beauty product to vendor of skinns
+
+    // public function updatebeauty(Request $request){
+
+       
+        
+    //     //$orders = Order::query()->join('carts', 'orders.cart_uuid', '=', 'carts.cart_uuid', 'INNER');
+
+    //     // $orders->when($locationID, function ($query, $locationID) {
+    //     //     $query->where(['orders.location_id' => $locationID, 'orders.payment_confirmed' => 1]);
+    //     // });
+
+    //     $orders = Order::where("payment_confirmed", 1)->first();
+
+       
+     
+
+   
+
+
+    //     return $orders;
+    // }
+
+    public function skinns(){
+        $order = Order::first();
+
+        return $order;
+    }
+
+
+    //drug sales report page
+
+    public function drugsalesreport(){
+
+        $drugsalesreport = DB::table("sales_reports")->get();
+
+       //dd($drugsalesreport);
+
+        
+        return view("drugsalesreport",compact("drugsalesreport"));
+    }
+
+    //delete sales report
+
+    public function deletesalesreport(Request $request,$id){
+        $salesreport = DB::table("sales_reports")->where("id",$id)->delete();
+
+        return back()->with("msg","Report Deleted Successfully");
+    }
+
+    //get cancelleed invoices
+
+    public function cancelledinvoices(){
+        $cancelled = DB::table("sales_reports")->where("status","cancelled")->get();
+        return view("cancelledinvoice",compact("cancelled"));
+    }
+
+    //mark cancellled sales as refunded
+
+    public function drefundedreport(Request $request, $id){
+        $salesreport = DB::table("sales_reports")->where("id",$id)->update([
+            'status' => "refunded"
+        ]);
+
+        return back()->with("msg","Report updated Successfully");
+
+    }
+
+
+    //skins report
+
+
+    public function skinnsreport(){
+
+       $skinnsproduct = PharmacyDrug::where("vendor","Skinns")->where('quantity','<',80)->get();
+       $countall = PharmacyDrug::where("vendor","Skinns")->where('quantity','<',80)->sum("quantity");
+      // $skinnsproduct = PharmacyDrug::where("name","PURITANS PRIDE L-GLUTATHIONE")->get();
+
+        $currentMonth = Carbon::now()->format('F');
+
+        //dd($skinnsproduct);
+        return view("skinnsreport",compact('skinnsproduct','currentMonth','countall'));
+    }
+
+
+    //delete my order
+
+    public function deletemyorder(Request $request,$ref){
+
+        $order = Order::where("order_ref",$ref)->delete();
+
+      return back();
+
+
+    }
+
+
+    /// mark as test order
+
+    public function myordermark(Request $request,$ref){
+        $myorder = Order::where("order_ref",$ref)->update([
+            'live' => "text"
+        ]);
+       
+        return back();
+    }
+
+
+    //nello medical report get available drugs
+
+    public function getavailabledrugs(){
+      $availabledrugs =   PharmacyDrug::where('quantity','>',0)->pluck("name");
+
+
+      return $availabledrugs;
+    }
 }

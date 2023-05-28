@@ -100,13 +100,13 @@
                                             <label>Filter by Experience</label>
                                             <select class="form-control" name="experience">
                                                 <option value="">Select experience</option>
-                                                <option value="happy" @if($experience == 'happy') selected @endif>
-                                                    Happy
+                                                <option value="Issues" @if($experience == 'Issues') selected @endif>
+                                                    Issues
                                                 </option>
-                                                <option value="neutral"
-                                                        @if($experience == 'neutral') selected @endif>Neutral
+                                                <option value="Complaints"
+                                                        @if($experience == 'Complaints') selected @endif>Complaints
                                                 </option>
-                                                <option value="sad" @if($experience == 'sad') selected @endif>Sad
+                                                <option value="Enquiry" @if($experience == 'Enquiry') selected @endif>Enquiry
                                                 </option>
                                             </select>
                                         </div>
@@ -129,27 +129,57 @@
                         <table class="table dataTable w-100">
                             <thead>
                             <tr>
-                                <th>#</th>
-                                <th>Experience</th>
-                                <th>Feedback</th>
-                                <th>Phone</th>
-                                <th>Date Added</th>
+                                
+                                <th>Feedback Type</th>
+                                <th>Customer Name</th>
+                                <th>Email</th>
+                                <th>Message</th>
+                                <th>Status</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
 
 
                             <tbody>
 
-                            @foreach($feedbacks as $key => $feedback)
-                                <tr>
-                                    <td>{{ ($key + 1) }}</td>
-                                    <td>{{ \Illuminate\Support\Str::ucfirst($feedback->experience) }}</td>
-                                    <td>{{ $feedback->feedback }}</td>
-                                    <td>{{ $feedback->phone }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($feedback->created_at)->format('h:ia F dS, Y') }}</td>
-                                </tr>
-                            @endforeach
+                                @foreach($feedbacks as $feed)
 
+                            <tr>
+                                <td>{{$feed->type}}</td>
+                                <td>{{$feed->name}}</td>
+                                <td>{{$feed->email}}</td>
+                                <td>{{$feed->message}}</td>
+                                <td>
+
+                                @if($feed->resolved == "false")
+
+                                <p class="badge badge-warning text-dark text-center">Pending</p>
+
+                                @else
+                                <p class="badge badge-success text-light text-center">Resolved</p>
+
+
+
+                                @endif
+
+                                </td>
+                                <td>
+                                    <form action="{{route('updatefeedback',$feed->id)}}"method="POST">
+                                        @csrf 
+
+                                        {{method_field("PUT")}}
+
+                                        <button class="btn  btn-sm btn-success text-center">Mark as Resolved</button>
+                                    </form>
+                                </td>
+
+                            </tr>
+
+
+
+                                @endforeach
+
+                            
                             </tbody>
                         </table>
 

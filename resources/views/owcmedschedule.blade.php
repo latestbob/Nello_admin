@@ -63,7 +63,7 @@
     <button class="nav-link" id="profile-tab" data-toggle="tab" data-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Gynaecologist</button>
   </li>
   <li class="nav-item" role="presentation">
-    <button class="nav-link" id="contact-tab" data-toggle="tab" data-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Aesthetician</button>
+    <button class="nav-link" id="contact-tab" data-toggle="tab" data-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Urologist</button>
   </li>
 </ul>
 <div class="tab-content" id="myTabContent">
@@ -81,6 +81,7 @@
                                    <th>Specialization</th>
                                    <th>Date</th>
                                    <th>Month</th>
+                                   
                                    <th>Action</th>
                                </tr>
                            </thead>
@@ -92,6 +93,7 @@
                                    <td>{{$dates->specialization}}</td>
                                    <td>{{$dates->date}}</td>
                                    <td>{{$dates->monthstring}}</td>
+                                   
                                    <td>
                                        <form action="{{route('deletecalendardate',$dates->id)}}"method="POST">
                                            @csrf
@@ -131,6 +133,10 @@
                                    <th>Specialization</th>
                                    <th>Date</th>
                                    <th>Month</th>
+                                   
+                                  
+                                
+
                                    <th>Action</th>
                                </tr>
                            </thead>
@@ -142,6 +148,7 @@
                                    <td>{{$dates2->specialization}}</td>
                                    <td>{{$dates2->date}}</td>
                                    <td>{{$dates2->monthstring}}</td>
+                                 
                                    <td>
                                        <form action="{{route('deletecalendardate',$dates2->id)}}"method="POST">
                                            @csrf
@@ -181,23 +188,29 @@
                                    <th>Specialization</th>
                                    <th>Date</th>
                                    <th>Month</th>
+                                   
+
+
                                    <th>Action</th>
                                </tr>
                            </thead>
 
                            <tbody>
-                               @foreach($aesthesian as $dates3)
+                               @foreach($urologist as $dates3)
 
                                <tr>
                                    <td>{{$dates3->specialization}}</td>
                                    <td>{{$dates3->date}}</td>
                                    <td>{{$dates3->monthstring}}</td>
+                                   
+                                   
+
                                    <td>
                                        <form action="{{route('deletecalendardate',$dates3->id)}}"method="POST">
                                            @csrf
                                            {{method_field('DELETE')}}
 
-                                            <button class="btn btn-danger text-light">Remove</button>
+                                           <button class="btn btn-danger text-light">Remove</button>||<a href="{{route('owcascheduletime',$dates3->id)}}"class="btn btn-info text-center text-light">Manage Time</a>
                                        </form>
                                    </td>
                                </tr>
@@ -244,7 +257,7 @@
                     
                   <option value="General Practitioner">General Practitioner</option>
                   <option value="Gynaecologist">Gynaecologist</option>
-                  <option value="Aesthetician">Aesthetician</option>
+                  <option value="Urologist">Urologist</option>
                   
 
                   
@@ -346,7 +359,7 @@ month = month + 1; //
 
 let today = d.getDate() 
 let year = d.getFullYear()
-var lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+var lastDay = new Date(d.getFullYear(), d.getMonth() + 2, 0);
 var last = lastDay.getDate();
 console.log(month)
 console.log(today)
@@ -370,8 +383,9 @@ console.log(minDate);
 
                     selectedDates.map(function(e){
                         const f = new Date(e);
-                    let month = d.getMonth();
-                    month = month + 1; //change back to 1
+                    let month = f.getMonth() + 1 ;
+                   // month = month + 1; //change back to 1
+                   // month = f.getMonth(); //change back to 1
                     let today = f.getDate() 
                     let year = f.getFullYear()
 

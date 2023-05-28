@@ -102,7 +102,7 @@
             </li>
 
             <li class="side-nav-item mt-2">
-                <a href="" class="side-nav-link">
+                <a href="{{route('famacarespecialization')}}" class="side-nav-link">
                     <i class="uil-clock"></i>
                     <span> Center Schedule</span>
                 </a>
@@ -117,7 +117,7 @@
             </li>
         @endif
 
-        {{-- @if(\Illuminate\Support\Facades\Auth::check() &&
+         @if(\Illuminate\Support\Facades\Auth::check() &&
                 \Illuminate\Support\Facades\Auth::user()->user_type == "admin")
             <li class="side-nav-item">
                 <a href="{{ route('feedbacks') }}" class="side-nav-link">
@@ -125,7 +125,7 @@
                     <span> Feedbacks </span>
                 </a>
             </li>
-        @endif --}}
+        @endif 
 
         @if(\Illuminate\Support\Facades\Auth::check() &&
                 \Illuminate\Support\Facades\Auth::user()->user_type == "admin")
@@ -277,9 +277,38 @@
             </li>
 
             <li class="side-nav-item">
+                <a href="javascript: void(0);" class="side-nav-link">
+                    <i class="uil-money-bill"></i>
+                    <span> Sales Report </span>
+                    <span class="menu-arrow"></span>
+                </a>
+                <ul class="side-nav-second-level" aria-expanded="false">
+                    <li>
+                        <a href="{{route('drugsalesreport')}}">Drug Sales Report</a>
+                    </li>
+                    <li>
+                        <a href="{{route('cancelledinvoices')}}">Cancelled Invoices</a>
+                    </li>
+
+
+                    <li>
+                        <a href="{{route('skinsreport')}}">Skinns Inventory </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="side-nav-item">
                 <a href="{{route('password-activity')}}" class="side-nav-link">
                     <i class="uil uil-user"></i>
                     <span> Password Activity </span>
+                </a>
+            </li>
+
+
+            <li class="side-nav-item">
+                <a href="{{route('getinterest')}}" class="side-nav-link">
+                    <i class="uil uil-user"></i>
+                    <span> Business Interests </span>
                 </a>
             </li>
 

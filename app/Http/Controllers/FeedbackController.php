@@ -4,23 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\Feedback;
 use Illuminate\Http\Request;
-
+use DB;
 class FeedbackController extends Controller
 {
     public function index(Request $request) {
 
         $size = empty($request->size) ? 10 : $request->size;
 
-        $feedbacks = Feedback::where('vendor_id', '=', $request->user()->vendor_id)->orderBy('id', 'desc');
+        $feedbacks = DB::table("customerfeedbacks")->orderBy('id', 'desc');
 
         if (!empty($experience = $request->experience)) {
-            $feedbacks = $feedbacks->where('experience', $experience);
+            $feedbacks = $feedbacks->where('type', $experience);
         }
 
         if (!empty($search = $request->search)) {
 
             $feedbacks = $feedbacks->whereRaw(
-                "(phone like ? or feedback like ?)",
+                "(email like ? or message like ?)",
                 [
                     "%{$search}%", "%{$search}%"
                 ]
@@ -36,5 +36,15 @@ class FeedbackController extends Controller
         ];
 
         return view('feedback', compact('feedbacks', 'total', 'size', 'experience', 'search'));
+    }
+
+    //update feedback
+
+    public function updatefeedback(Request $request, $id){
+        $feedback = DB::table("customerfeedbacks")->where("id",$id)->update([
+            "resolved" => "true",
+        ]);
+
+        return back()->with("msg","Feedback marked as resolved");
     }
 }

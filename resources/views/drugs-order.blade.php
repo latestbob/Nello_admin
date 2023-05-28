@@ -25,7 +25,7 @@
                     <div class="card-body">
                         <i class="uil uil-moneybag-alt float-right"></i>
                         <h6 class="text-uppercase mt-0">Paid</h6>
-                        <h2 class="my-2" id="active-users-count">{{ $total['paid'] }}</h2>
+                        <h2 class="my-2" id="active-users-count">{{ $orders->where("live","!=","text")->count() - 1}}</h2>
                         <p class="mb-0 text-muted">
                             <span class="text-nowrap">Total Paid Orders</span>
                         </p>
@@ -40,7 +40,7 @@
                         <h6 class="text-uppercase mt-0">Unpaid</h6>
                         <h2 class="my-2" id="active-users-count">{{ $total['unpaid'] }}</h2>
                         <p class="mb-0 text-muted">
-                            <span class="text-nowrap">Total Unpaid Orders</span>
+                            <span class="text-nowrap">Total Unpaid Orders  </span>
                         </p>
                     </div> <!-- end card-body-->
                 </div>
@@ -156,7 +156,7 @@
                         <table class="table dataTable w-100">
                             <thead>
                             <tr>
-                                <th>#</th>
+                               
                                 <th>Name</th>
                                 <th>Contact</th>
                                 <th>Amount</th>
@@ -175,6 +175,8 @@
                                 <th>Date Ordered</th>
                                 <th>Cart_Uuid</th>
                                 <th>Action</th>
+                                <!-- <th>More</th> -->
+                               
                             </tr>
                             </thead>
 
@@ -182,8 +184,9 @@
                             <tbody>
 
                             @foreach($orders as $key => $order)
+                                @if(!$order->live)
                                 <tr>
-                                    <td>{{ ($key + 1) }}</td>
+                                    <!-- <td>{{ ($key + 1) }}</td> -->
                                     <td>{{ $order->firstname }} {{ $order->lastname }}</td>
                                     <td>{{ $order->phone }}, {{ $order->email }}</td>
                                     <td>₦{{ $order->amount }}</td>
@@ -216,7 +219,7 @@
                                                 <form action="{{route('delivered_drugs',$order->order_ref)}}"method="POST">
                                                     @csrf
 
-                                                    <!-- <input type="hidden"name="id"value="{{ $order->id }}"> -->
+                                                   
                                                     <button type="submit" class="dropdown-item order-delivered"
                                                             >
                                                         Order Delivered 
@@ -233,7 +236,17 @@
                                             </div>
                                         </div>
                                     </td>
+
+                                    <!-- <td>
+                                      <a href="{{route('myordermark',$order->order_ref)}}"class="btn btn-info text-light">Mark </a>
+                                    
+
+                                    </td> -->
+
+                                    
                                 </tr>
+
+                                @endif
                             @endforeach
 
                             </tbody>

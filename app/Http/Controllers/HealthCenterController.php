@@ -81,7 +81,20 @@ class HealthCenterController extends Controller
 
             if ($request->hasFile('logo')) {
                 $data['logo'] = $this->uploadFile($request, 'logo');
+
+                $healthCenterr = HealthCenter::where('uuid', $request->uuid)->update([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'phone' => $request->phone,
+                    'address1' => $request->address1,
+                    'state' => $request->state,
+                    'city' => $request->city,
+                    'fee' => $request->fee,
+                    'logo' => $data['logo'],
+                ]);
             }
+
+            else{
 
             // $healthCenter->update($data);
             $healthCenterr = HealthCenter::where('uuid', $request->uuid)->update([
@@ -91,8 +104,10 @@ class HealthCenterController extends Controller
                 'address1' => $request->address1,
                 'state' => $request->state,
                 'city' => $request->city,
-                'fee' => $request->fee
+                'fee' => $request->fee,
+                
             ]);
+        }
 
             return redirect("/health-centers")->with('success', "Health center has been updated successfully");
 
@@ -389,5 +404,84 @@ class HealthCenterController extends Controller
     }
 
 
+    // get specialization or caretype for each unique healthcenter
+
+    public function getspecunique(Request $request){
+
+        $validator = Validator::make($request->all(), [
+       
+       
+            'uuid'=> 'required',
+            
+            
+]);
+
+
+        if($validator->fails()){
+        return response([
+            'status' => 'failed',
+            'message' => $validator->errors()
+        ]);
+        }
+
+        $specialization = Specialization::where("med_center_uuid",$request->uuid)->get();
+
+        return $specialization;
+    }
+
+
+
+        //getnellomedcenters
+
+        public function getnellomedcenters(Request $request){
+            
+            $healthCenters = HealthCenter::where("is_active",true)
+            ->when($request->location, function($query, $location){
+                // $names = explode(" ", $search, 2);
+                // $firstname = $names[0] ?? '';
+                // $lastname = $names[1] ?? '';
+                $query->whereRaw('(city LIKE ? or address1 LIKE ?)',
+                    ["%{$location}%", "%{$location}%"]);
+            })->when($request->name, function($query, $name){
+                                $query->where('name', 'LIKE', "%{$name}%");
+                            })->get();
+
+//             $doctors = User::with(['vendor'])->where(['user_type' => 'doctor', 'active' => true])
+// //            ->whereNotNull('hospital')
+//             ->when($request->search, function($query, $search){
+//                 $names = explode(" ", $search, 2);
+//                 $firstname = $names[0] ?? '';
+//                 $lastname = $names[1] ?? '';
+//                 $query->whereRaw('(firstname LIKE ? or middlename LIKE ? or lastname LIKE ? or hospital like ? or (firstname = ? and lastname = ?))',
+//                     ["%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%", "{$firstname}", "{$lastname}"]);
+//             })->when($request->specialization, function($query, $spec){
+//                 $query->where('aos', 'LIKE', "%{$spec}%");
+//             })->paginate(16);
+
+
+            return $healthCenters;
+        }
+
+
+
+        // centers by spec
+
+        public function nellocentersbyspec(Request $request){
+            //$existed = Specialization::where('med_center_uuid',$uuid)->where('specialization',$request->specialization)->exists();
+            $healthCenter = Specialization::where("specialization",$request->specialization)->get();
+
+        //return $healthCenter;
+
+        $all_centers = [];
+
+        foreach($healthCenter as $centers){
+            
+            $centerss = HealthCenter::where("uuid",$centers->med_center_uuid)->where("is_active",true)->first();
+
+            array_push($all_centers,$centerss);
+        }
+
+        return $all_centers;
+        }
 
 }

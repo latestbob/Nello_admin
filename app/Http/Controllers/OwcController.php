@@ -332,20 +332,34 @@ class OwcController extends Controller
         $general = Owcalendar::where("specialization","General Practitioner")->get();
         $gynecology = Owcalendar::where("specialization","Gynaecologist")->get();
         $aesthesian = Owcalendar::where("specialization","Aesthetician")->get();
-        return view('owcmedschedule',compact('general', 'gynecology', 'aesthesian'));
+        $urologist = Owcalendar::where("specialization","Urologist")->get();
+        return view('owcmedschedule',compact('general', 'gynecology', 'aesthesian','urologist'));
     }
 
 
     //OWC Calendar Post
 
     public function medicalcalendarpost(Request $request){
+
+
+        //month number
+        $timestamp = strtotime(str_replace('/', '-', "28/2/2023"));
+        $monthNumber = date('m', $timestamp);
+
+
+        // month string
+        $timestamp = strtotime(str_replace('/', '-', "28/2/2023"));
+        $monthName = date('F', $timestamp);
+
+
         
-        $month = date('m'); //uncomment this tomorrow 
-       $monthstring = date("F", strtotime('m'));  
+        
+    //     $month = date('m'); //uncomment this tomorrow 
+    //   $monthstring = date("F", strtotime('m'));  
+
+     
        
-      // $monthstring = date("F", strtotime('first day of +1 month')); //comment this tomorrow
-      // $month = date('m',strtotime('first day of +1 month')); //comment this tomorrow
-       
+ 
       
         $date = $request->mydates;
 
@@ -355,36 +369,39 @@ class OwcController extends Controller
        foreach($selected as $select){
         $existed = Owcalendar::where('date',$select)->where('specialization',$request->specialization)->exists();
 
+
         if($existed){
             return back()->with('error','Date(s) already exists in the calendar for ' .$request->specialization);
         } 
 
         //uncomment the above later
 
+        $timestamp = strtotime(str_replace('/', '-', $select));
+        $monthNumber = date('m', $timestamp);
+
+
+        // month string
+        $timestamp = strtotime(str_replace('/', '-', $select));
+        $monthName = date('F', $timestamp);
+
+
+
            $owc = new Owcalendar;
 
-        //    $table->string("specialization");
-        //     $table->string("center");
-        //     $table->string("date");
-        //     $table->integer("fee")->nullable();
-        //     $table->string("month");
+       
 
         $owc->specialization = $request->specialization;
         $owc->center = "OWC";
         $owc->date = $select;
-        $owc->month=$month;
-        $owc->monthstring = $monthstring;
+        $owc->month=$monthNumber;
+        $owc->monthstring = $monthName;
 
         $owc->save();
            
        }
 
        return back()->with("msg",'Calandar created successfully');
-    //dd($month);
-   // dump($monthstring);
-        
-
-
+    
     }
 
     //delete unique calendar date
@@ -748,7 +765,7 @@ public function owcmanagetime($id){
    
     $schedule = Owcalendar::find($id);
     $blocked_date = $schedule->date;
-    $blocktimes = Owctime::where("date",$blocked_date)->get();
+    $blocktimes = Owctime::where("date",$blocked_date)->where("specialization",$schedule->specialization)->get();
     return view("owcscheduletime",compact("schedule","blocktimes"));
 }
 
@@ -765,7 +782,13 @@ public function owcmanagetimepost(Request $request){
     foreach($request->time as $times){
         //dump($times);
 
-        $existed = Owctime::where("date",$request->date)->where("time",$times)->exists();
+        $existed = Owctime::where("date",$request->date)->where("time",$times)->where("specialization",$request->specialization)->exists();
+
+        // if($existed){
+        //     $mytimess = Owctime::where("date",$request->date)->where("time",$times)->get();
+
+        //     dd($mytimess);
+        // }
 
         if(!$existed){
             
@@ -776,6 +799,7 @@ public function owcmanagetimepost(Request $request){
            $blocktime->specialization = $request->specialization;
 
            $blocktime->save();
+
         }
     }
 
@@ -825,6 +849,30 @@ public function getblockedtime(Request $request){
 
     return $blocked;
 }
+
+public function getmostdate(Request $request){
+    //
+
+  $calendar = Owcalendar::where("specialization",$request->specialization)->get();
+
+  
+
+    //return $calendar;
+
+    $dateArray = [];
+
+    foreach($calendar as $date){
+      $mydate = $date->date;
+
+      
+          array_push($dateArray,$mydate);
+    }
+
+     return $dateArray;
+}
+
+
+
 
 
 }

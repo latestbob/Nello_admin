@@ -74,6 +74,7 @@
                                 <th>Consultation Fee</th>
                                 <th>Status</th>
                                 <th>Action</th>
+                                <th>Picture</th>
                             </tr>
                             </thead>
 
@@ -115,9 +116,16 @@
                                                 @endif
 
                                                 <a class="dropdown-item"href="{{route('health-center-specschedule',$healthCenter->uuid)}}">Spec & Schedule</a>
+
+                                                <a class="dropdown-item"href="{{route('healthcentercalenderget',$healthCenter->id)}}">Calendar</a>
                                             </div>
                                         </div>
                                     </td>
+
+                                    <td>
+
+                                    </td>
+
                                 </tr>
                             @endforeach
 

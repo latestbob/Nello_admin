@@ -13,6 +13,8 @@
                     </ol>
                 </div>
                 <h4 class="page-title">Drug Order Items</h4>
+
+                <!-- <a href=""class="btn btn-primary text-center text-light">Add Prescription</a> -->
             </div>
         </div>
     </div>
@@ -33,6 +35,7 @@
                                     <p class="text-muted font-14">
                                         Here's a list of drugs ordered by a Nello user
                                     </p>
+                                    <a href=""class="btn btn-primary text-center text-light">Add Prescription</a>
 
                                 </div>
 

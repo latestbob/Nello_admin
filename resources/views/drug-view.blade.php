@@ -43,6 +43,9 @@
 
                         <p class="text-muted mb-2 font-13"><strong>Quantity :</strong> <span class="ml-2 ">{{ number_format($drug->quantity ?: 0) }}</span></p>
 
+                        <p class="text-muted mb-2 font-13"><strong>Vendor:</strong> <span class="ml-2 ">{{ $drug->vendor ?: 'Unavailable' }}</span></p>
+
+
                     </div>
 
                 </div> <!-- end card-body -->
@@ -220,7 +223,7 @@
                         </div> <!-- end row -->
 
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="image">Image</label>
 
@@ -235,6 +238,25 @@
                                         </span>
                                         @enderror
                                     </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                            <div class="form-group">
+                                    <label for="category">Vendor(Optional)</label>
+                                    <select class="form-control @error('vendor') is-invalid @enderror" id="vendor" name="vendor"required>
+                                       
+                                        <option value=""> Select Vendor </option>
+                                            <option value="Skinns">Skinns</option>
+                                            <option value="Famacare">Famacare</option>
+                                    </select>
+
+                                    @error('category')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
 
                                 </div>
                             </div>

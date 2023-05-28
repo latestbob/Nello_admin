@@ -13,6 +13,7 @@
                     </ol>
                 </div>
                 <h4 class="page-title">Drugs</h4>
+                <a href="{{route('exportdrugs')}}" class="btn btn-info text-light"> Download Drugs</a>
             </div>
         </div>
     </div>
@@ -86,6 +87,8 @@
                                 
                                 <th>Availability</th>
                                 <th>Quantity</th>
+                                <th>Vendor</th>
+
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -106,7 +109,10 @@
                                     <td>{{ $drug->require_prescription == 1 ? 'Required' : 'Not required' }}</td>
                                 
                                     <td>{{ $drug->is_out_of_stock == true ? 'Unavailable (Out of stock)' : 'Available' }}</td>
+                                   
                                     <td>{{$drug->quantity}}</td>
+
+                                    <td>{{ $drug->vendor }}</td>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button"

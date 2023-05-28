@@ -162,6 +162,21 @@
                                                 <a href="{{route('appointmentreschedule',$appointment->id)}}" class="dropdown-item " 
                                                             >Re-Schedule
                                                 </a>
+
+
+                                                @if($appointment->doctor)
+                                                <a href="{{route('appointmentswitch',$appointment->id)}}" class="dropdown-item " 
+                                                            >Switch
+                                                </a>
+
+                                                @endif
+
+                                               
+
+
+                                                <a href="{{route('appointmentreschedule',$appointment->id)}}" class="dropdown-item " 
+                                                            >Delete
+                                                </a>
                                             </div>
                                         </div>
                                     </td>

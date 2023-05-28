@@ -113,4 +113,12 @@ class LocationController extends Controller
             'message' => 'Location has been deleted successfully',
         ]);
     }
+
+
+    public function getfacilitylocationss(){
+        
+        $location = Location::pluck("name");
+
+        return $location;
+    }
 }

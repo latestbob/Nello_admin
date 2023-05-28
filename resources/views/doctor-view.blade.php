@@ -363,6 +363,7 @@
                                                <option value="General Surgery">General Surgery</option>
                                                <option value="Neurosurgery">Neurosurgery</option>
                                                <option value="Pathology">Pathology</option>
+                                               <option value="Urologist">Urologist</option>
 
                                            </select>
 

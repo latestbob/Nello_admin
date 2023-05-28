@@ -133,6 +133,7 @@ Route::get("/checktimebot","OwcController@checktimebot");
 
 Route::get('/owc/doctors','OwcController@getDoctorSpec');
 
+Route::get("/owcgetmostdate","OwcController@getmostdate");
 
 
 // Nello Webstite frontend get doctors calendar days
@@ -179,3 +180,91 @@ Route::get("/specialistscheduletime","AppointmentController@specialistscheduleti
 //get specialist based on date, specialization and time
 
 Route::get("/specialistgetapi",'AppointmentController@specialistgetapi');
+
+
+
+//health center facility spec get dates api
+
+Route::get("/healthcenterdatesapi","AppointmentController@healthcenterdatesapi");
+
+//health center facility spec get time associated to a date api
+
+Route::get("/healthcenterdatetimeapi","AppointmentController@healthcenterdatetimeapi");
+
+
+
+/////////////nello website dates time  doctor / facility appointment/////////////////
+
+//Route::get("/nellodocdates","AppointmentController@getdatesdoctornellowebsite");
+
+Route::get("/nellodoctordates","AppointmentController@getwebsitedoctordate");
+
+//get time for a unique specialist
+
+Route::get("/nellodoctortimes","AppointmentController@getwebsitedoctortime");
+
+
+//get nello website facility date
+
+Route::get("/nellofacilitydates","AppointmentController@getwebsitefacilitydate");
+
+//get nello website facility time
+Route::get("/nellofacilitytimes","AppointmentController@getnellowebsitefacilitytime");
+
+
+
+////////////////////////////////////////////////////////////////////////
+
+//Route::put("/update/beauty","DrugController@updatebeauty");
+
+Route::get("/skinns","DrugController@skinns");
+
+//get specialization for each unique healthcenter
+
+Route::get("/healthcenter/spec","HealthCenterController@getspecunique");
+
+
+//get all healthcenters for nellofrontend
+
+Route::get("/nellogetmedcenters","HealthCenterController@getnellomedcenters");
+
+//get facility by service
+
+
+Route::get("/nellomedcentername","HealthCenterController@nellocentersbyspec");
+
+
+//get location nellofrontend
+
+Route::get("/facilitylocation","LocationController@getfacilitylocationss");
+
+
+//Nello medical report get drug array
+
+Route::get("/nelloavailabledrugs","DrugController@getavailabledrugs");
+
+
+//Nello medical report get appoint by reference
+
+Route::get("nellogetappointment/{ref}","AppointmentController@getappointmentref");
+
+
+//Nello medical records post consultation records
+
+Route::post("/nellomedicalrecords","AppointmentController@createnewrecord");
+
+
+//Get all medical Records
+
+Route::get("/medicalrecords","AppointmentController@getallmedicalrecords");
+
+//get all specialization and caretype nello frontend
+
+Route::get("/getsearchinput","AppointmentController@getsearchinput");
+
+Route::get("/getdoctorcenter","AppointmentController@getdoctorcenter"); //for nello frontend
+
+
+// nello interest form
+
+Route::post("/join","BusinessController@interest");

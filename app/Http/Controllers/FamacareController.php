@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use PDF;
 use App\Models\User;
 use App\Models\HealthCenter;
+use App\Specialization;
 use DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
@@ -84,6 +85,16 @@ class FamacareController extends Controller
 
 
 
+    }
+
+
+    //famacare specialization page
+
+    public function specialization(){
+        $specialization = Specialization::where("med_center_uuid","24592144-b717-45bd-9fbf-905d3a26ee84")->get();
+
+        //dd($specialization);
+        return view("famacarespecialization",compact("specialization"));
     }
 
 

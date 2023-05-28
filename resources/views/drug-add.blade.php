@@ -198,7 +198,7 @@
                         </div> <!-- end row -->
 
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="image">Image</label>
 
@@ -214,6 +214,26 @@
                                         </span>
                                         @enderror
                                     </div>
+
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-6">
+                            <div class="form-group">
+                                    <label for="category">Vendor(Optional)</label>
+                                    <select class="form-control @error('vendor') is-invalid @enderror" id="vendor" name="vendor">
+                                       
+                                        <option value=""> Select Vendor </option>
+                                            <option value="Skinns">Skinns</option>
+                                            <option value="Famacare">Famacare</option>
+                                    </select>
+
+                                    @error('category')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
 
                                 </div>
                             </div>

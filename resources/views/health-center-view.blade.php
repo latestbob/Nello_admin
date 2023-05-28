@@ -26,7 +26,7 @@
 
                     <img
                         src="{{ $healthCenter->logo ?: asset('images/health-center.jpg') }}"
-                        class="rounded-circle avatar-lg img-thumbnail" alt="profile-image"/>
+                        class="" alt="profile-image"style="width:200px;"/>
 
                     <h4 class="mb-0 mt-2">{{ $healthCenter->name }}</h4>
 
@@ -183,17 +183,17 @@
                         </div> 
 
                         <div class="row">
-                            <div class="col-md-6">
+                        <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="logo">Logo <small>(*optional)</small></label>
 
                                     <div class="custom-file">
                                         <input type="file"
-                                               class="custom-file-input @error('logo') is-invalid @enderror"
+                                               class="@error('logo') is-invalid @enderror"
                                                name="logo" id="logo-input">
-                                        <label class="custom-file-label" for="logo-input">Choose file</label>
+                                       
 
-                                        @error('logo')
+                                        @error('picture')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>

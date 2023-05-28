@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\Response;
 use App\ChatToken;
 use App\Count;
+use App\MedcenterSchedule;
 
 
 class ChatBotController extends Controller
@@ -248,7 +249,7 @@ return response()->json($appointment);
             $date = Carbon::parse($date)->format('Y-m-d');
 
           
-            $doctorname = 'Dr. ' .$doctor->firstname.' ' .$doctor->lastname;
+            $doctorname = $doctor->title.' '.$doctor->firstname.' ' .$doctor->lastname;
 
 
 
@@ -403,10 +404,21 @@ return response()->json($appointment);
         ]);
         }
 
-        $medical_Center = MedSchedule::where('state',$request->state)->where('specialization',$request->specialization)->distinct()->get(['lga']);
+       // $medical_Center = MedSchedule::where('state',$request->state)->where('specialization',$request->specialization)->distinct()->get(['lga']);
+        $medical_Center = MedcenterSchedule::where("specialization",$request->specialization)->distinct()->get(['center_uuid']);
+
+        //return $medical_Center;
+
+        $lga = [];
 
 
-        return $medical_Center;
+        foreach($medical_Center as $centers){
+            $location = HealthCenter::where("uuid",$centers["center_uuid"])->value("city");
+
+            array_push($lga, $location);
+        }
+
+        return $lga;
 
        
 
@@ -762,7 +774,7 @@ return response()->json($appointment);
     public function draftfacilitybooking(Request $request){
         $validator = Validator::make($request->all(), [
        
-            'date'=> 'required|date_format:d-m-Y|after_or_equal:today',
+            'date'=> 'required',
             'time' => 'required',
             'phone' => 'required|exists:users',
             'uuid' =>'required|exists:health_centers',
@@ -1098,7 +1110,7 @@ public function webhook(Request $request){
 
             //call embanqo
 
-            $message = "Congratulation, you have successfully scheduled an appointment on Nello, Kindly click on  ".$link." to download Visitation Slip or login to Nello Website to downloaad appointment vistitation slip";
+            $message = "Congratulation, you have successfully scheduled an appointment on Nello, Kindly click on  ".$link." to download confirmation slip or login to Nello Website to download appointment confirmation slip";
 
             $responsed = Http::withoutVerifying()->withHeaders([
                 'token'=> $token,
@@ -1979,7 +1991,7 @@ public function webhookreceive(Request $request){
                     ])->post('https://ost9cv8wr3.execute-api.us-east-2.amazonaws.com/qa/ebqmsg/message/reply/',[
                         "platform" => $user['platform'],
                         "agent_id" => $user['agent_id'],
-                        "message" => "Please input the reason for the appointment, Type Cancel to exit
+                        "message" => "Please provide purpose of appointment, Type Cancel to exit
                         ",
                         "msg_type" => "text",
                         "user_code" => $response->user_code,
@@ -2170,7 +2182,7 @@ public function webhookreceive(Request $request){
                         ])->post('https://ost9cv8wr3.execute-api.us-east-2.amazonaws.com/qa/ebqmsg/message/reply/',[
                             "platform" => $user['platform'],
                             "agent_id" => $user['agent_id'],
-                            "message" => "Please provide your preferred date for the appointment with a $appointment_specialization i.e 20/09/2022",
+                            "message" => "Please provide your preferred date for the appointment with a $appointment_specialization e.g dd/mm/yyyy",
                             "msg_type" => "text",
                             "user_code" => $response->user_code,
                             "parent_param" => [
@@ -2204,7 +2216,7 @@ public function webhookreceive(Request $request){
                             ])->post('https://ost9cv8wr3.execute-api.us-east-2.amazonaws.com/qa/ebqmsg/message/reply/',[
                                 "platform" => $user['platform'],
                                 "agent_id" => $user['agent_id'],
-                                "message" => "Invalid input, Please input the reason for the appointment, Type Cancel to exit
+                                "message" => "Invalid input, Please provide purpose of appointment, Type Cancel to exit
                                 ",
                                 "msg_type" => "text",
                                 "user_code" => $response->user_code,
@@ -2581,7 +2593,7 @@ public function webhookreceive(Request $request){
                       ])->post('https://ost9cv8wr3.execute-api.us-east-2.amazonaws.com/qa/ebqmsg/message/reply/',[
                           "platform" => $user['platform'],
                           "agent_id" => $user['agent_id'],
-                          "message" => "Please provide your preferred date for the appointment with a $appointment_specialization i.e 20/09/2022",
+                          "message" => "Please provide your preferred date for the appointment with a $appointment_specialization e.g dd/mm/yyyy",
                           "msg_type" => "text",
                           "user_code" => $response->user_code,
                           "parent_param" => [
@@ -4037,7 +4049,7 @@ public function webhookreceive(Request $request){
                       ])->post('https://ost9cv8wr3.execute-api.us-east-2.amazonaws.com/qa/ebqmsg/message/reply/',[
                           "platform" => $user['platform'],
                           "agent_id" => $user['agent_id'],
-                          "message" => "Please provide your preferred date for the appointment with a $appointment_specialization i.e 20/09/2022",
+                          "message" => "Please provide your preferred date for the appointment with a $appointment_specialization e.g dd/mm/yyyy",
                           "msg_type" => "text",
                           "user_code" => $response->user_code,
                           "parent_param" => [
@@ -5541,7 +5553,7 @@ if($password){
                                     // ]);
                                     
 
-                                    $med_specialization = MedSchedule::distinct()->get(['specialization']);
+                                    $med_specialization = MedcenterSchedule::distinct()->get(['specialization']);
 
 
                                     
@@ -6704,7 +6716,7 @@ if($password){
                         ])->post('https://ost9cv8wr3.execute-api.us-east-2.amazonaws.com/qa/ebqmsg/message/reply/',[
                             "platform" => $user['platform'],
                             "agent_id" => $user['agent_id'],
-                            "message" => "Please input the reason for the appointment, Type Cancel to exit",
+                            "message" => "Please provide purpose of appointment, Type Cancel to exit",
                             "msg_type" => "text",
                             "user_code" => $response->user_code,
                             "parent_param" => [
@@ -6938,7 +6950,7 @@ if($password){
                 ])->post('https://ost9cv8wr3.execute-api.us-east-2.amazonaws.com/qa/ebqmsg/message/reply/',[
                     "platform" => $user['platform'],
                     "agent_id" => $user['agent_id'],
-                    "message" => "Please provide your preferred date for the appointment i.e 20/09/2022",
+                    "message" => "Please provide your preferred date for the appointment e.g dd/mm/yyyy",
                     "msg_type" => "text",
                     "user_code" => $response->user_code,
                     "parent_param" => [
@@ -7072,7 +7084,7 @@ if($password){
                         ])->post('https://ost9cv8wr3.execute-api.us-east-2.amazonaws.com/qa/ebqmsg/message/reply/',[
                             "platform" => $user['platform'],
                             "agent_id" => $user['agent_id'],
-                            "message" => "Invalid date input,  provide your preferred date for the appointment in format i.e 20/09/2022",
+                            "message" => "Invalid date input,  provide your preferred date for the appointment in format e.g dd/mm/yyyy",
                             "msg_type" => "text",
                             "user_code" => $response->user_code,
                             "parent_param" => [
@@ -7577,7 +7589,7 @@ if($password){
                         ])->post('https://ost9cv8wr3.execute-api.us-east-2.amazonaws.com/qa/ebqmsg/message/reply/',[
                             "platform" => $user['platform'],
                             "agent_id" => $user['agent_id'],
-                            "message" => "Please provide your preferred date for the appointment i.e 20/09/2022",
+                            "message" => "Please provide your preferred date for the appointment e.g dd/mm/yyyy",
                             "msg_type" => "text",
                             "user_code" => $response->user_code,
                             "parent_param" => [
@@ -7741,6 +7753,8 @@ if($password){
                             // $uuid = $doc_docss['uuid'];
                             // $fee = $doc_docss['fee'];
                             // $reasons = $reason;
+
+                            //wedo
         
                             $date = $date;
                             $time = $time;
@@ -8328,7 +8342,7 @@ $responsed = Http::withoutVerifying()->withHeaders([
                     ])->post('https://ost9cv8wr3.execute-api.us-east-2.amazonaws.com/qa/ebqmsg/message/reply/',[
                         "platform" => $user['platform'],
                         "agent_id" => $user['agent_id'],
-                        "message" => "Please provide your preferred date for the appointment i.e 20/09/2022",
+                        "message" => "Please provide your preferred date for the appointment e.g dd/mm/yyyy",
                         "msg_type" => "text",
                         "user_code" => $response->user_code,
                         "parent_param" => [
@@ -11313,7 +11327,7 @@ public function webhookproduction(Request $request){
                     ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
                         "platform" => $user['platform'],
                         "agent_id" => $user['agent_id'],
-                        "message" => "Please input the reason for the appointment, Type Cancel to exit
+                        "message" => "Please provide purpose of appointment, Type Cancel to exit
                         ",
                         "msg_type" => "text",
                         "user_code" => $response->user_code,
@@ -11516,7 +11530,7 @@ public function webhookproduction(Request $request){
                             ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
                                 "platform" => $user['platform'],
                                 "agent_id" => $user['agent_id'],
-                                "message" => "Please choose your preferred date for the appointment with a $appointment_specialization ", //updatedlast
+                                "message" => "Please choose your preferred date for the appointment with a $appointment_specialization e.g dd/mm/yyyy", //updatedlast
                                 "msg_type" => "quick_reply",
                                 "user_code" => $response->user_code,
                                 "parent_param" => [
@@ -11613,7 +11627,7 @@ public function webhookproduction(Request $request){
                             ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
                                 "platform" => $user['platform'],
                                 "agent_id" => $user['agent_id'],
-                                "message" => "Invalid input, Please input the reason for the appointment, Type Cancel to exit
+                                "message" => "Invalid input, Please provide purpose of appointment, Type Cancel to exit
                                 ",
                                 "msg_type" => "text",
                                 "user_code" => $response->user_code,
@@ -12014,7 +12028,7 @@ public function webhookproduction(Request $request){
                     ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
                         "platform" => $user['platform'],
                         "agent_id" => $user['agent_id'],
-                        "message" => "Kindly hold while I get available doctors for the appointment",
+                        "message" => "Kindly hold while I get available ".$appointment_specialization,
                         "msg_type" => "text",
                         "user_code" => $response->user_code,
                         "parent_param" => [
@@ -12301,6 +12315,7 @@ public function webhookproduction(Request $request){
                     $doctor_firstname = User::where("email",$doc_email)->value("firstname");
                     $doctor_lastname = User::where("email",$doc_email)->value("lastname");
                     $doctor_fee = User::where("email",$doc_email)->value("fee");
+                    $doctor_title = User::where("email",$doc_email)->value("title");
 
                   
                     Log::debug($doctor_firstname);
@@ -12320,8 +12335,9 @@ public function webhookproduction(Request $request){
                             // Log::debug($name);
                             // Log::debug($money);
 
-                            $message = 'Proceed to make payment of N'. '  '.$fee . ' as consultation fee. Please note confirmation will be sent via mail after payment is verified. Type Cancel to exit';
+                           // $message = 'Proceed to make payment of N'. '  '.$fee . ' as consultation fee. Please note confirmation will be sent via mail after payment is verified. Type Cancel to exit';
 
+                           $message = 'Proceed to make payment of N'.$fee.' to secure an appointment with '.$doctor_title.'. '.$doctor_firstname.' on '.$date.' by '.$time.' . Type Cancel to exit';
                             //draft online api
                             
 
@@ -12557,23 +12573,6 @@ public function webhookproduction(Request $request){
 
 
 
-                ////
-
-
-
-
-
-
-                        ////////////
-
-
-
-
-
-
-
-
-                        /////////////
 
 
                     
@@ -12629,6 +12628,7 @@ public function webhookproduction(Request $request){
                     $doctor_firstname = User::where("email",$doc_email)->value("firstname");
                     $doctor_lastname = User::where("email",$doc_email)->value("lastname");
                     $doctor_fee = User::where("email",$doc_email)->value("fee");
+                    $doctor_title = User::where("email",$doc_email)->value("title");
 
                   
                     Log::debug($doctor_firstname);
@@ -12648,8 +12648,8 @@ public function webhookproduction(Request $request){
                             // Log::debug($name);
                             // Log::debug($money);
 
-                            $message = 'Proceed to make payment of N'. '  '.$fee . ' as consultation fee. Please note confirmation will be sent via mail after payment is verified. Type Cancel to exit';
-
+                            //$message = 'Proceed to make payment of N'. '  '.$fee . ' as consultation fee. Please note confirmation will be sent via mail after payment is verified. Type Cancel to exit';
+                            $message = 'Proceed to make payment of N'.$fee.' to secure an appointment with '.$doctor_title.'. '.$doctor_firstname.' on '.$date.' by '.$time.' . Type Cancel to exit';
                             //draft online api
                             
 
@@ -13126,7 +13126,7 @@ $update = Count::first()->update([
 ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
 "platform" => $user['platform'],
 "agent_id" => $user['agent_id'],
-"message" => "Kindly hold while I get available doctors for the appointment",
+"message" => "Kindly hold while I get available ".$appointment_specialization,
 "msg_type" => "text",
 "user_code" => $response->user_code,
 "parent_param" => [
@@ -13359,6 +13359,477 @@ $responsed = Http::withoutVerifying()->withHeaders([
 
 
 
+            case "Nello_onlinebooking_payment":
+
+
+                ////////////////
+
+
+        $options = json_decode($user['options_temp'], true);
+
+           
+               
+        $count = Count::first();
+            $count = $count->count;
+
+
+
+            $date_selected = $parent_param['date_selected'];
+
+            //parent params details
+            $user_data = $parent_param['user_data'];
+            $appointment_specialization = $parent_param['appointment_specialization'];
+            $reason = $parent_param['reason'];
+
+            $myselected_time = $parent_param['myselected_time'];
+
+            $doc_email = $response->query;
+           
+
+
+
+            if(in_array($doc_email,array_column($options,'value'))){
+               
+
+                //update count back to one
+                $update = Count::first()->update([
+                    'count' => 1
+                ]);
+
+                 
+
+
+            //renter payment button link here owc_payment 
+            $doctor = User::where("email",$doc_email)->get();
+            $doctor_firstname = User::where("email",$doc_email)->value("firstname");
+            $doctor_lastname = User::where("email",$doc_email)->value("lastname");
+            $doctor_fee = User::where("email",$doc_email)->value("fee");
+            $doctor_title = User::where("email",$doc_email)->value("title");
+
+          
+            Log::debug($doctor_firstname);
+
+
+            $doc_id =  User::where("email",$doc_email)->value("id");
+            $date = Carbon::createFromFormat('d/m/Y', $date_selected)->format('d-m-Y');
+
+            Log::debug($date);
+            //$date = $date->format('l, F d, Y');
+                    $time = $myselected_time;
+                    $phone = $user_data['phone'];
+                    $uuid = User::where("email",$doc_email)->value("uuid");
+                    $fee =  $doctor_fee;
+                    $reasons = $reason;
+
+                    
+
+                    // Log::debug($name);
+                    // Log::debug($money);
+
+                    $message = 'Proceed to make payment of N'.$fee.' to secure an appointment with '.$doctor_title.'. '.$doctor_firstname.' on '.$date.' by '.$time.' . Type Cancel to exit';
+                    
+
+                    //draft online api
+
+
+                    $drafbooking = Http::withoutVerifying()->withHeaders([
+                        'token'=>$token,
+                        
+                    ])->post('https://admin.asknello.com/api/draftbooking',[
+                        
+                        'date'=> $date,
+                        'time' => Carbon::parse($time)->format('H:i:s'),
+                        'phone' => $phone,
+                        'uuid' =>$uuid,
+                        'reason' => $reason,
+                        'fee' => $fee
+                    ]);
+
+                    //stophere
+
+                       Log::debug($drafbooking);
+
+                      if($drafbooking['temp_id']){
+                        $temp_id = $drafbooking['temp_id'];
+
+                    
+
+                  
+                       // $temp_id = $uuid;
+
+
+                        $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
+                            "dynamicLinkInfo" => [
+                                "domainUriPrefix" => "https://nello.page.link",
+                                "link" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$fee."&email=".$user_data['email'],
+                            ]
+                            ]);
+
+                        ////
+
+
+                        if($generatelink['shortLink']){
+
+                        
+
+                        $responsed = Http::withoutVerifying()->withHeaders([
+                            'token'=>$token,
+                            
+                        ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
+                            "platform" => $user['platform'],
+                            "agent_id" => $user['agent_id'],
+                            "message" => $message,
+                            "msg_type" => "link",
+                            "user_code" => $response->user_code,
+                            "parent_param" => [
+                                'next_step' => 'check_Nello_payment_button',
+                                'user_data' => $user_data,
+                                'appointment_specialization' => $appointment_specialization,
+                                'reason'=> $reason,
+                                'date_selected' => $date_selected,
+                            'myselected_time' => $myselected_time,
+                            'doc_email' => $doc_email,
+                            'temp_id' => $temp_id,
+                                
+    
+                            ],
+                            "quick_replies" => [
+                                
+
+                            ],
+                            "buttons" => [
+                                [
+                                    "url" => $generatelink['shortLink'],
+                                    "title" => "Make Payment"
+                                ]
+                            ],
+                            "use_cache" => true,
+                            "reply_internal" => true,
+                            "action" =>  $response->action,
+                            "intent_id" => $user['intent_id']
+                        ]);
+                        
+                    }
+                    
+
+                } //end of draft tempid
+
+
+    
+            
+
+            //end of if success
+
+
+            ////////////////////////////////////
+
+
+                
+           }  
+           else{
+               
+
+               //if count is lesser than 3
+               if($count < 3){
+                $update = Count::first()->update([
+                    'count' => $count + 1
+                ]);
+
+                
+                //render error
+
+                $response_doctors = Http::get('https://admin.asknello.com/api/specialistgetapi?specialization='.$appointment_specialization.'&date='.$date_selected.'&time='.$myselected_time);
+
+                if($response_doctors["status"] == "success"){
+                
+                    ///carousel here now
+                
+                
+                    $doctors_docss = [];
+                              
+                         
+                       
+                
+                    foreach($response_doctors['doctors']  as $doc_docss){
+                       // $title = $doc_docss['date'] . ' - ' . ' Dr '.' '. $doc_docss['firstname'];
+                
+                       
+                        
+                        $doctors_docss[] = [
+                            
+                
+                            "title" => $doc_docss['title']. " ".$doc_docss['firstname'],
+                            "description" => "AOS - ".$appointment_specialization ." , Fee - N ".$doc_docss['fee'],
+                            "image_url" => $doc_docss['picture'],
+                            "suggestions" => [
+                             
+                              [
+                                "title" =>  $doc_docss['title'].". ".$doc_docss['firstname'],
+                                "payload" => $doc_docss['email'],
+                                "type" => "postback",
+                                "url" => null
+                              ],
+                              [
+                                "title" =>  "Start Again",
+                                "payload" => "Cancel",
+                                "type" => "postback",
+                                "url" => null
+                              ]
+                            ]
+                          
+                
+                          
+                        ];
+                    } 
+                
+                    
+                
+                      $responsed = Http::withoutVerifying()->withHeaders([
+                    'token'=>$token,
+                    
+                ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
+                    "platform" => $user['platform'],
+                    "agent_id" => $user['agent_id'],
+                    "message" => "Here's a list of available specialists
+                    ",
+                    "msg_type" => "carousel",
+                    "user_code" => $response->user_code,
+                         "parent_param" => [
+                            'next_step' => 'Nello_onlinebooking_payment',
+                            'user_data' => $user_data,
+                            'appointment_specialization' => $appointment_specialization,
+                            'reason'=> $reason,
+                            'date_selected' => $date_selected,
+                            'myselected_time' => $myselected_time
+                
+                        ],
+                    "quick_replies" => null,
+                    "buttons" => [],
+                    "use_cache" => null,
+                    "reply_internal" => true,
+                    "label" => null,
+                    "attachments" => [],
+                    "template" => null,
+                    "action" =>  $response->action,
+                    "intent_id" => $user['intent_id'],
+                
+                    "carousels" => $doctors_docss,
+                
+                ]);
+                
+                
+                
+                
+                }
+                // end of if the doctors fetch api successful
+
+                
+
+                //send message to select from below button
+
+             }
+
+             else {
+                $update = Count::first()->update([
+                    'count' => 1
+                ]);
+
+                //Back To Menu
+                $responsed = Http::withoutVerifying()->withHeaders([
+                    'token'=> $token,
+                    // Back to menu
+                ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
+                    "platform" => $user['platform'],
+                    "agent_id" => $user['agent_id'],
+                    "message" => "You have exceeded you error limits of 3, kindly start again",
+                    "msg_type" => "quick_reply",
+                    "user_code" => $response->user_code,
+                    "parent_param" => null,
+                    "quick_replies" => null,
+                    // "buttons" => [],
+                    // "use_cache" => true,
+                    // "reply_internal" => true,
+                    // "action" =>  $response->action,
+                    // "intent_id" => $user['intent_id']
+                ]);
+             }
+           }  
+
+
+           break;
+
+
+           case "check_Nello_payment_button":
+
+            $count = Count::first();
+                    $count = $count->count;
+
+
+
+                    $date_selected = $parent_param['date_selected'];
+
+                    //parent params details
+                    $user_data = $parent_param['user_data'];
+                    $appointment_specialization = $parent_param['appointment_specialization'];
+                    $reason = $parent_param['reason'];
+
+                    $myselected_time = $parent_param['myselected_time'];
+                    $doc_email =  $parent_param['doc_email'];
+                    $temp_id = $parent_param['temp_id'];
+
+                    $option = $response->query;
+
+                    //////////////////////////
+
+
+                    if($option){
+                        //////////////
+
+                        if($count < 3){
+                            $update = Count::first()->update([
+                                'count' => $count + 1
+                            ]);
+
+
+                            //code here
+
+                                    //renter payment button link here owc_payment 
+                                $doctor = User::where("email",$doc_email)->get();
+                                $doctor_firstname = User::where("email",$doc_email)->value("firstname");
+                                $doctor_lastname = User::where("email",$doc_email)->value("lastname");
+                                $doctor_fee = User::where("email",$doc_email)->value("fee");
+                                $doctor_title = User::where("email",$doc_email)->value("title");
+
+                    
+                                Log::debug($doctor_firstname);
+
+
+                                $doc_id =  User::where("email",$doc_email)->value("id");
+                                $date = Carbon::createFromFormat('d/m/Y', $date_selected)->format('d-m-Y');
+
+                                Log::debug($date);
+                                //$date = $date->format('l, F d, Y');
+                                        $time = $myselected_time;
+                                        $phone = $user_data['phone'];
+                                        $uuid = User::where("email",$doc_email)->value("uuid");
+                                        $fee =  $doctor_fee;
+                                        $reasons = $reason;
+
+                    
+
+                                // Log::debug($name);
+                                // Log::debug($money);
+
+                            $message = 'Proceed to make payment of N'.$fee.' to secure an appointment with '.$doctor_title.'. '.$doctor_firstname.' on '.$date.' by '.$time.' . Type Cancel to exit';
+                                
+
+                                $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
+                                    "dynamicLinkInfo" => [
+                                        "domainUriPrefix" => "https://nello.page.link",
+                                        "link" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$fee."&email=".$user_data['email'],
+                                    ]
+                                    ]);
+
+                                ////
+
+
+                                if($generatelink['shortLink']){
+
+                    
+
+                            $responsed = Http::withoutVerifying()->withHeaders([
+                                'token'=>$token,
+                                
+                            ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
+                                "platform" => $user['platform'],
+                                "agent_id" => $user['agent_id'],
+                                "message" => $message,
+                                "msg_type" => "link",
+                                "user_code" => $response->user_code,
+                                "parent_param" => [
+                                    'next_step' => 'check_Nello_payment_button',
+                                    'user_data' => $user_data,
+                                    'appointment_specialization' => $appointment_specialization,
+                                    'reason'=> $reason,
+                                    'date_selected' => $date_selected,
+                                'myselected_time' => $myselected_time,
+                                'doc_email' => $doc_email,
+                                'temp_id' => $temp_id,
+                                    
+
+                                ],
+                                "quick_replies" => [
+                                    
+
+                                ],
+                                "buttons" => [
+                                    [
+                                        "url" => $generatelink['shortLink'],
+                                        "title" => "Make Payment"
+                                    ]
+                                ],
+                                "use_cache" => true,
+                                "reply_internal" => true,
+                                "action" =>  $response->action,
+                                "intent_id" => $user['intent_id']
+                            ]);
+                    
+                }
+                
+
+
+                    }
+
+
+
+                    /////////////////////////////
+                    
+
+                    else {
+                        $update = Count::first()->update([
+                            'count' => 1
+                        ]);
+
+                        //Back To Menu
+                        $responsed = Http::withoutVerifying()->withHeaders([
+                            'token'=> $token,
+                            // Back to menu
+                        ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
+                            "platform" => $user['platform'],
+                            "agent_id" => $user['agent_id'],
+                            "message" => "You have exceeded you error limits of 3, kindly start again",
+                            "msg_type" => "quick_reply",
+                            "user_code" => $response->user_code,
+                            "parent_param" => null,
+                            "quick_replies" => null,
+                            // "buttons" => [],
+                            // "use_cache" => true,
+                            // "reply_internal" => true,
+                            // "action" =>  $response->action,
+                            // "intent_id" => $user['intent_id']
+                        ]);
+                     }
+
+                    } //end of if option
+
+                   
+                  
+                
+        
+                   
+        
+                   
+
+
+
+
+
+            break;
+
+
+
+
+
 
 
                   //check date
@@ -13396,7 +13867,7 @@ $responsed = Http::withoutVerifying()->withHeaders([
                       ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
                           "platform" => $user['platform'],
                           "agent_id" => $user['agent_id'],
-                          "message" => "Please provide your preferred date for the appointment with a $appointment_specialization i.e 20/09/2022",
+                          "message" => "Please provide your preferred date for the appointment with a $appointment_specialization e.g dd/mm/yyyy",
                           "msg_type" => "text",
                           "user_code" => $response->user_code,
                           "parent_param" => [
@@ -14871,7 +15342,7 @@ $responsed = Http::withoutVerifying()->withHeaders([
                       ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
                           "platform" => $user['platform'],
                           "agent_id" => $user['agent_id'],
-                          "message" => "Please provide your preferred date for the appointment with a $appointment_specialization i.e 20/09/2022",
+                          "message" => "Please provide your preferred date for the appointment with a $appointment_specialization e.g dd/mm/yyyy",
                           "msg_type" => "text",
                           "user_code" => $response->user_code,
                           "parent_param" => [
@@ -16456,7 +16927,7 @@ if($password){
                                     // ]);
                                     
 
-                                    $med_specialization = MedSchedule::distinct()->get(['specialization']);
+                                    $med_specialization = MedcenterSchedule::distinct()->get(['specialization']);
 
 
                                     
@@ -16781,7 +17252,7 @@ if($password){
                                         // ]);
                                         
     
-                                        $med_specialization = MedSchedule::distinct()->get(['specialization']);
+                                        $med_specialization = MedcenterSchedule::distinct()->get(['specialization']);
     
                                         
                                         
@@ -17129,8 +17600,8 @@ if($password){
                      foreach($resjsonlocation as $facility_location){
                          $location[] = [
                              "content_type" => "text",
-                             "title" => $facility_location["lga"],
-                             "payload" => $facility_location["lga"],
+                             "title" => $facility_location,
+                             "payload" => $facility_location,
                              "image_url" =>  null
                          ];
                      } 
@@ -17199,7 +17670,7 @@ if($password){
 
 
                         $userr = User::where('phone',$user['identifier'])->first();
-                        $med_specialization = MedSchedule::distinct()->get(['specialization']);
+                        $med_specialization = MedcenterSchedule::distinct()->get(['specialization']);
 
 
 
@@ -17239,7 +17710,7 @@ if($password){
                         ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
                             "platform" => $user['platform'],
                             "agent_id" => $user['agent_id'],
-                            "message" => "Kindly choose the care type from the below options ",
+                            "message" => "Kindly choose the care type from the generated options ",
                             "msg_type" => "quick_reply",
                             "user_code" => $response->user_code,
                             "parent_param" => [
@@ -17756,7 +18227,7 @@ if($password){
                     ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
                         "platform" => $user['platform'],
                         "agent_id" => $user['agent_id'],
-                        "message" => "Please input the reason for the appointment, Type Cancel to exit
+                        "message" => "Please provide purpose of appointment, Type Cancel to exit
                         ",
                         "msg_type" => "text",
                         "user_code" => $response->user_code,
@@ -17929,7 +18400,7 @@ if($password){
                         ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
                             "platform" => $user['platform'],
                             "agent_id" => $user['agent_id'],
-                            "message" => "Please input the reason for the appointment, Type Cancel to exit",
+                            "message" => "Please provide purpose of appointment, Type Cancel to exit",
                             "msg_type" => "text",
                             "user_code" => $response->user_code,
                             "parent_param" => [
@@ -18203,7 +18674,7 @@ if($password){
                            ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
                                "platform" => $user['platform'],
                                "agent_id" => $user['agent_id'],
-                               "message" => "Invalid input, Please input the reason for the appointment, Type Cancel to exit
+                               "message" => "Invalid input, Please provide purpose of appointment, Type Cancel to exit
                                ",
                                "msg_type" => "text",
                                "user_code" => $response->user_code,
@@ -18849,14 +19320,45 @@ if($password){
                          'count' => 1
                      ]);
 
+                     //fixdate
+
+                     $response_dates = Http::get('https://admin.asknello.com/api/healthcenterdatesapi?specialization='.$care_type.'&center_uuid='.$facility_uuid);
+
+                     $resjson = $response_dates->json();
+
+                      Log::debug($resjson);
+                     $specialization_datess = [];
+
+                     foreach($resjson  as $doc_dates){
+                         $specialization_datess[] = [
+                             "content_type" => "text",
+                             "title" => $doc_dates,
+                             "payload" => $doc_dates,
+                             "image_url" =>  null
+                         ];
+                     } 
+                     
+                     //  Log::debug($specialization);
+
+                      $specialization_datess[] = [
+                         "content_type" => "text",
+                         "title" => "Cancel",
+                         "payload" => "Cancel",
+                         "image_url" =>  null
+                      ];
+
+
+
+
+
                  $responsed = Http::withoutVerifying()->withHeaders([
                     'token'=>$token,
                     
                 ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
                     "platform" => $user['platform'],
                     "agent_id" => $user['agent_id'],
-                    "message" => "Please provide your preferred date for the appointment i.e 20/09/2022",
-                    "msg_type" => "text",
+                    "message" => "Kindly choose preferred date for the appointment e.g dd/mm/yyyy",
+                    "msg_type" => "quick_reply",
                     "user_code" => $response->user_code,
                     "parent_param" => [
                         'next_step' => 'validate_date_facility',
@@ -18868,7 +19370,7 @@ if($password){
                         'reason' => $reason
 
                     ],
-                    "quick_replies" => [],
+                    "quick_replies" => $specialization_datess,
                         
                           
                     "buttons" => [],
@@ -18983,16 +19485,71 @@ if($password){
                             'count' => $count + 1
                         ]);
 
+                        // $responsed = Http::withoutVerifying()->withHeaders([
+                        //     'token'=>$token,
+                            
+                        // ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
+                        //     "platform" => $user['platform'],
+                        //     "agent_id" => $user['agent_id'],
+                        //     "message" => "Invalid date input,  provide your preferred date for the appointment in format i.e 20/09/2022",
+                        //     "msg_type" => "text",
+                        //     "user_code" => $response->user_code,
+                        //     "parent_param" => [
+                        //         'next_step' => 'validate_date_facility',
+                        //         'user_data' => $user_data,
+                        //         'care_type' => $care_type,
+                        //         'state' => $state,
+                        //         'location' => $location,
+                        //         'facility_uuid' => $facility_uuid,
+                        //         'reason' => $reason
+        
+                        //     ],
+                        //     "quick_replies" => [],
+                                
+                                  
+                        //     "buttons" => [],
+                        //     "use_cache" => true,
+                        //     "reply_internal" => true,
+                        //     "action" =>  $response->action,
+                        //     "intent_id" => $user['intent_id']
+                        // ]);
+
+                        $response_dates = Http::get('https://admin.asknello.com/api/healthcenterdatesapi?specialization='.$care_type.'&center_uuid='.$facility_uuid);
+   
+                        $resjson = $response_dates->json();
+
+                        // Log::debug($resjson);
+                        $specialization_datess = [];
+
+                        foreach($resjson  as $doc_dates){
+                            $specialization_datess[] = [
+                                "content_type" => "text",
+                                "title" => $doc_dates,
+                                "payload" => $doc_dates,
+                                "image_url" =>  null
+                            ];
+                        } 
+                        
+                        //  Log::debug($specialization);
+
+                         $specialization_datess[] = [
+                            "content_type" => "text",
+                            "title" => "Cancel",
+                            "payload" => "Cancel",
+                            "image_url" =>  null
+                         ];
+
+
                         $responsed = Http::withoutVerifying()->withHeaders([
                             'token'=>$token,
                             
                         ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
                             "platform" => $user['platform'],
                             "agent_id" => $user['agent_id'],
-                            "message" => "Invalid date input,  provide your preferred date for the appointment in format i.e 20/09/2022",
-                            "msg_type" => "text",
+                            "message" => "Invalid date input,  kindly choose from the below available dates.",
+                            "msg_type" => "quick_reply",
                             "user_code" => $response->user_code,
-                            "parent_param" => [
+                               "parent_param" => [
                                 'next_step' => 'validate_date_facility',
                                 'user_data' => $user_data,
                                 'care_type' => $care_type,
@@ -19002,15 +19559,16 @@ if($password){
                                 'reason' => $reason
         
                             ],
-                            "quick_replies" => [],
-                                
-                                  
+                            "quick_replies" => $specialization_datess,
                             "buttons" => [],
                             "use_cache" => true,
                             "reply_internal" => true,
                             "action" =>  $response->action,
                             "intent_id" => $user['intent_id']
                         ]);
+                        
+
+
 
                        
 
@@ -19048,178 +19606,7 @@ if($password){
 
 
 
-                 $date = Carbon::createFromFormat('d/m/Y', $date)->format('d-m-Y');
-
-                 $response_available = Http::get('https://admin.asknello.com/api/checkavailability',[
-                    "specialization" => $care_type,
-                    "date" => $date,
-                    "uuid" => $facility_uuid
-                ]);
-
-                $response_available = $response_available->json();
-
-
-                 //check if date is passed date
-                
-                 if($response_available["status"] == "failed"){
-                     //if error with date format or passed date
-
-                     $updated = Count::first()->update([
-                         'count' => $count + 1
-                     ]);
-
-                     if($count < 3){
-
-                            $responsed = Http::withoutVerifying()->withHeaders([
-                                'token'=>$token,
-                                
-                            ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
-                                "platform" => $user['platform'],
-                                "agent_id" => $user['agent_id'],
-                                "message" => "Invalid or past date ",
-                                "msg_type" => "quick_reply",
-                                "user_code" => $response->user_code,
-                                "parent_param" => [
-                                    'next_step' => 'redate_facility',
-                                    'user_data' => $user_data,
-                                'care_type' => $care_type,
-                                'state' => $state,
-                                'location' => $location,
-                                'facility_uuid' => $facility_uuid,
-                                'reason' => $reason,
-                                
-
-                                ],
-                            
-                                "quick_replies" => [
-                                    [
-                                        "content_type" => "text",
-                                        "title" => "Search Again",
-                                        "payload" => "Search Again",
-                                        "image_url" =>  null
-                                    ],
-                                
-                                    [
-                                        "content_type" => "text",
-                                        "title" => "Cancel",
-                                        "payload" => "Cancel",
-                                        "image_url" =>  null
-                                    ],
-
-                                    [
-                                        "content_type" => "text",
-                                        "title" => "Chat Support",
-                                        "payload" => "Chat Support",
-                                        "image_url" =>  null
-                                    ],
-
-                                ],
-                                "buttons" => [],
-                                "use_cache" => true,
-                                "reply_internal" => true,
-                                "action" =>  $response->action,
-                                "intent_id" => $user['intent_id']
-                            ]);
-
-                     }
-
-                     else {
-                        $updated = Count::first()->update([
-                            'count' => 1
-                        ]);
-
-                        //date back
-
-                        $responsed = Http::withoutVerifying()->withHeaders([
-                            'token'=> $token,
-                            // Back to menu
-                        ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
-                            "platform" => $user['platform'],
-                            "agent_id" => $user['agent_id'],
-                            "message" => "You have exceeded you error limits of 3, kindly start again",
-                            "msg_type" => "quick_reply",
-                            "user_code" => $response->user_code,
-                            "parent_param" => null,
-                            "quick_replies" => null,
-                            // "buttons" => [],
-                            // "use_cache" => true,
-                            // "reply_internal" => true,
-                            // "action" =>  $response->action,
-                            // "intent_id" => $user['intent_id']
-                        ]);
-                     }
-
-                     
-
-
-                 }
-
-
-
-
-
-
-                 //end of check if date is passed date
-
-
-                 //check if date is not passed but no availaility 
-                 elseif($response_available["status"] == "success" && count($response_available['available'])== 0) {
-                    $responsed = Http::withoutVerifying()->withHeaders([
-                        'token'=>$token,
-                        
-                    ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
-                        "platform" => $user['platform'],
-                        "agent_id" => $user['agent_id'],
-                        "message" => "There are no time slots that match your selection. You can search for another facility or another time, or chat with a support representative who can help you book an appointment",
-                        "msg_type" => "quick_reply",
-                        "user_code" => $response->user_code,
-                        "parent_param" => [
-                            'next_step' => 'redate_facility',
-                            'user_data' => $user_data,
-                        'care_type' => $care_type,
-                        'state' => $state,
-                        'location' => $location,
-                        'facility_uuid' => $facility_uuid,
-                        'reason' => $reason,
-                        
-
-                        ],
-                       
-                        "quick_replies" => [
-                            [
-                                "content_type" => "text",
-                                "title" => "Search Again",
-                                "payload" => "Search Again",
-                                "image_url" =>  null
-                            ],
-                           
-                            [
-                                "content_type" => "text",
-                                "title" => "Cancel",
-                                "payload" => "Cancel",
-                                "image_url" =>  null
-                            ],
-
-                            [
-                                "content_type" => "text",
-                                "title" => "Chat Support",
-                                "payload" => "Chat Support",
-                                "image_url" =>  null
-                            ],
-
-                        ],
-                        "buttons" => [],
-                        "use_cache" => true,
-                        "reply_internal" => true,
-                        "action" =>  $response->action,
-                        "intent_id" => $user['intent_id']
-                    ]);
-
-                 }
-
-
-                 // end no availablity
-
+             
 
 
 
@@ -19229,11 +19616,10 @@ if($password){
 
                  //when everthing checks
 
-                 elseif($response_available["status"] == "success" && count($response_available['available']) > 0) {
+                 else {
 
-                    $updated = Count::first()->update([
-                        'count' =>  1
-                    ]);
+                   
+
 
 
                     ////////////////////////////////////
@@ -19271,51 +19657,39 @@ if($password){
     
                         // if message went through call the Online DoctorList Api
                         if($responsed['status'] == 'success'){
-                            $available = [];
-                            $centername = HealthCenter::where('uuid',$facility_uuid)->value('name');
-        
-                            foreach($response_available['available'] as $availability){
-                                $availability_date = [
-                                    "date" => $availability['date'],
-                                    "time" => $availability['time'],
-                                    "day" => $availability['day'],
-                                    "cost" => $availability['cost']
-        
-                                ];
-                                $availability_date = serialize($availability_date);
-        
-                                $title = $availability['day'].' - '.$availability['date'].' - '.$availability['time'] ;
-                                $available[] = [
-                                    // "content_type" => "text",
-                                    // "title" => $title,
-                                    // "payload" => $availability_date,
-                                    // "image_url" =>  null
-        
-                                    "title" =>$availability['day']."(".$availability['date'].")",
-                                    "description" => $centername ." - ".$care_type .", - N ".$availability['cost'],
-                                    "image_url" => "https://res.cloudinary.com/edifice-solutions/image/upload/v1665572286/Wavy_Med-04_Single-10-min_t1lrrz.jpg",
-                                    "suggestions" => [
-                                     
-                                      [
-                                        "title" =>  $availability['time'],
-                                        "payload" => $availability_date,
-                                        "type" => "postback",
-                                        "url" => null
-                                      ],
-                                      [
-                                        "title" =>  "Start Again",
-                                        "payload" => "Cancel",
-                                        "type" => "postback",
-                                        "url" => null
-                                      ]
-                                    ]
+
+
+
+                            $response_dates = Http::get('https://admin.asknello.com/api/healthcenterdatetimeapi?date='.$date.'&center_uuid='.$facility_uuid.'&specialization='.$care_type);
+
+                            $resjson = $response_dates->json();
+                            // Log::debug($resjson);
+    
+                            // Log::debug($resjson['available']);
+
+                            if(count($resjson['available']) > 0){
+                                $available_times = [];
+
+                            foreach($resjson['available'] as $availabletime){
+                                $available_times[] = [
+                                    "content_type" => "text",
+                                    "title" => $availabletime,
+                                    "payload" => $availabletime,
+                                    "image_url" =>  null
                                 ];
                             } 
-        
-        
-                           
-        
-                            $responsed = Http::withoutVerifying()->withHeaders([
+                            
+                            //  Log::debug($specialization);
+
+                             $available_times[] = [
+                                "content_type" => "text",
+                                "title" => "Cancel",
+                                "payload" => "Cancel",
+                                "image_url" =>  null
+                             ];
+
+
+                               $responsed = Http::withoutVerifying()->withHeaders([
                                 'token'=>$token,
                                 
                             ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
@@ -19323,7 +19697,7 @@ if($password){
                                 "agent_id" => $user['agent_id'],
                                 "message" => "Kindly Choose preferred time to schedule the appointment
                                 ",
-                                "msg_type" => "carousel",
+                                "msg_type" => "quick_reply",
                                 "user_code" => $response->user_code,
                                     "parent_param" => [
                                     'next_step' => 'checkifavailable_facility',
@@ -19337,7 +19711,7 @@ if($password){
                                 
         
                                 ],
-                                "quick_replies" => null,
+                                "quick_replies" => $available_times,
                                 "buttons" => [],
                                 "use_cache" => null,
                                 "reply_internal" => true,
@@ -19347,95 +19721,89 @@ if($password){
                                 "action" =>  $response->action,
                                 "intent_id" => $user['intent_id'],
         
-                                "carousels" => $available,
         
                             ]);
+
+
+
+
+
+                            }// end of if available count is greater than 0
+
+                            else{
+
+                                $response_dates = Http::get('https://admin.asknello.com/api/healthcenterdatesapi?specialization='.$care_type.'&center_uuid='.$facility_uuid);
+   
+                        $resjson = $response_dates->json();
+
+                        // Log::debug($resjson);
+                        $specialization_datess = [];
+
+                        foreach($resjson  as $doc_dates){
+                            $specialization_datess[] = [
+                                "content_type" => "text",
+                                "title" => $doc_dates,
+                                "payload" => $doc_dates,
+                                "image_url" =>  null
+                            ];
+                        } 
+                        
+                        //  Log::debug($specialization);
+
+                         $specialization_datess[] = [
+                            "content_type" => "text",
+                            "title" => "Cancel",
+                            "payload" => "Cancel",
+                            "image_url" =>  null
+                         ];
+
+
+                        $responsed = Http::withoutVerifying()->withHeaders([
+                            'token'=>$token,
+                            
+                        ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
+                            "platform" => $user['platform'],
+                            "agent_id" => $user['agent_id'],
+                            "message" => "It appears that last available time has just been booked, kindly choose another date.",
+                            "msg_type" => "quick_reply",
+                            "user_code" => $response->user_code,
+                               "parent_param" => [
+                                'next_step' => 'validate_date_facility',
+                                'user_data' => $user_data,
+                                'care_type' => $care_type,
+                                'state' => $state,
+                                'location' => $location,
+                                'facility_uuid' => $facility_uuid,
+                                'reason' => $reason
+        
+                            ],
+                            "quick_replies" => $specialization_datess,
+                            "buttons" => [],
+                            "use_cache" => true,
+                            "reply_internal" => true,
+                            "action" =>  $response->action,
+                            "intent_id" => $user['intent_id']
+                        ]);
+                        
+
+
+
+
+                            } // if available count is not greater than zero
+    
+
+
+        
+        
+                           
+        
+                          
                             
                                 
                         }
 
 
-                    //////////////////////////////////
-
-                    // $available = [];
-                    // $centername = HealthCenter::where('uuid',$facility_uuid)->value('name');
-
-                    // foreach($response_available['available'] as $availability){
-                    //     $availability_date = [
-                    //         "date" => $availability['date'],
-                    //         "time" => $availability['time'],
-                    //         "day" => $availability['day'],
-                    //         "cost" => $availability['cost']
-
-                    //     ];
-                    //     $availability_date = serialize($availability_date);
-
-                    //     $title = $availability['day'].' - '.$availability['date'].' - '.$availability['time'] ;
-                    //     $available[] = [
-                    //         // "content_type" => "text",
-                    //         // "title" => $title,
-                    //         // "payload" => $availability_date,
-                    //         // "image_url" =>  null
-
-                    //         "title" =>$availability['day']."(".$availability['date'].")",
-                    //         "description" => $centername ." - ".$care_type .", - N ".$availability['cost'],
-                    //         "image_url" => "https://res.cloudinary.com/edifice-solutions/image/upload/v1665572286/Wavy_Med-04_Single-10-min_t1lrrz.jpg",
-                    //         "suggestions" => [
-                             
-                    //           [
-                    //             "title" =>  $availability['time'],
-                    //             "payload" => $availability_date,
-                    //             "type" => "postback",
-                    //             "url" => null
-                    //           ],
-                    //           [
-                    //             "title" =>  "Start Again",
-                    //             "payload" => "Cancel",
-                    //             "type" => "postback",
-                    //             "url" => null
-                    //           ]
-                    //         ]
-                    //     ];
-                    // } 
-
-
-                   
-
-                    // $responsed = Http::withoutVerifying()->withHeaders([
-                    //     'token'=>$token,
-                        
-                    // ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
-                    //     "platform" => $user['platform'],
-                    //     "agent_id" => $user['agent_id'],
-                    //     "message" => "Kindly Choose preferred time to schedule the appointment
-                    //     ",
-                    //     "msg_type" => "carousel",
-                    //     "user_code" => $response->user_code,
-                    //         "parent_param" => [
-                    //         'next_step' => 'checkifavailable_facility',
-                    //         'user_data' => $user_data,
-                    //     'care_type' => $care_type,
-                    //     'state' => $state,
-                    //     'location' => $location,
-                    //     'facility_uuid' => $facility_uuid,
-                    //     'reason' => $reason,
-                    //     'searched_date' => $date,
-                        
-
-                    //     ],
-                    //     "quick_replies" => null,
-                    //     "buttons" => [],
-                    //     "use_cache" => null,
-                    //     "reply_internal" => true,
-                    //     "label" => null,
-                    //     "attachments" => [],
-                    //     "template" => null,
-                    //     "action" =>  $response->action,
-                    //     "intent_id" => $user['intent_id'],
-
-                    //     "carousels" => $available,
-
-                    // ]);
+             
                     
                         
 
@@ -19494,7 +19862,7 @@ if($password){
                         ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
                             "platform" => $user['platform'],
                             "agent_id" => $user['agent_id'],
-                            "message" => "Please provide your preferred date for the appointment i.e 20/09/2022",
+                            "message" => "Please provide your preferred date for the appointment e.g dd/mm/yyyy",
                             "msg_type" => "text",
                             "user_code" => $response->user_code,
                             "parent_param" => [
@@ -19526,7 +19894,16 @@ if($password){
 
                 case "checkifavailable_facility":
 
-                //check if the appointment whered date and time and facility id exist
+                //check if the appointment time 
+
+                $options = json_decode($user['options_temp'], true);
+
+
+
+                    $count = Count::first();
+                    $count = $count->count;
+
+
 
                 $user_data = $parent_param['user_data'];
                 $care_type = $parent_param['care_type'];
@@ -19541,17 +19918,12 @@ if($password){
 
                 ////
 
-                $input  = $response->query;
+                $myselected_time = $response->query;
 
 
-                $options = json_decode($user['options_temp'], true);
-
-                   
                        
-                 $count = Count::first();
-                    $count = $count->count;
-
-                    if(in_array($input,array_column($options,'value'))){
+                
+                if(in_array($myselected_time,array_column($options,'value'))){
                            
 
                         //update count back to one
@@ -19559,340 +19931,214 @@ if($password){
                             'count' => 1
                         ]);
 
-                        //Do this
+                        $cost = HealthCenter::where("uuid",$facility_uuid)->value("fee");
 
-                        $availability_date = unserialize($response->query);
 
-                        // Log::debug("Check down");
-                        // Log::debug($availability_date);
-                        // Log::debug($response->query);
+                        ///do the needful
+                        $date = Carbon::createFromFormat('d/m/Y', $searched_date)->format('d-m-Y');
+                        $time =  Carbon::parse($myselected_time)->format('H:i:s');
+
+                        $date = $date;
+                        $time = $time;
+                        $phone = $user_data['phone'];
+                        $uuid = $facility_uuid;
+                        $reason = $reason;
+                        $fee = $cost;
+    
+    
+                         //draft online api
+                         $drafbooking = Http::withoutVerifying()->withHeaders([
+                            'token'=>$token,
+                            
+                        ])->post('https://admin.asknello.com/api/facilitybook',[
+                            
+                            'date'=> $date,
+                            'time' => $time,
+                            'phone' => $phone,
+                            'uuid' =>$uuid,
+                            'reason' => $reason,
+                            'fee' => $fee
+                        ]);
+
+
+                        if($drafbooking['temp_id']){
+
+                            
+////////////////generate link/////////
+
+$centername = HealthCenter::where('uuid',$facility_uuid)->value('name');
         
-                        $day = $availability_date['day'];
-                        $time = $availability_date['time'];
-                        $date = $availability_date['date'];
-                        $cost = $availability_date['cost'];
         
-                        
-                        //check if appointment exist already
-        
-                        $dateformat= Carbon::parse($date)->format('Y-m-d');
-        
-                        $checkappointment = Appointment::where('date',$dateformat)->where('time',$time)->where('center_uuid',$facility_uuid)->first();
-        
-                        if($checkappointment){
-        
-                            $responsed = Http::withoutVerifying()->withHeaders([
+$temp_id = $drafbooking['temp_id'];
+
+//generate link
+
+$generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
+    "dynamicLinkInfo" => [
+        "domainUriPrefix" => "https://nello.page.link",
+        "link" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$fee."&email=".$user_data['email'],
+    ]
+    ]);
+
+    Log::debug($generatelink);
+    Log::debug($generatelink['shortLink']);
+
+
+
+$message = 'Hi '.$user_data['firstname']. ', kindly proceed to make payment of ₦'.$fee. ' to secure appointment on '.$date.' by '.$myselected_time.' with '.$centername.'. Type Cancel to exit' ;
+    
+
+                    if($generatelink['shortLink']){
+                        $responsed = Http::withoutVerifying()->withHeaders([
+                            'token'=>$token,
+                            
+                        ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
+                            "platform" => $user['platform'],
+                            "agent_id" => $user['agent_id'],
+                            "message" => $message,
+                            "msg_type" => "link",
+                            "user_code" => $response->user_code,
+                            "parent_param" => [
+                                'next_step' => 'paymentcompleted_facility',
+                                'user_data' => $user_data,
+                                'care_type' => $care_type,
+                                'state' => $state,
+                                'location' => $location,
+                                'facility_uuid' => $facility_uuid,
+                                'reason' => $reason,
+                                'temp_id'=> $temp_id,
+                                'searched_date' => $searched_date,
+                                'myselected_time' => $myselected_time,
+
+            
+    
+                            ],
+                            "quick_replies" => [
+                                
+
+                            ],
+                        "buttons" => [
+                            [
+                                "url" => $generatelink['shortLink'],
+                                "title" => "Make Payment"
+                            ]
+                        ],
+                            "use_cache" => true,
+                            "reply_internal" => true,
+                            "action" =>  $response->action,
+                            "intent_id" => $user['intent_id']
+                        ]);
+
+
+                    } //end of if generate link short link
+                            
+
+
+                        }//if temp id exists in responses
+
+
+
+
+
+
+                }
+
+                else {
+
+                    //if count is lesser than 3
+                        if($count < 3){
+                            $update = Count::first()->update([
+                                'count' => $count + 1
+                            ]);
+
+                            //render time here wearehere
+
+                            $response_dates = Http::get('https://admin.asknello.com/api/healthcenterdatetimeapi?date='.$searched_date.'&center_uuid='.$facility_uuid.'&specialization='.$care_type);
+
+                            $resjson = $response_dates->json();
+                            // Log::debug($resjson);
+    
+                            // Log::debug($resjson['available']);
+
+                            if(count($resjson['available']) > 0){
+                                $available_times = [];
+
+                            foreach($resjson['available'] as $availabletime){
+                                $available_times[] = [
+                                    "content_type" => "text",
+                                    "title" => $availabletime,
+                                    "payload" => $availabletime,
+                                    "image_url" =>  null
+                                ];
+                            } 
+                            
+                            //  Log::debug($specialization);
+
+                             $available_times[] = [
+                                "content_type" => "text",
+                                "title" => "Cancel",
+                                "payload" => "Cancel",
+                                "image_url" =>  null
+                             ];
+
+
+                               $responsed = Http::withoutVerifying()->withHeaders([
                                 'token'=>$token,
                                 
                             ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
                                 "platform" => $user['platform'],
                                 "agent_id" => $user['agent_id'],
-                                "message" => "Seems scheduled appointment for ".$day. " the ".$date." at ".$time." has just been booked, Kindly Change time or Search Again.",
+                                "message" => "Invalid input, you are expected to select from the generated time
+                                ",
                                 "msg_type" => "quick_reply",
                                 "user_code" => $response->user_code,
-                                "parent_param" => [
-                                    'next_step' => 'redate_with_time_facility',
+                                    "parent_param" => [
+                                    'next_step' => 'checkifavailable_facility',
                                     'user_data' => $user_data,
                                 'care_type' => $care_type,
                                 'state' => $state,
                                 'location' => $location,
                                 'facility_uuid' => $facility_uuid,
                                 'reason' => $reason,
-                                'searched_date' => $searched_date
+                                'searched_date' => $searched_date,
                                 
         
                                 ],
-                               
-                                "quick_replies" => [
-        
-                                    [
-                                        "content_type" => "text",
-                                        "title" => "Change Time",
-                                        "payload" => "Change Time",
-                                        "image_url" =>  null
-                                    ],
-        
-                                    [
-                                        "content_type" => "text",
-                                        "title" => "Search Again",
-                                        "payload" => "Search Again",
-                                        "image_url" =>  null
-                                    ],
-                                   
-                                    [
-                                        "content_type" => "text",
-                                        "title" => "Cancel",
-                                        "payload" => "Cancel",
-                                        "image_url" =>  null
-                                    ],
-        
-                                    [
-                                        "content_type" => "text",
-                                        "title" => "Chat Support",
-                                        "payload" => "Chat Support",
-                                        "image_url" =>  null
-                                    ],
-        
-                                ],
+                                "quick_replies" => $available_times,
                                 "buttons" => [],
-                                "use_cache" => true,
+                                "use_cache" => null,
                                 "reply_internal" => true,
+                                "label" => null,
+                                "attachments" => [],
+                                "template" => null,
                                 "action" =>  $response->action,
-                                "intent_id" => $user['intent_id']
+                                "intent_id" => $user['intent_id'],
+        
+        
                             ]);
-                            
-                        }
-                        // end of check if appointment exists
-        
-        
-                        //When appointment doest exist Draft temporay appointment
-        
+
+
+
+
+
+                            }
+
+
+
+
+                        }// end of render time
+
                         else{
-        
-                            //draft temporary booking 
-        
-                            // $doc_id = $doc_docss['id'];
-                            // $date = $doc_docss['date'];
-                            // $time = $selected_time;
-                            // $phone = $user_data['phone'];
-                            // $uuid = $doc_docss['uuid'];
-                            // $fee = $doc_docss['fee'];
-                            // $reasons = $reason;
-        
-                            $date = $date;
-                            $time = $time;
-                            $phone = $user_data['phone'];
-                            $uuid = $facility_uuid;
-                            $reason = $reason;
-                            $fee = $cost;
-        
-        
-                             //draft online api
-                             $drafbooking = Http::withoutVerifying()->withHeaders([
-                                'token'=>$token,
-                                
-                            ])->post('https://admin.asknello.com/api/facilitybook',[
-                                
-                                'date'=> $date,
-                                'time' => $time,
-                                'phone' => $phone,
-                                'uuid' =>$uuid,
-                                'reason' => $reason,
-                                'fee' => $fee
-                            ]);
-        
-        
-                            // Log::debug($drafbooking['temp_id']);
-        
-                            if($drafbooking['temp_id']){
-                                
-                                //if the temp_id is present
-        
-                                $centername = HealthCenter::where('uuid',$facility_uuid)->value('name');
-        
-        
-                                $temp_id = $drafbooking['temp_id'];
-
-                                //generate link
-
-                                $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
-                                    "dynamicLinkInfo" => [
-                                        "domainUriPrefix" => "https://nello.page.link",
-                                        "link" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$fee."&email=".$user_data['email'],
-                                    ]
-                                    ]);
-
-                                    Log::debug($generatelink);
-                                    Log::debug($generatelink['shortLink']);
-
-
-
-                                $message = 'Hi '.$user_data['firstname']. ', kindly proceed to make payment of ₦'.$fee. ' to secure appointment on '.$day. ' the '.$date.' by '.$time.' with '.$centername.' Type Cancel to exit' ;
-        
-                                
-                        if($generatelink['shortLink']){
-                                $responsed = Http::withoutVerifying()->withHeaders([
-                                    'token'=>$token,
-                                    
-                                ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
-                                    "platform" => $user['platform'],
-                                    "agent_id" => $user['agent_id'],
-                                    "message" => $message,
-                                    "msg_type" => "link",
-                                    "user_code" => $response->user_code,
-                                    "parent_param" => [
-                                        'next_step' => 'paymentcompleted_facility',
-                                        'user_data' => $user_data,
-                                        'care_type' => $care_type,
-                                        'state' => $state,
-                                        'location' => $location,
-                                        'facility_uuid' => $facility_uuid,
-                                        'reason' => $reason,
-                                        'temp_id'=> $temp_id,
-                                        'availability_date' => $availability_date,
-            
-                                    ],
-                                    "quick_replies" => [
-                                        
-        
-                                    ],
-                                    "buttons" => [
-                                        [
-                                            "url" => $generatelink['shortLink'],
-                                            "title" => "Make Payment"
-                                        ]
-                                    ],
-                                    "use_cache" => true,
-                                    "reply_internal" => true,
-                                    "action" =>  $response->action,
-                                    "intent_id" => $user['intent_id']
-                                ]);
-
-                        }
-        
-        
-                    }
-        
-        
-                            
-                        }
-        
-        
-        
-                        //end of draft temporary appointment booking
-                        ///
-
-                    }
-
-                    else{
-
-                        if($count < 3){
-                            //Error to rendered
-
-                            $update = Count::first()->update([
-                                'count' => $count + 1
-                            ]);
-
-                            $response_available = Http::get('https://admin.asknello.com/api/checkavailability',[
-                                "specialization" => $care_type,
-                                "date" => $searched_date,
-                                "uuid" => $facility_uuid
-                            ]);
-            
-                            $response_available = $response_available->json();
-
-
-                            if($response_available["status"] == "success" && count($response_available['available']) > 0) {
-
-                               
-            
-                                $available = [];
-                                $centername = HealthCenter::where('uuid',$facility_uuid)->value('name');
-            
-                                foreach($response_available['available'] as $availability){
-                                    $availability_date = [
-                                        "date" => $availability['date'],
-                                        "time" => $availability['time'],
-                                        "day" => $availability['day'],
-                                        "cost" => $availability['cost']
-            
-                                    ];
-                                    $availability_date = serialize($availability_date);
-            
-                                    $title = $availability['day'].' - '.$availability['date'].' - '.$availability['time'] ;
-                                    $available[] = [
-                                        // "content_type" => "text",
-                                        // "title" => $title,
-                                        // "payload" => $availability_date,
-                                        // "image_url" =>  null
-            
-                                        "title" =>$availability['day']."(".$availability['date'].")",
-                                        "description" => $centername ." - ".$care_type .", - N ".$availability['cost'],
-                                        "image_url" => "https://res.cloudinary.com/edifice-solutions/image/upload/v1665572286/Wavy_Med-04_Single-10-min_t1lrrz.jpg",
-                                        "suggestions" => [
-                                         
-                                          [
-                                            "title" =>  $availability['time'],
-                                            "payload" => $availability_date,
-                                            "type" => "postback",
-                                            "url" => null
-                                          ],
-                                          [
-                                            "title" =>  "Start Again",
-                                            "payload" => "Cancel",
-                                            "type" => "postback",
-                                            "url" => null
-                                          ]
-                                        ]
-                                    ];
-                                } 
-            
-            
-                               
-            
-                                $responsed = Http::withoutVerifying()->withHeaders([
-                                    'token'=>$token,
-                                    
-                                ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
-                                    "platform" => $user['platform'],
-                                    "agent_id" => $user['agent_id'],
-                                    "message" => "Kindly Choose preferred time to schedule the appointment
-                                    ",
-                                    "msg_type" => "carousel",
-                                    "user_code" => $response->user_code,
-                                        "parent_param" => [
-                                        'next_step' => 'checkifavailable_facility',
-                                        'user_data' => $user_data,
-                                    'care_type' => $care_type,
-                                    'state' => $state,
-                                    'location' => $location,
-                                    'facility_uuid' => $facility_uuid,
-                                    'reason' => $reason,
-                                    'searched_date' => $searched_date,
-                                    
-            
-                                    ],
-                                    "quick_replies" => null,
-                                    "buttons" => [],
-                                    "use_cache" => null,
-                                    "reply_internal" => true,
-                                    "label" => null,
-                                    "attachments" => [],
-                                    "template" => null,
-                                    "action" =>  $response->action,
-                                    "intent_id" => $user['intent_id'],
-            
-                                    "carousels" => $available,
-            
-                                ]);
-                                
-                                    
-            
-            
-            
-            
-               
-            
-                             }
-            
-                             //end of when everthing checks
-
-
-
-                            //////
-                        }
-
-                        else {
-                            //Back to menu
 
                             $update = Count::first()->update([
                                 'count' => 1
                             ]);
-
+                            
+                            //Back To Menu
                             $responsed = Http::withoutVerifying()->withHeaders([
                                 'token'=> $token,
                                 // Back to menu
-                                ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
+                            ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
                                 "platform" => $user['platform'],
                                 "agent_id" => $user['agent_id'],
                                 "message" => "You have exceeded you error limits of 3, kindly start again",
@@ -19905,195 +20151,13 @@ if($password){
                                 // "reply_internal" => true,
                                 // "action" =>  $response->action,
                                 // "intent_id" => $user['intent_id']
-                                ]);
-                        }
-                    }
+                            ]);
 
+                        }// end of back to menu
 
+                } // if the the user typed instead of selecting 
 
-
-                
-
-                // $availability_date = unserialize($response->query);
-
-                // // Log::debug("Check down");
-                // // Log::debug($availability_date);
-                // // Log::debug($response->query);
-
-                // $day = $availability_date['day'];
-                // $time = $availability_date['time'];
-                // $date = $availability_date['date'];
-                // $cost = $availability_date['cost'];
-
-                
-                // //check if appointment exist already
-
-                // $dateformat= Carbon::parse($date)->format('Y-m-d');
-
-                // $checkappointment = Appointment::where('date',$dateformat)->where('time',$time)->where('center_uuid',$facility_uuid)->first();
-
-                // if($checkappointment){
-
-                //     $responsed = Http::withoutVerifying()->withHeaders([
-                //         'token'=>$token,
-                        
-                //     ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
-                //         "platform" => $user['platform'],
-                //         "agent_id" => $user['agent_id'],
-                //         "message" => "Seems scheduled appointment for ".$day. " the ".$date." at ".$time." has just been booked, Kindly Change time or Search Again.",
-                //         "msg_type" => "quick_reply",
-                //         "user_code" => $response->user_code,
-                //         "parent_param" => [
-                //             'next_step' => 'redate_with_time_facility',
-                //             'user_data' => $user_data,
-                //         'care_type' => $care_type,
-                //         'state' => $state,
-                //         'location' => $location,
-                //         'facility_uuid' => $facility_uuid,
-                //         'reason' => $reason,
-                //         'searched_date' => $searched_date
-                        
-
-                //         ],
                        
-                //         "quick_replies" => [
-
-                //             [
-                //                 "content_type" => "text",
-                //                 "title" => "Change Time",
-                //                 "payload" => "Change Time",
-                //                 "image_url" =>  null
-                //             ],
-
-                //             [
-                //                 "content_type" => "text",
-                //                 "title" => "Search Again",
-                //                 "payload" => "Search Again",
-                //                 "image_url" =>  null
-                //             ],
-                           
-                //             [
-                //                 "content_type" => "text",
-                //                 "title" => "Cancel",
-                //                 "payload" => "Cancel",
-                //                 "image_url" =>  null
-                //             ],
-
-                //             [
-                //                 "content_type" => "text",
-                //                 "title" => "Chat Support",
-                //                 "payload" => "Chat Support",
-                //                 "image_url" =>  null
-                //             ],
-
-                //         ],
-                //         "buttons" => [],
-                //         "use_cache" => true,
-                //         "reply_internal" => true,
-                //         "action" =>  $response->action,
-                //         "intent_id" => $user['intent_id']
-                //     ]);
-                    
-                // }
-                // // end of check if appointment exists
-
-
-                // //When appointment doest exist Draft temporay appointment
-
-                // else{
-
-                //     //draft temporary booking 
-
-                //     // $doc_id = $doc_docss['id'];
-                //     // $date = $doc_docss['date'];
-                //     // $time = $selected_time;
-                //     // $phone = $user_data['phone'];
-                //     // $uuid = $doc_docss['uuid'];
-                //     // $fee = $doc_docss['fee'];
-                //     // $reasons = $reason;
-
-                //     $date = $date;
-                //     $time = $time;
-                //     $phone = $user_data['phone'];
-                //     $uuid = $facility_uuid;
-                //     $reason = $reason;
-                //     $fee = $cost;
-
-
-                //      //draft online api
-                //      $drafbooking = Http::withoutVerifying()->withHeaders([
-                //         'token'=>$token,
-                        
-                //     ])->post('https://admin.asknello.com/api/facilitybook',[
-                        
-                //         'date'=> $date,
-                //         'time' => $time,
-                //         'phone' => $phone,
-                //         'uuid' =>$uuid,
-                //         'reason' => $reason,
-                //         'fee' => $fee
-                //     ]);
-
-
-                //     // Log::debug($drafbooking['temp_id']);
-
-                //     if($drafbooking['temp_id']){
-                        
-                //         //if the temp_id is present
-
-                //         $centername = HealthCenter::where('uuid',$facility_uuid)->value('name');
-
-
-                //         $temp_id = $drafbooking['temp_id'];
-                //         $message = 'Hi '.$user_data['firstname']. ', kindly proceed to make payment of ₦'.$fee. ' to secure appointment on '.$day. ' the '.$date.' by '.$time.' with '.$centername ;
-
-                //         $responsed = Http::withoutVerifying()->withHeaders([
-                //             'token'=>$token,
-                            
-                //         ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
-                //             "platform" => $user['platform'],
-                //             "agent_id" => $user['agent_id'],
-                //             "message" => $message,
-                //             "msg_type" => "link",
-                //             "user_code" => $response->user_code,
-                //             "parent_param" => [
-                //                 'next_step' => 'paymentcompleted_facility',
-                //                 'user_data' => $user_data,
-                //                 'care_type' => $care_type,
-                //                 'state' => $state,
-                //                 'location' => $location,
-                //                 'facility_uuid' => $facility_uuid,
-                //                 'reason' => $reason,
-                //                 'temp_id'=> $temp_id,
-                //                 'availability_date' => $availability_date,
-    
-                //             ],
-                //             "quick_replies" => [
-                                
-
-                //             ],
-                //             "buttons" => [
-                //                 [
-                //                     "url" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$fee."&email=".$user_data['email'],
-                //                     "title" => "Make Payment"
-                //                 ]
-                //             ],
-                //             "use_cache" => true,
-                //             "reply_internal" => true,
-                //             "action" =>  $response->action,
-                //             "intent_id" => $user['intent_id']
-                //         ]);
-
-
-                //     }
-
-
-                    
-                // }
-
-
-
-                // //end of draft temporary appointment booking
 
 
                 break;
@@ -20108,22 +20172,13 @@ if($password){
                     $location = $parent_param['location'];
                     $facility_uuid = $parent_param['facility_uuid'];
                     $reason = $parent_param['reason'];
-                    $availability_date = $parent_param['availability_date'];
+                    $searched_date = $parent_param['searched_date'];
+                    $myselected_time = $parent_param['myselected_time'];
                     $temp_id = $parent_param['temp_id'];
 
-                    $day = $availability_date['day'];
-                    $time = $availability_date['time'];
-                    $date = $availability_date['date'];
-                    $cost = $availability_date['cost'];
 
-
-                    $date = $date;
-                    $time = $time;
-                    $phone = $user_data['phone'];
-                    $uuid = $facility_uuid;
-                    $reason = $reason;
-                    $fee = $cost;
                     $centername = HealthCenter::where('uuid',$facility_uuid)->value('name');
+                    $fee = HealthCenter::where('uuid',$facility_uuid)->value('fee');
                     
 
 
@@ -20145,9 +20200,9 @@ $update = Count::first()->update([
 ]);
 
 
-//rendered error count
+//rendered error count hereok
 
-$message = 'Hi '.$user_data['firstname']. ', kindly proceed to make payment of ₦'.$fee. ' to secure appointment on '.$day. ' the '.$date.' by '.$time.' with '.$centername.' Type Cancel to exit' ;
+$message = 'Hi '.$user_data['firstname']. ', kindly proceed to make payment of ₦'.$fee. ' to secure appointment on '.$searched_date.' by '.$myselected_time.' with '.$centername.' Type Cancel to exit' ;
 
 
 $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
@@ -20179,7 +20234,8 @@ $responsed = Http::withoutVerifying()->withHeaders([
         'facility_uuid' => $facility_uuid,
         'reason' => $reason,
         'temp_id'=> $temp_id,
-        'availability_date' => $availability_date,
+        'searched_date' => $searched_date,
+        'myselected_time' => $myselected_time,
 
     ],
     "quick_replies" => [
@@ -20276,7 +20332,7 @@ $responsed = Http::withoutVerifying()->withHeaders([
                     ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
                         "platform" => $user['platform'],
                         "agent_id" => $user['agent_id'],
-                        "message" => "Please provide your preferred date for the appointment i.e 20/09/2022",
+                        "message" => "Please provide your preferred date for the appointment e.g dd/mm/yyyy",
                         "msg_type" => "text",
                         "user_code" => $response->user_code,
                         "parent_param" => [

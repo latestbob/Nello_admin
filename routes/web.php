@@ -282,6 +282,10 @@ Route::get("/famacare/physical","FamacareController@physicalappointment")->middl
 Route::get("/famacare/specialist","FamacareController@specialist")->middleware("auth.famacare")->name("famacarespecialist");
 
 
+//famacare physical specialization schedule
+
+Route::get("/famacare/specialization","FamacareController@specialization")->middleware("auth.famacare")->name("famacarespecialization");
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -312,3 +316,92 @@ Route::delete("/specialistcalendertimedelete/{id}","AppointmentController@specia
 //delete dates and time for a particular specialist
 
 Route::delete("/deletedoctorschedule/{uuid}","AppointmentController@deletespecificspecialistschedules")->middleware("auth.admin.famacare")->name("deletespecificspecialistschedules");
+
+
+//health center calendar get
+Route::get("/healthcenter/{id}","AppointmentController@healthcentercalenderget")->middleware("auth.admin.famacare")->name("healthcentercalenderget");
+
+//health center specialization manage calender
+
+Route::get('/healthcenterspec/{id}','AppointmentController@healthcenterspecalender')->middleware("auth.admin.famacare")->name("healthcenterspecalender");
+
+//health center specialization manage calender post
+
+Route::post("/healthcenterspecpost","AppointmentController@healthcenterspecpost")->middleware("auth.admin.famacare")->name("healthcenterspecpost");
+
+//delete unique health center specialization manage date
+
+Route::delete("/healthcenterspecdate/{id}","AppointmentController@deleteuniquehealthcenterspecdate")->middleware("auth.admin.famacare")->name("deleteuniquehealthcenterspec");
+
+//health center specialization date manage time
+
+Route::get("/healthcenterspecdatetime/{id}","AppointmentController@healthcenterspecdatetime")->middleware("auth.admin.famacare")->name("healthcenterspecdatetime");
+
+//health center specialization date manage time post
+
+Route::post("/healthcenterspecdatetimepost","AppointmentController@healthcenterspecdatetimepost")->middleware("auth.admin.famacare")->name("healthcenterspecdatettimepost");
+
+
+//health center specialization date managet time delete
+
+Route::delete("/healthcenterspecdatetimedelete/{id}","AppointmentController@healthcenterspecdatetimedelete")->middleware("auth.admin.famacare")->name("healthcenterspecdatetimedelete");
+
+
+//healthallcalendardate and time associated with a unique specialization
+
+Route::delete("/healthdeletecalenddardateandtime/{id}","AppointmentController@healthdeleteallcalenderdateandtime")->middleware("auth.admin.famacare")->name("healthdeleteallcalenderdateandtime");
+
+
+//appointment switch
+
+
+Route::get('/switch/{id}','AppointmentController@switch')->middleware("auth.admin.famacare")->name("appointmentswitch");
+
+//update appointment doctor
+
+Route::put("/switch/doctor","AppointmentController@switchspecialist")->middleware("auth.admin.famacare")->name("switchappointmentput");
+
+//update customer feedback as resove
+
+Route::put("/feedback/{id}","FeedbackController@updatefeedback")->name("updatefeedback");
+
+
+///sales report
+
+Route::get("/drugs/salesreport","DrugController@drugsalesreport")->name("drugsalesreport")->middleware("auth.admin");
+
+//delete sales report
+
+Route::delete('/sales/report/{id}',"DrugController@deletesalesreport")->name("deletesalesreport")->middleware("auth.admin");
+
+
+Route::get("/export/drugs","ExportController@exportdrug")->name("exportdrugs")->middleware("auth.admin");
+
+
+//sales report cancelled invoices 
+
+Route::get("/cancelled/invoices","DrugController@cancelledinvoices")->middleware("auth.admin")->name("cancelledinvoices");
+
+ //mark as refunded 
+
+Route::put('/sales/report/{id}',"DrugController@drefundedreport")->name("refundedreport")->middleware("auth.admin");
+
+//Skinns inventory report
+
+
+Route::get("/skinns/report","DrugController@skinnsreport")->name("skinsreport")->middleware("auth.admin");
+
+//mark as test order
+
+Route::get("/myorder/{ref}","DrugController@myordermark")->name("myordermark");
+
+
+
+
+
+// Route::delete("/drug/delete/{ref}","DrugController@deletemyorder")->name("deletemyorder")->middleware("auth.admin");
+
+
+//business intereset page
+
+Route::get("/interest","BusinessController@getinterest")->name("getinterest")->middleware("auth.admin");

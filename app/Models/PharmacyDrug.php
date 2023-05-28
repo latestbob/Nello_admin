@@ -12,7 +12,7 @@ class PharmacyDrug extends Model
     protected $fillable = ['brand', 'name', 'description', 'price', 
         'require_prescription', 'image', 'uuid', 'vendor_id', 'drug_id',
         'category_id' , 'dosage_type', 'quantity', 'status',
-        'indications', 'side_effects', 'contraindications'
+        'indications', 'side_effects', 'contraindications', 'vendor'
     ];
 
     protected $appends = ['is_out_of_stock'];
