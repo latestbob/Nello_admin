@@ -20,7 +20,7 @@
     <!-- end page title -->
   
     <div class="row card py-3">
-        <div class="col-md-6 col-lg-6 m-auto">
+        <div class="col-md-8 col-lg-8 m-auto">
 
             <div class="card">
      

@@ -430,5 +430,13 @@ public function deleteUsers(Request $request, $email){
 }
 
 
+//get doctor by Id
+public function getdoctorbyid($id){
+    $doctor = User::find($id);
+
+    return response()->json($doctor);
+}
+
+
 
 }

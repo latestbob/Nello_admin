@@ -84,7 +84,7 @@
                                <tr>
                                    <td>{{$dates->specialization}}</td>
                                    <td>{{$dates->date}}</td>
-                                   <td>{{$dates->monthstring}}</td>
+                                   <td>{{date('F')}}</td>
                                    <td>{{$dates->month}}</td>
                                    <td>
                                        <form action="{{route('deletespecialistcalendar',$dates->id)}}"method="POST">
@@ -243,6 +243,7 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <script>
+       
         const d = new Date();
 let month = d.getMonth();
 month = month + 1; //

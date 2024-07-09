@@ -13,6 +13,7 @@ use App\SpecialistTime;
 use App\Specialization;
 use App\MedcenterTime;
 use App\MedicalReport;
+use App\Healthreports;
 use DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
@@ -1488,7 +1489,8 @@ $filteredDates = array_filter($date_list, function($date) use ($currentDate) {
 
 
            $appointment = Appointment::where("ref_no",$request->ref_no)->update([
-               'doctor_id' => $newdoctor->id
+               'doctor_id' => $newdoctor->id,
+               'doctor_name' =>$newdoctor->title." ".$newdoctor->firstname." ".$newdoctor->lastname
            ]);
 
            $resbooking = Http::withoutVerifying()->post('https://mw.asknello.com/api/appointmentswitchemails',[
@@ -1508,6 +1510,8 @@ $filteredDates = array_filter($date_list, function($date) use ($currentDate) {
             'link' => $link,
             
         ]);
+
+        //return back()->with("msg","Appointment has been switched successfully");
 
         if($resbooking['status'] == 'success'){
             return back()->with("msg","Appointment has been switched successfully");
@@ -1534,34 +1538,7 @@ $filteredDates = array_filter($date_list, function($date) use ($currentDate) {
 
         public function createnewrecord(Request $request){
 
-            // $table->string("ref");
-            // $table->text("symptoms");
-            // $table->string("other_symptoms")->nullable();
-            // $table->text("histor_of_compliants");
-            // $table->string("allergies");
-            // $table->text("diagnosis");
-            // $table->string("other_diagnosis")->nullable();
-            // $table->text("procedures")->nullable();
-            // $table->text("comments");
-            // $table->text("prescriptions")->nullable();
-            // $table->string("followup_date")->nullable();
-            // $table->string("followup_time")->nullable();
-            // $table->string("outcome")->nullable("");
-
-            // const[symptomsList , setSymptomsList] = useState([]);
-            // const[refno, setRefNo] = useState("");
-        
-            // const[othersymptoms , setOtherSymptoms] = useState("");
-            // const[historyOfCompliants , setHistoryOfCompliants] = useState("");
-        
-            // const[allergies , setAllergies] = useState([]);
-            // const[diagnosesList , setDiagnosesList]= useState([]);
-            // const[otherDiagnosis , setOtherDiagnosis] = useState("");
-            // const[procedureList , setProcedureList] = useState([]);
-            // const[comments , setComment] = useState('');
-            // const[prescriptions , setPrescriptions] = useState([]);
-            // const[followUpDate , setFollowUpDate] = useState("");
-            // const[followUpTime , setFollowUpTime] = useState("");
+            
 
 
             $report = new MedicalReport;
@@ -1593,7 +1570,7 @@ $filteredDates = array_filter($date_list, function($date) use ($currentDate) {
 
 
         public function getallmedicalrecords(){
-            $records = MedicalReport::all();
+            $records = Healthreports::all();
 
             return $records;
         }
@@ -1767,6 +1744,172 @@ $filteredDates = array_filter($date_list, function($date) use ($currentDate) {
 
         
         }
+
+
+        // get all appointment
+
+        public function getall(){
+            $appointment = Appointment::all();
+
+            return response()->json($appointment);
+        }
+
+        //see schedule
+
+        public function seeschedule(){
+            $schedule = SpecialistSchedule::all();
+            return $schedule;
+        }
+
+        //date note
+
+
+        public function getwebsitedoctordatenot(Request $request){
+            $validator = Validator::make($request->all(), [
+                'uuid'=> "required",
+                  
+       ]);
+    
+                if($validator->fails()){
+                    return response([
+                        'status' => 'failed',
+                        'message' => $validator->errors()
+                    ]);
+                }
+    
+    
+                $date_list = [];
+            $dates = SpecialistSchedule::where("center",$request->center)->where("doc_uuid",'<>',$request->uuid)->distinct()->get(['date']);
+    
+            foreach($dates as $date){
+    
+                array_push($date_list,$date["date"]);
+            }
+    
+            $currentDate = Carbon::today();
+    
+    // Filter out past dates
+    $filteredDates = array_filter($date_list, function($date) use ($currentDate) {
+        $parsedDate = Carbon::createFromFormat('d/m/Y', $date);
+        return $parsedDate->gt($currentDate) || $parsedDate->eq($currentDate);
+    });
+           
+    
+           // return $date_list;
+    
+            
+    
+           // Sort the array using the sortBy() method
+            $sortedDates = collect($filteredDates)->sortBy(function ($date) {
+                return strtotime(str_replace('/', '-', $date));
+            })->values()->all();
+    
+            $today =  Carbon::now()->format("d/n/Y");
+            
+            //return $date_to_remove;
+    
+            //return $sortedDates;
+    
+            $current_time = Carbon::now()->addHour();
+            $seven_pm = Carbon::createFromTime(19, 0, 0);
+    
+           // return $current_time;
+    
+           
+           
+    
+    
+        
+        $date_to_remove = $today;
+        
+        if (in_array($date_to_remove, $sortedDates)) {
+            $index = array_search($date_to_remove, $sortedDates);
+            // unset($sortedDates[$index]);
+            // return "The date '$date_to_remove' was removed from the array.";
+    
+    
+            if ($current_time->lessThan($seven_pm)) {
+            // "The current time is less than 7 pm.";
+    
+            $newDates = array_map(function($date) {
+                return ["dates" => explode('/', $date)[0]];
+            }, $sortedDates);
+
+            return $newDates;
+            
+    
+            } else {
+                // "The current time is 7 pm or later.";
+                 unset($sortedDates[$index]);
+    
+                 $dates = array_values($sortedDates);
+
+                 $newDates = array_map(function($date) {
+                    return ["dates" => explode('/', $date)[0]];
+                }, $dates);
+
+                return $newDates;
+          
+            }
+        } else {
+           
+    
+            $newDates = array_map(function($date) {
+                return ["dates" => explode('/', $date)[0]];
+            }, $sortedDates);
+
+            return $newDates;
+
+
+
+        }
+        }
+
+
+
+        //get same available doctors for nello frontend
+
+       public function sameavailable(Request $request){
+        $validator = Validator::make($request->all(), [
+            'uuid'=> "required",
+            "center"=>"required",
+            "date"=>"required"
+              
+   ]);
+
+            if($validator->fails()){
+                return response([
+                    'status' => 'failed',
+                    'message' => $validator->errors()
+                ]);
+            }
+
+            $doctors = SpecialistSchedule::where("center",$request->center)->where("date",$request->date)->where("doc_uuid",'<>',$request->uuid)->distinct()->get(['doc_uuid']);
+
+
+            $realdoctors = [];
+
+            foreach($doctors as $doc){
+                $user = User::where("uuid",$doc['doc_uuid'])->first();
+
+                $realdoctors[]=[
+                    "doc_uuid" => $user['uuid'],
+                    "firstname" => $user['firstname'],
+                    "lastname" => $user['lastname'],
+                    "email" => $user['email'],
+                    "picture" => $user['picture'],
+                    "title" => $user['title'],
+                    "aos" => $user["aos"],
+                ];
+            }
+
+            return $realdoctors;
+
+
+
+
+       }
+     
 
     }
 

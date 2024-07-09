@@ -170,16 +170,10 @@
                             <div class="col-md-4">
                             <div class="form-group">
                                     <label for="state">State</label>
-                                    <!-- <input type="text" class="form-control @error('state') is-invalid @enderror" id="state"
-                                           value="{{ old('state') }}" name="state" placeholder="Enter state"> -->
+                                    <input type="text" class="form-control @error('state') is-invalid @enderror" id="state"
+                                    value="{{ old('state', $customer->state) }}" name="state" placeholder="Enter state">
 
-                                           <select name="state" class="form-control @error('state') is-invalid @enderror" id="state">
-                                               <option value="">Select State</option>
-
-                                               @foreach($states as $state)
-                                                    <option value="{{$state['name']}}">{{$state['name']}}</option>
-                                               @endforeach
-                                           </select>
+                 
 
                                     @error('state')
                                     <span class="invalid-feedback" role="alert">
@@ -192,12 +186,10 @@
                             <div class="col-md-4">
                             <div class="form-group">
                                     <label for="city">L.G.A</label>
-                                    <!-- <input type="text" class="form-control @error('city') is-invalid @enderror" id="city"
-                                           value="{{ old('city') }}" name="city" placeholder="Enter city"> -->
+                                    <input type="text" class="form-control @error('city') is-invalid @enderror" id="city"
+                                    value="{{ old('city', $customer->city) }}" name="city" placeholder="Enter city">
 
-                                           <select name="city"class="form-control @error('city') is-invalid @enderror" id="city" >
-                                               <option value="">Select LGA</option>
-                                           </select>
+                                          
 
                                     @error('city')
                                     <span class="invalid-feedback" role="alert">
@@ -223,113 +215,39 @@
                             </div> <!-- end col -->
                         </div> <!-- end row -->
 
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="sponsor">Sponsor</label>
-                                    <input type="text" class="form-control @error('sponsor') is-invalid @enderror" id="sponsor"
-                                           value="{{ old('sponsor', $customer->sponsor) }}" name="sponsor" placeholder="Enter sponsor">
 
-                                    @error('sponsor')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
+                        <div class="form-group">
+                          
+                          <label for="">User Type</label>
 
-                                </div>
-                            </div>
-                        </div> <!-- end row -->
+                          <select name="user_type"class="form-control" id="">
+                           
+                          <option value="admin" @if(old('user_type', $customer->user_type) == "admin") selected @endif>Admin</option>
+                                        <option value="customer" @if(old('user_type', $customer->user_type) == "customer") selected @endif>Customer</option>
 
-                        <div class="row">
-                            <div class="col-md-12">
-                            <div class="form-group">
-                                    <label for="religion">Religion</label>
-                                    <!-- <input type="text" class="form-control @error('religion') is-invalid @enderror" id="religion"
-                                           value="{{ old('religion') }}" name="religion" placeholder="Enter religion"> -->
+                           
+                              
+                          </select>
 
-                                    <select name="religion" class="form-control @error('religion') is-invalid @enderror" id="religion">
-                                        <option value="">Select Religion</option>
-                                        <option value="Christian">Christian</option>
-                                        <option value="Muslim">Muslim</option>
-                                        <option value="Others">Others</option>
-                                    </select>
+                        </div>
 
-                                    @error('religion')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
 
-                                </div>
-                            </div>
-                        </div> <!-- end row -->
+                        <!-- <div class="form-group">
+                            <label for="">Update Password</label>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="height">Height</label>
-                                    <input type="text" class="form-control @error('height') is-invalid @enderror" id="height"
-                                           value="{{ old('height', $customer->height) }}" name="height" placeholder="Enter height">
+                            <input type="password"class="form-control"name="password">
+                        </div>
+                         -->
 
-                                    @error('height')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
 
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="weight">Weight</label>
-                                    <input type="text" class="form-control @error('weight') is-invalid @enderror" id="weight"
-                                           value="{{ old('weight', $customer->weight) }}" name="weight" placeholder="Enter weight">
 
-                                    @error('weight')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
+                       
 
-                                </div>
-                            </div>
-                        </div> <!-- end row -->
+                        
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="aos">Specialization</label>
-                                    <input type="text" class="form-control @error('aos') is-invalid @enderror" id="aos"
-                                           value="{{ old('aos', $customer->aos) }}" name="aos" placeholder="Enter specialization">
+                        
 
-                                    @error('aos')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="picture">Picture <small>(*optional)</small></label>
-
-                                    <div class="custom-file">
-                                        <input type="file"
-                                               class="custom-file-input @error('picture') is-invalid @enderror"
-                                               name="picture" id="picture-input">
-                                        <label class="custom-file-label" for="picture-input">Choose file</label>
-
-                                        @error('picture')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                        @enderror
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div> <!-- end row -->
+                       
 
                         @csrf
 

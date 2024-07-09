@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Http;
+use Hash;
 
 use DB;
 
@@ -26,15 +27,15 @@ class CustomerController extends Controller
         $size = empty($request->size) ? 10 : $request->size;
 
         if($search == "active"){
-            $customers = User::where('user_type','customer')->where('active',true)->paginate($size);
+            $customers = User::where('user_type','customer')->where('active',true)->orderBy('id', 'desc')->paginate($size);
         }
 
         elseif($search == "inactive"){
-            $customers = User::where('user_type','customer')->where('active',false)->paginate($size);
+            $customers = User::where('user_type','customer')->where('active',false)->orderBy('id', 'desc')->paginate($size);
         }
 
         else{
-            $customers = User::whereIn('user_type', ['customer', 'agent'])
+            $customers = User::whereIn('user_type', ['customer', 'agent', 'pharmacyagent'])
             ->when($search, function ($query, $search) {
 
                 $query->whereRaw(
@@ -48,7 +49,7 @@ class CustomerController extends Controller
 
                 $query->where('gender', '=', "{$gender}");
 
-            })->paginate($size);
+            })->orderBy('id', 'desc')->paginate($size);
         }
 
       
@@ -84,13 +85,12 @@ class CustomerController extends Controller
                 'address' => 'nullable|string',
                 'state' => 'nullable|string',
                 'city'  => 'nullable|string',
-                'religion' => 'nullable|string',
+               
                 'gender' => 'required|string|in:Male,Female',
-                'height' => 'nullable|numeric',
-                'weight' => 'nullable|numeric',
-                'sponsor' => 'nullable|string',
-                'aos' => 'nullable|string',
-                'picture' => 'nullable|image|mimes:jpeg,jpg,png'
+                
+                'picture' => 'nullable|image|mimes:jpeg,jpg,png',
+                'user_type' => 'nullable|string',
+                // 'password' => 'nullable',
             ])->validate();
 
             if ($request->hasFile('picture')) {
@@ -103,6 +103,10 @@ class CustomerController extends Controller
             if (!empty($data['dob'])) {
                 $data['dob'] = Carbon::parse($data['dob'])->toDateString();
             }
+
+            // if($request->password){
+            //     $data['password'] = Hash::make($request->password);
+            // }
 
             $customer->update($data);
 
@@ -133,7 +137,7 @@ class CustomerController extends Controller
 
         $customer = User::where(['user_type' => 'customer', 'uuid' => $request->uuid])->first();
 
-        if (!$customer->update(['user_type' => 'agent', 'pharmacy_id' => $request->id])) {
+        if (!$customer->update(['user_type' => 'pharmacyagent'])) {
 
             return response()->json([
                 'status' => false,
@@ -143,7 +147,7 @@ class CustomerController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => "You have successfully made {$customer->firstname} an agent",
+            'message' => "You have successfully made {$customer->firstname} a pharmacy agent",
         ]);
     }
 

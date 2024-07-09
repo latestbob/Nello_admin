@@ -3,7 +3,7 @@
 @section('content')
 
 
-@if(($userType == 'admin' || $userType == 'agent'))
+@if(($userType == 'admin'))
     <!-- start page title -->
     <div class="row">
         <div class="col-12">

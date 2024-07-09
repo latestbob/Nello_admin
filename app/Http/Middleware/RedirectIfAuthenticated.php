@@ -18,7 +18,7 @@ class RedirectIfAuthenticated
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if (($check = Auth::guard($guard)->check()) && Auth::user()->user_type != 'customer') {
+        if (($check = Auth::guard($guard)->check()) && Auth::user()->user_type == 'admin') {
             return redirect(RouteServiceProvider::HOME);
         }
 
@@ -28,6 +28,10 @@ class RedirectIfAuthenticated
 
         elseif (($check = Auth::guard($guard)->check()) && Auth::user()->email == 'admin@famacare.com') {
             return redirect(route('famacareadmin'));
+        }
+
+        elseif (($check = Auth::guard($guard)->check()) && Auth::user()->user_type  == 'pharmacyagent') {
+            return redirect(route('agentdashboard'));
         }
 
         if ($check) Auth::logout();

@@ -101,7 +101,7 @@
                          <div class="form-group">
                              <label for="">New Date</label>
                              
-                             <input type="date"name="date" class="form-control"required>
+                             <input type="date"name="date"id="inputdate" class="form-control"required>
                         
                 
                          </div>
@@ -164,6 +164,8 @@
     </div>
 
 @endsection
+
+
 
 
 @section('css')

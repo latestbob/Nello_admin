@@ -34,6 +34,10 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
+                <div class="text-right">
+                    <input type="checkbox" name="allcheckbox" id="allcheckbox"><b> Check All</b>
+                </div>
+
 
                    
                 <form action="{{route('healthcenterspecdatettimepost')}}"method="POST" class="col-md-6 m-auto">
@@ -264,7 +268,23 @@
 
 
 
-
+    <script>
+  // Get the "checkall" checkbox element
+  const checkAllCheckbox = document.getElementById("allcheckbox");
+  
+  // Get all the time checkboxes
+  const timeCheckboxes = document.querySelectorAll('input[name="time[]"]');
+  
+  // Add event listener to the "checkall" checkbox
+  checkAllCheckbox.addEventListener("change", function() {
+    const isChecked = checkAllCheckbox.checked;
+    
+    // Set the checked property of all time checkboxes based on the "checkall" checkbox
+    timeCheckboxes.forEach(function(checkbox) {
+      checkbox.checked = isChecked;
+    });
+  });
+</script>
 
 @endsection
 

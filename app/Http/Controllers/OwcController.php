@@ -27,6 +27,8 @@ use PDF;
 use App\Owcalendar;
 use DateTime;
 use App\Owctime;
+use Mail;
+use App\Mail\Owcreschedule;
 
 
 class OwcController extends Controller
@@ -194,18 +196,7 @@ class OwcController extends Controller
                     );
                 });
 
-                // })->whereHas('center', function ($query) use ($search) {
-
-                //     $query->when($search, function ($query, $search) {
-
-                //         $query->whereRaw(
-                //             "(name like ? or state like ? or phone like ? or email like ?)",
-                //             [
-                //                 "%{$search}%", "%{$search}%", "%{$search}%", "%{$search}%"
-                //             ]
-                //         );
-
-                //     });
+              
 
             })
             ->when($type, function ($query, $type) {
@@ -217,13 +208,90 @@ class OwcController extends Controller
                     ]
                 );
             })
-            ->orderBy('id')
+            ->orderByDesc('id')
             
             ->paginate($size);
+
+
+            $calendar = Owcalendar::where("specialization",$request->specialization)->get();
+
+
+    //return $calendar;
+
+    // $dateArray = [];
+
+    // foreach($calendar as $date){
+    //   $mydate = $date->date;
+
+      
+    //       array_push($dateArray,$mydate);
+    // }
+
+    
 
             
 
         return view('owcappointment', compact('appointments', 'search', 'size','type'));
+    }
+
+
+
+    //reschedule appointment 
+
+
+    public function rescheduleappointment(Request $request){
+     
+
+        
+
+
+           $dateString = $request->date;
+            $carbonDate = Carbon::createFromFormat('d/m/Y', $dateString);
+            $newdate = $carbonDate->format('l, F j, Y');
+
+           
+
+
+            $appointment = Owcappointment::where("ref",$request->ref)->update([
+                "date" => $newdate,
+                "time" => $request->time
+            ]);
+
+            $myappointment = Owcappointment::where("ref",$request->ref)->first();
+
+            $owc = [
+                "title" => $myappointment->title,
+                "user_firstname" => $myappointment->user_firstname,
+                "date" => $myappointment->date,
+                "time" => $myappointment->time,
+                "caretype" => $myappointment->caretype,
+                "ref" => $request->ref,
+            ];
+
+            Mail::to($myappointment->email)->send(new Owcreschedule($owc));
+
+
+            return back()->with("msg","Appointment has been rescheduled successfully");
+
+           
+
+    }
+
+
+    ///edit user details
+
+    public function edituserdetails(Request $request){
+        $appointment = Owcappointment::where("ref",$request->ref)->update([
+           "user_firstname" => $request->firstname,
+            "user_lastname"  => $request->lastname,
+            "email" => $request->email,
+            "title" => $request->title,
+            
+           "phone" => $request->phone,
+            
+        ]);
+
+        return back()->with("msg","User details updated successfully");
     }
 
     //check appointment availaibilty
@@ -855,7 +923,6 @@ public function getmostdate(Request $request){
 
   $calendar = Owcalendar::where("specialization",$request->specialization)->get();
 
-  
 
     //return $calendar;
 
@@ -872,6 +939,88 @@ public function getmostdate(Request $request){
 }
 
 
+
+
+//check admin available time
+
+public function checkadminavailabletime(Request $request){
+
+    $validator = Validator::make($request->all(), [
+       
+       
+        'date'=> 'required',
+       
+        'caretype' => 'required',
+        
+        
+]);
+
+
+    if($validator->fails()){
+    return response([
+        'status' => 'failed',
+        'message' => $validator->errors()
+    ]);
+    }
+
+    $dateString = $request->date;
+    $carbonDate = Carbon::createFromFormat('d/m/Y', $dateString);
+    $newdate = $carbonDate->format('l, F j, Y');
+
+
+    $blocktimes = Owctime::where("date",$request->date)->where("specialization",$request->caretype)->pluck("time")->toArray();
+
+    $appointment = Owcappointment::where('date',$newdate)->where('caretype',$request->caretype)->pluck("time")->toArray();
+   // return $appointment;
+
+   $merged = array_merge($appointment, $blocktimes);
+   $unique = array_unique($merged);
+
+   $timeArray = [
+       
+    "10:00 am",
+    "10:30 am",
+    "11:00 am",
+    "11:30 am",
+    "12:00 pm",
+    "12:30 pm",
+    "2:00 pm",
+    "2:30 pm",
+    "3:00 pm",
+    "3:30 pm",
+    "4:00 pm",
+    "4:30 pm",
+    "5:00 pm",
+];
+$result = array_diff($timeArray, $unique);
+$resultArray = array_values($result);
+//return $resultArray;
+
+// Set the timezone to Lagos, Nigeria
+date_default_timezone_set('Africa/Lagos');
+
+// Get the current time in Lagos, Nigeria
+$currentTime = Carbon::now();
+
+// Check if $request->date is equal to today's date in the format d/m/Y
+$currentDate = $currentTime->format('j/n/Y');
+if ($request->date === $currentDate) {
+    $resultArray = array_filter($resultArray, function ($time) use ($currentTime) {
+        $timeObj = Carbon::createFromFormat('h:i a', $time);
+        return $timeObj >= $currentTime;
+    });
+}
+
+return array_values($resultArray);
+
+
+
+
+
+    
+
+
+}
 
 
 

@@ -81,10 +81,12 @@
                            <tbody>
                                         @foreach($calender as $dates)
 
+                                        
+
                                     <tr>
                                         <td>{{$dates->specialization}}</td>
                                         <td>{{$dates->date}}</td>
-                                        <td>{{$dates->monthstring}}</td>
+                                        <td>{{date('F')}}</td>
                                         <td>{{$dates->month}}</td>
                                         <td>
                                             <form action="{{route('deleteuniquehealthcenterspec',$dates->id)}}"method="POST">

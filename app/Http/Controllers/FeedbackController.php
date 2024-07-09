@@ -9,6 +9,8 @@ class FeedbackController extends Controller
 {
     public function index(Request $request) {
 
+       // $feedbacks = DB::table("customerfeedbacks")->truncate();
+
         $size = empty($request->size) ? 10 : $request->size;
 
         $feedbacks = DB::table("customerfeedbacks")->orderBy('id', 'desc');

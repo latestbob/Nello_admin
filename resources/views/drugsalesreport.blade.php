@@ -61,7 +61,7 @@
                                 <th>Total Amount</th>
                                
                                 <th>Cart_Uuid</th>
-                                <th>Month</th>
+                                
                                 <th>Date Purchased</th>
                                 <th>Status</th>
                                
@@ -86,7 +86,7 @@
                                 <td>{{$drug->purchased_quantity}}</td>
                                 <td>{{$drug->total_amount}}</td>
                                 <td>{{$drug->cart_uuid}}</td>
-                                <td>{{$drug->month}}</td>
+                                
                                 <td>{{$drug->created_at}}</td>
                                 <td>
 

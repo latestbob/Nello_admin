@@ -131,9 +131,12 @@
                             <tr>
                                 
                                 <th>Feedback Type</th>
+                                <th>Priority_Level</th>
+                                <th>Resolution Time</th>
                                 <th>Customer Name</th>
                                 <th>Email</th>
                                 <th>Message</th>
+                                <th>Dependencies</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -146,9 +149,12 @@
 
                             <tr>
                                 <td>{{$feed->type}}</td>
+                                <td>{{$feed->priority}}</td>
+                                <td>{{$feed->resolution_time}}</td>
                                 <td>{{$feed->name}}</td>
                                 <td>{{$feed->email}}</td>
                                 <td>{{$feed->message}}</td>
+                                <td>{{$feed->dependencies}}</td>
                                 <td>
 
                                 @if($feed->resolved == "false")

@@ -99,7 +99,7 @@ class DrugController extends Controller
                 'dosage_type' => 'required|string|max:50',
                 'price' => 'required|numeric',
                 'quantity' => 'required|numeric',
-                'image' => 'nullable|image|mimes:jpeg,jpg,png',
+                'image' => 'nullable',
                 'indications' => 'required|string',
                 'side_effects' => 'required|string',
                 'contraindications' => 'required|string'
@@ -107,7 +107,7 @@ class DrugController extends Controller
 
             if ($request->hasFile('image')) {
 
-                $data['image'] = $this->uploadFile($request, 'image');
+                // $data['image'] = $this->uploadFile($request, 'image');
             //            $data['image'] = 'http://www.famacare.com/img/famacare.png';
 
             }

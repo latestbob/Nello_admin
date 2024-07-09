@@ -87,10 +87,9 @@
                                 <th>Dob</th>
                                 <th>State</th>
                                 <th>City</th>
-                                <th>Religion</th>
-                                <th>Height</th>
-                                <th>Weight</th>
-                                <th>Sponsor</th>
+                                <th>Registered At</th>
+                                <th>UPI</th>
+                                
                                 <th>Status</th>
                                 <th>Action</th>
                                 
@@ -115,10 +114,9 @@
                                     <td>{{ $customer->dob ? \Carbon\Carbon::parse($customer->dob)->format('F dS, Y') : 'Unavailable' }}</td>
                                     <td>{{ $customer->state ?: 'Unavailable' }}</td>
                                     <td>{{ $customer->city ?: 'Unavailable' }}</td>
-                                    <td>{{ $customer->religion ?: 'Unavailable' }}</td>
-                                    <td>{{ $customer->height ?: 'Unavailable' }}</td>
-                                    <td>{{ $customer->weight ?: 'Unavailable' }}</td>
-                                    <td>{{ $customer->sponsor ?: 'Unavailable' }}</td>
+                                    <td>{{ $customer->created_at->diffForHumans() }}</td>
+                                    <td>{{$customer->upi}}</td>
+                                    
                                     <td>
                                         <label class="badge {{ $customer->active == 1 ? 'badge-success' : 'badge-warning' }}">{{ $customer->active ? 'active' : 'inactive' }}</label>
                                     </td>

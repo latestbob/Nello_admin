@@ -72,5 +72,6 @@ class Kernel extends HttpKernel
         'auth.owc' => \App\Http\Middleware\Owc::class,
         'auth.famacare' => \App\Http\Middleware\Famacare::class,
         'auth.admin.famacare' => \App\Http\Middleware\AdminFamacare::class,
+        'auth.pharmacyagent' => \App\Http\Middleware\PharmacyAgent::class,
     ];
 }

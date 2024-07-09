@@ -228,8 +228,10 @@
                                     <label for="image">Image</label>
 
                                     <div class="custom-file">
-                                        <input type="file" class=" @error('image') is-invalid @enderror"
-                                               name="image" id="inputGroupFile04">
+                                        <!-- <input type="file" class=" @error('image') is-invalid @enderror"
+                                               name="image" id="inputGroupFile04"> -->
+
+                                               <input name="image"class="form-control" required>
                                         
 
                                         @error('image')

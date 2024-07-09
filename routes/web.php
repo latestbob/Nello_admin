@@ -186,7 +186,7 @@ Route::get('/owcappointment','OwcController@getappointment')->middleware('auth')
 //delete OWCappoint
 
 
-Route::delete("/owcdelete/{id}",'OwcController@deleteappointment')->middleware("auth.admin")->name("deleteowcappointment");
+Route::delete("/owcdelete/{id}",'OwcController@deleteappointment')->middleware("auth.owc")->name("deleteowcappointment");
 
 //download 
 
@@ -405,3 +405,19 @@ Route::get("/myorder/{ref}","DrugController@myordermark")->name("myordermark");
 //business intereset page
 
 Route::get("/interest","BusinessController@getinterest")->name("getinterest")->middleware("auth.admin");
+
+
+
+//Agent Routes
+
+Route::get("/agent-dashboard","AgentController@dashboard")->name("agentdashboard")->middleware("auth.agent");
+
+
+
+//owc appointment reschedulinn
+
+Route::put("/owc/rescheduling","OwcController@rescheduleappointment")->name("owcreschedule")->middleware("auth.owc");
+
+//edit owc appointment user details
+
+Route::put("/owc/edit/user","OwcController@edituserdetails")->name("owcedituserdetails")->middleware("auth.owc");

@@ -258,6 +258,8 @@ Route::post("/nellomedicalrecords","AppointmentController@createnewrecord");
 
 Route::get("/medicalrecords","AppointmentController@getallmedicalrecords");
 
+
+
 //get all specialization and caretype nello frontend
 
 Route::get("/getsearchinput","AppointmentController@getsearchinput");
@@ -268,3 +270,99 @@ Route::get("/getdoctorcenter","AppointmentController@getdoctorcenter"); //for ne
 // nello interest form
 
 Route::post("/join","BusinessController@interest");
+
+
+//get doctor by ID
+Route::get('/doctor/{id}','DoctorController@getdoctorbyid');
+
+
+// Medical Report
+
+Route::post("/healthrecords","MedicalReportController@createnewrecord");
+
+Route::delete("/deleterecords","MedicalReportController@deleterecords");
+
+//GET health record by ref
+
+Route::get("/healthrecords/{ref}","MedicalReportController@gethealthrecordbyref");
+
+
+Route::get("/allappointment","AppointmentController@getall");
+
+// update vitals healthrecords
+
+//Route::put("/vitals/{ref}","MedicalReportController@updatevitals");
+
+Route::put("/vitals/update/{ref}","MedicalReportController@updatevitalsigns");
+
+
+// update symptoms healthrecords
+
+Route::put("/symptoms/update/{ref}","MedicalReportController@updatesymptoms");
+
+//edit history of complaints
+
+Route::put("/history/update/{ref}","MedicalReportController@updatehistory");
+
+//allergies edit
+
+Route::put("/allergies/update/{ref}","MedicalReportController@updateallergies");
+
+// update dignosiss
+
+Route::put("/diagnosis/update/{re}","MedicalReportController@updatediagnosis");
+
+// update laboratory
+
+Route::put("/laboratory/update/{ref}","MedicalReportController@updatelaboratory");
+
+//update xray
+
+Route::put("/xray/update/{ref}","MedicalReportController@updatexray");
+
+
+//update Ultrasound
+
+Route::put("/ultrasound/update/{ref}","MedicalReportController@updateUltrasound");
+
+//demo see all specialischedule
+
+Route::get("/see/schedule","AppointmentController@seeschedule");
+
+//get date not as uuid
+
+Route::get("/nellodoctordatesnot","AppointmentController@getwebsitedoctordatenot");
+
+
+//get doctor available for same day and same center
+
+Route::get("/sameavailable","AppointmentController@sameavailable");
+
+
+Route::get('drugs/cart', 'Api\DrugController@getdrugcart')->name('getallcart');
+
+//get user and doctors details
+
+
+Route::get("/healthrecords/{ref}/details","MedicalReportController@gethealthrecordbyrefdetails");
+
+
+//check time owc admin
+
+Route::get("/owcadmin/checkavailabletime","OwcController@checkadminavailabletime");
+
+
+//test url shorten
+
+Route::post("/shortner","AgentController@test")->name("testshortner");
+
+
+
+//facebook meta cloud api
+Route::match(array('GET','POST'),'/bothook', 'BotController@bothook');
+
+Route::match(array('GET','POST'),'/facebook', 'FacebookController@webhook');
+
+// Route::get('/getallmessage',"BotController@getallmessage");
+
+Route::put("/resetall","BotController@resetall");

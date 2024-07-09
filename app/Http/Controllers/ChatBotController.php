@@ -12345,17 +12345,30 @@ public function webhookproduction(Request $request){
                                 $temp_id = $uuid;
 
 
-                                $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
-                                    "dynamicLinkInfo" => [
-                                        "domainUriPrefix" => "https://nello.page.link",
-                                        "link" => "https://mw.asknello.com/owcservicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&cost=".$fee."&user_email=".$user_data['email']."&doctor_email=".$doc_email."&type=Online&date=".$date."&time=".$time."&spec=".$appointment_specialization,
-                                    ]
+                                // $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
+                                //     "dynamicLinkInfo" => [
+                                //         "domainUriPrefix" => "https://nello.page.link",
+                                //         "link" => "https://mw.asknello.com/owcservicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&cost=".$fee."&user_email=".$user_data['email']."&doctor_email=".$doc_email."&type=Online&date=".$date."&time=".$time."&spec=".$appointment_specialization,
+                                //     ]
+                                //     ]);
+
+                                    $generatelink = Http::withoutVerifying()->withHeaders([
+                                        //  'Content-Type'=> 'application/x-www-form-urlencoded',
+                                        'X-RapidAPI-Key' => '153aad5a4emshc3de77aedbeee81p164b17jsn305dd7248559',
+                                        'X-RapidAPI-Host' => 'url-shortener-service.p.rapidapi.com'
+                                        // Back to menu
+                                    ])->post('https://url-shortener-service.p.rapidapi.com/shorten',[
+                                       
+                                        "url" => "https://mw.asknello.com/owcservicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&cost=".$fee."&user_email=".$user_data['email']."&doctor_email=".$doc_email."&type=Online&date=".$date."&time=".$time."&spec=".$appointment_specialization,
+                                        
                                     ]);
+                            
+                                    
 
                                 ////
 
 
-                                if($generatelink['shortLink']){
+                                if($generatelink){
 
                                 
 
@@ -12385,7 +12398,7 @@ public function webhookproduction(Request $request){
                                     ],
                                     "buttons" => [
                                         [
-                                            "url" => $generatelink['shortLink'],
+                                            "url" => $generatelink['result_url'],
                                             "title" => "Make Payment"
                                         ]
                                     ],
@@ -12659,15 +12672,27 @@ public function webhookproduction(Request $request){
                                 ////
 
 
-                                $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
-                                    "dynamicLinkInfo" => [
-                                        "domainUriPrefix" => "https://nello.page.link",
-                                        "link" => "https://mw.asknello.com/owcservicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&cost=".$fee."&user_email=".$user_data['email']."&doctor_email=".$doc_email."&type=Online&date=".$date."&time=".$time."&spec=".$appointment_specialization,
-                                    ]
-                                    ]);
+                                // $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
+                                //     "dynamicLinkInfo" => [
+                                //         "domainUriPrefix" => "https://nello.page.link",
+                                //         "link" => "https://mw.asknello.com/owcservicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&cost=".$fee."&user_email=".$user_data['email']."&doctor_email=".$doc_email."&type=Online&date=".$date."&time=".$time."&spec=".$appointment_specialization,
+                                //     ]
+                                //     ]);
 
 
-                                    if($generatelink['shortLink']){
+                                $generatelink = Http::withoutVerifying()->withHeaders([
+                                    //  'Content-Type'=> 'application/x-www-form-urlencoded',
+                                    'X-RapidAPI-Key' => '153aad5a4emshc3de77aedbeee81p164b17jsn305dd7248559',
+                                    'X-RapidAPI-Host' => 'url-shortener-service.p.rapidapi.com'
+                                    // Back to menu
+                                ])->post('https://url-shortener-service.p.rapidapi.com/shorten',[
+                                   
+                                    "url" => "https://mw.asknello.com/owcservicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&cost=".$fee."&user_email=".$user_data['email']."&doctor_email=".$doc_email."&type=Online&date=".$date."&time=".$time."&spec=".$appointment_specialization,
+                                    
+                                ]);
+
+
+                                    if($generatelink){
 
                                     
 
@@ -12697,7 +12722,7 @@ public function webhookproduction(Request $request){
                                     ],
                                     "buttons" => [
                                         [
-                                            "url" => $generatelink['shortLink'],
+                                            "url" => $generatelink['result_url'],
                                             "title" => "Make Payment"
                                         ]
                                     ],
@@ -13458,17 +13483,28 @@ $responsed = Http::withoutVerifying()->withHeaders([
                        // $temp_id = $uuid;
 
 
-                        $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
-                            "dynamicLinkInfo" => [
-                                "domainUriPrefix" => "https://nello.page.link",
-                                "link" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$fee."&email=".$user_data['email'],
-                            ]
-                            ]);
+                        // $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
+                        //     "dynamicLinkInfo" => [
+                        //         "domainUriPrefix" => "https://nello.page.link",
+                        //         "link" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$fee."&email=".$user_data['email'],
+                        //     ]
+                        //     ]);
 
                         ////
 
+                        $generatelink = Http::withoutVerifying()->withHeaders([
+                            //  'Content-Type'=> 'application/x-www-form-urlencoded',
+                            'X-RapidAPI-Key' => '153aad5a4emshc3de77aedbeee81p164b17jsn305dd7248559',
+                            'X-RapidAPI-Host' => 'url-shortener-service.p.rapidapi.com'
+                            // Back to menu
+                        ])->post('https://url-shortener-service.p.rapidapi.com/shorten',[
+                           
+                            "url" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$fee."&email=".$user_data['email'],
+                            
+                        ]);
 
-                        if($generatelink['shortLink']){
+
+                        if($generatelink){
 
                         
 
@@ -13499,7 +13535,7 @@ $responsed = Http::withoutVerifying()->withHeaders([
                             ],
                             "buttons" => [
                                 [
-                                    "url" => $generatelink['shortLink'],
+                                    "url" => $generatelink['result_url'],
                                     "title" => "Make Payment"
                                 ]
                             ],
@@ -13723,17 +13759,29 @@ $responsed = Http::withoutVerifying()->withHeaders([
                             $message = 'Proceed to make payment of N'.$fee.' to secure an appointment with '.$doctor_title.'. '.$doctor_firstname.' on '.$date.' by '.$time.' . Type Cancel to exit';
                                 
 
-                                $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
-                                    "dynamicLinkInfo" => [
-                                        "domainUriPrefix" => "https://nello.page.link",
-                                        "link" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$fee."&email=".$user_data['email'],
-                                    ]
-                                    ]);
+                                // $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
+                                //     "dynamicLinkInfo" => [
+                                //         "domainUriPrefix" => "https://nello.page.link",
+                                //         "link" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$fee."&email=".$user_data['email'],
+                                //     ]
+                                //     ]);
 
                                 ////
 
 
-                                if($generatelink['shortLink']){
+                                $generatelink = Http::withoutVerifying()->withHeaders([
+                                    //  'Content-Type'=> 'application/x-www-form-urlencoded',
+                                    'X-RapidAPI-Key' => '153aad5a4emshc3de77aedbeee81p164b17jsn305dd7248559',
+                                    'X-RapidAPI-Host' => 'url-shortener-service.p.rapidapi.com'
+                                    // Back to menu
+                                ])->post('https://url-shortener-service.p.rapidapi.com/shorten',[
+                                   
+                                    "url" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$fee."&email=".$user_data['email'],
+                                    
+                                ]);
+
+
+                                if($generatelink){
 
                     
 
@@ -13764,7 +13812,7 @@ $responsed = Http::withoutVerifying()->withHeaders([
                                 ],
                                 "buttons" => [
                                     [
-                                        "url" => $generatelink['shortLink'],
+                                        "url" => $generatelink['result_url'],
                                         "title" => "Make Payment"
                                     ]
                                 ],
@@ -14670,22 +14718,34 @@ $responsed = Http::withoutVerifying()->withHeaders([
 
                                 //generate link
 
-                    $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
-                        "dynamicLinkInfo" => [
-                            "domainUriPrefix" => "https://nello.page.link",
-                            "link" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$doc_docss['fee']."&email=".$user_data['email'],
-                        ]
-                        ]);
+                    // $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
+                    //     "dynamicLinkInfo" => [
+                    //         "domainUriPrefix" => "https://nello.page.link",
+                    //         "link" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$doc_docss['fee']."&email=".$user_data['email'],
+                    //     ]
+                    //     ]);
 
-        Log::debug($generatelink);
-        Log::debug($generatelink['shortLink']);
+        // Log::debug($generatelink);
+        // Log::debug($generatelink['shortLink']);
+
+        $generatelink = Http::withoutVerifying()->withHeaders([
+            //  'Content-Type'=> 'application/x-www-form-urlencoded',
+            'X-RapidAPI-Key' => '153aad5a4emshc3de77aedbeee81p164b17jsn305dd7248559',
+            'X-RapidAPI-Host' => 'url-shortener-service.p.rapidapi.com'
+            // Back to menu
+        ])->post('https://url-shortener-service.p.rapidapi.com/shorten',[
+           
+            "url" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$doc_docss['fee']."&email=".$user_data['email'],
+            
+        ]);
+
 
 
 
                                      ///
                                     
 
-                                     if($generatelink['shortLink']){
+                                     if($generatelink){
 
                             $responsed = Http::withoutVerifying()->withHeaders([
                                 'token'=>$token,
@@ -14711,7 +14771,7 @@ $responsed = Http::withoutVerifying()->withHeaders([
                                 ],
                                 "buttons" => [
                                     [
-                                        "url" => $generatelink['shortLink'],
+                                        "url" => $generatelink['result_url'],
                                         "title" => "Make Payment"
                                     ]
                                 ],
@@ -16326,14 +16386,27 @@ $responsed = Http::withoutVerifying()->withHeaders([
 
 
 
-                           $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
-                            "dynamicLinkInfo" => [
-                                "domainUriPrefix" => "https://nello.page.link",
-                                "link" => "https://admin.asknello.com/embanqo/password/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&firstname=".$firstname."&lastname=".$lastname."&email=".$email."&phone=".$phone."&gender=".$gender."&dob=".$dob,
-                            ]
-                            ]);
+                        //    $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
+                        //     "dynamicLinkInfo" => [
+                        //         "domainUriPrefix" => "https://nello.page.link",
+                        //         "link" => "https://admin.asknello.com/embanqo/password/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&firstname=".$firstname."&lastname=".$lastname."&email=".$email."&phone=".$phone."&gender=".$gender."&dob=".$dob,
+                        //     ]
+                        //     ]);
 
-                            if($generatelink['shortLink']){
+
+                        $generatelink = Http::withoutVerifying()->withHeaders([
+                            //  'Content-Type'=> 'application/x-www-form-urlencoded',
+                            'X-RapidAPI-Key' => '153aad5a4emshc3de77aedbeee81p164b17jsn305dd7248559',
+                            'X-RapidAPI-Host' => 'url-shortener-service.p.rapidapi.com'
+                            // Back to menu
+                        ])->post('https://url-shortener-service.p.rapidapi.com/shorten',[
+                           
+                            "url" => "https://admin.asknello.com/embanqo/password/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&firstname=".$firstname."&lastname=".$lastname."&email=".$email."&phone=".$phone."&gender=".$gender."&dob=".$dob,
+                            
+                        ]);
+                
+
+                            if($generatelink){
 
                             
                            
@@ -16360,7 +16433,7 @@ $responsed = Http::withoutVerifying()->withHeaders([
                             "quick_replies" => [],
                             "buttons" => [
                                 [
-                                    "url" => $generatelink['shortLink'],
+                                    "url" => $generatelink['result_url'],
                                     "title" => "Create Password"
                                 ]
                             ],
@@ -16484,15 +16557,27 @@ if($password){
         //render button again
 
 
-        $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
-            "dynamicLinkInfo" => [
-                "domainUriPrefix" => "https://nello.page.link",
-                "link" => "https://admin.asknello.com/embanqo/password/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&firstname=".$firstname."&lastname=".$lastname."&email=".$email."&phone=".$phone."&gender=".$gender."&dob=".$dob,
-            ]
-            ]);
+        // $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
+        //     "dynamicLinkInfo" => [
+        //         "domainUriPrefix" => "https://nello.page.link",
+        //         "link" => "https://admin.asknello.com/embanqo/password/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&firstname=".$firstname."&lastname=".$lastname."&email=".$email."&phone=".$phone."&gender=".$gender."&dob=".$dob,
+        //     ]
+        //     ]);
+
+    
+        $generatelink = Http::withoutVerifying()->withHeaders([
+            //  'Content-Type'=> 'application/x-www-form-urlencoded',
+            'X-RapidAPI-Key' => '153aad5a4emshc3de77aedbeee81p164b17jsn305dd7248559',
+            'X-RapidAPI-Host' => 'url-shortener-service.p.rapidapi.com'
+            // Back to menu
+        ])->post('https://url-shortener-service.p.rapidapi.com/shorten',[
+           
+            "url" => "https://admin.asknello.com/embanqo/password/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&firstname=".$firstname."&lastname=".$lastname."&email=".$email."&phone=".$phone."&gender=".$gender."&dob=".$dob,
+            
+        ]);
 
 
-            if($generatelink['shortLink']) {
+            if($generatelink) {
 
             
         $responsed = Http::withoutVerifying()->withHeaders([
@@ -16517,7 +16602,7 @@ if($password){
             "quick_replies" => [],
             "buttons" => [
                 [
-                    "url" => $generatelink['shortLink'],
+                    "url" => $generatelink['result_url'],
                     "title" => "Create Password"
                 ]
             ],
@@ -16772,15 +16857,27 @@ if($password){
 
       //generate link
 
-      $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
-        "dynamicLinkInfo" => [
-            "domainUriPrefix" => "https://nello.page.link",
-            "link" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$doc_docss['fee']."&email=".$user_data['email'],
-        ]
-        ]);
+    //   $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
+    //     "dynamicLinkInfo" => [
+    //         "domainUriPrefix" => "https://nello.page.link",
+    //         "link" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$doc_docss['fee']."&email=".$user_data['email'],
+    //     ]
+    //     ]);
 
 
-        if($generatelink['shortLink']){
+    $generatelink = Http::withoutVerifying()->withHeaders([
+        //  'Content-Type'=> 'application/x-www-form-urlencoded',
+        'X-RapidAPI-Key' => '153aad5a4emshc3de77aedbeee81p164b17jsn305dd7248559',
+        'X-RapidAPI-Host' => 'url-shortener-service.p.rapidapi.com'
+        // Back to menu
+    ])->post('https://url-shortener-service.p.rapidapi.com/shorten',[
+       
+        "url" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$doc_docss['fee']."&email=".$user_data['email'],
+        
+    ]);
+
+
+        if($generatelink){
     
                     $responsed = Http::withoutVerifying()->withHeaders([
                         'token'=>$token,
@@ -16806,7 +16903,7 @@ if($password){
                         ],
                         "buttons" => [
                             [
-                                "url" => $generatelink['shortLink'],
+                                "url" => $generatelink['result_url'],
                                 "title" => "Make Payment"
                             ]
                         ],
@@ -19973,22 +20070,33 @@ $temp_id = $drafbooking['temp_id'];
 
 //generate link
 
-$generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
-    "dynamicLinkInfo" => [
-        "domainUriPrefix" => "https://nello.page.link",
-        "link" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$fee."&email=".$user_data['email'],
-    ]
-    ]);
+// $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
+//     "dynamicLinkInfo" => [
+//         "domainUriPrefix" => "https://nello.page.link",
+//         "link" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$fee."&email=".$user_data['email'],
+//     ]
+//     ]);
 
-    Log::debug($generatelink);
-    Log::debug($generatelink['shortLink']);
+    // Log::debug($generatelink);
+    // Log::debug($generatelink['shortLink']);
+
+    $generatelink = Http::withoutVerifying()->withHeaders([
+        //  'Content-Type'=> 'application/x-www-form-urlencoded',
+        'X-RapidAPI-Key' => '153aad5a4emshc3de77aedbeee81p164b17jsn305dd7248559',
+        'X-RapidAPI-Host' => 'url-shortener-service.p.rapidapi.com'
+        // Back to menu
+    ])->post('https://url-shortener-service.p.rapidapi.com/shorten',[
+       
+        "url" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$fee."&email=".$user_data['email'],
+        
+    ]);
 
 
 
 $message = 'Hi '.$user_data['firstname']. ', kindly proceed to make payment of ₦'.$fee. ' to secure appointment on '.$date.' by '.$myselected_time.' with '.$centername.'. Type Cancel to exit' ;
     
 
-                    if($generatelink['shortLink']){
+                    if($generatelink){
                         $responsed = Http::withoutVerifying()->withHeaders([
                             'token'=>$token,
                             
@@ -20019,7 +20127,7 @@ $message = 'Hi '.$user_data['firstname']. ', kindly proceed to make payment of �
                             ],
                         "buttons" => [
                             [
-                                "url" => $generatelink['shortLink'],
+                                "url" => $generatelink['result_url'],
                                 "title" => "Make Payment"
                             ]
                         ],
@@ -20205,15 +20313,27 @@ $update = Count::first()->update([
 $message = 'Hi '.$user_data['firstname']. ', kindly proceed to make payment of ₦'.$fee. ' to secure appointment on '.$searched_date.' by '.$myselected_time.' with '.$centername.' Type Cancel to exit' ;
 
 
-$generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
-    "dynamicLinkInfo" => [
-        "domainUriPrefix" => "https://nello.page.link",
-        "link" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$fee."&email=".$user_data['email'],
-    ]
-    ]);
+// $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
+//     "dynamicLinkInfo" => [
+//         "domainUriPrefix" => "https://nello.page.link",
+//         "link" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$fee."&email=".$user_data['email'],
+//     ]
+//     ]);
+
+$generatelink = Http::withoutVerifying()->withHeaders([
+    //  'Content-Type'=> 'application/x-www-form-urlencoded',
+    'X-RapidAPI-Key' => '153aad5a4emshc3de77aedbeee81p164b17jsn305dd7248559',
+    'X-RapidAPI-Host' => 'url-shortener-service.p.rapidapi.com'
+    // Back to menu
+])->post('https://url-shortener-service.p.rapidapi.com/shorten',[
+   
+    "url" => "https://mw.asknello.com/servicepay/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&temp_id=".$temp_id."&cost=".$fee."&email=".$user_data['email'],
+    
+]);
 
 
-    if($generatelink['shortLink']){
+
+    if($generatelink){
 
 
 $responsed = Http::withoutVerifying()->withHeaders([
@@ -20244,7 +20364,7 @@ $responsed = Http::withoutVerifying()->withHeaders([
     ],
     "buttons" => [
         [
-            "url" => $generatelink['shortLink'],
+            "url" => $generatelink['result_url'],
             "title" => "Make Payment"
         ]
     ],
@@ -21571,15 +21691,26 @@ $responsed = Http::withoutVerifying()->withHeaders([
                             'count' => 1
                         ]);
 
-                        $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
-                            "dynamicLinkInfo" => [
-                                "domainUriPrefix" => "https://nello.page.link",
-                                "link" => "https://admin.asknello.com/embanqo/password/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&firstname=".$firstname."&lastname=".$lastname."&email=".$email."&phone=".$phone."&gender=".$gender."&dob=".$dob,
-                            ]
-                            ]);
+                        // $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
+                        //     "dynamicLinkInfo" => [
+                        //         "domainUriPrefix" => "https://nello.page.link",
+                        //         "link" => "https://admin.asknello.com/embanqo/password/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&firstname=".$firstname."&lastname=".$lastname."&email=".$email."&phone=".$phone."&gender=".$gender."&dob=".$dob,
+                        //     ]
+                        //     ]);
+
+                        $generatelink = Http::withoutVerifying()->withHeaders([
+                            //  'Content-Type'=> 'application/x-www-form-urlencoded',
+                            'X-RapidAPI-Key' => '153aad5a4emshc3de77aedbeee81p164b17jsn305dd7248559',
+                            'X-RapidAPI-Host' => 'url-shortener-service.p.rapidapi.com'
+                            // Back to menu
+                        ])->post('https://url-shortener-service.p.rapidapi.com/shorten',[
+                           
+                            "url" => "https://admin.asknello.com/embanqo/password/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&firstname=".$firstname."&lastname=".$lastname."&email=".$email."&phone=".$phone."&gender=".$gender."&dob=".$dob,
+                            
+                        ]);
                         
 
-                            if($generatelink['shortLink']){
+                            if($generatelink){
 
                             
 
@@ -21605,7 +21736,7 @@ $responsed = Http::withoutVerifying()->withHeaders([
                             "quick_replies" => [],
                             "buttons" => [
                                 [
-                                    "url" => $generatelink['shortLink'],
+                                    "url" => $generatelink['result_url'],
                                     "title" => "Create Password"
                                 ]
                             ],
@@ -21728,15 +21859,26 @@ if($password){
         //render button again
 
 
-        $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
-            "dynamicLinkInfo" => [
-                "domainUriPrefix" => "https://nello.page.link",
-                "link" => "https://admin.asknello.com/embanqo/password/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&firstname=".$firstname."&lastname=".$lastname."&email=".$email."&phone=".$phone."&gender=".$gender."&dob=".$dob,
-            ]
-            ]);
+        // $generatelink =Http::withoutVerifying()->post('https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDAH1BbbU-pbd_WN3ZJEW2rLbKvLteAaX4',[
+        //     "dynamicLinkInfo" => [
+        //         "domainUriPrefix" => "https://nello.page.link",
+        //         "link" => "https://admin.asknello.com/embanqo/password/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&firstname=".$firstname."&lastname=".$lastname."&email=".$email."&phone=".$phone."&gender=".$gender."&dob=".$dob,
+        //     ]
+        //     ]);
+
+        $generatelink = Http::withoutVerifying()->withHeaders([
+            //  'Content-Type'=> 'application/x-www-form-urlencoded',
+            'X-RapidAPI-Key' => '153aad5a4emshc3de77aedbeee81p164b17jsn305dd7248559',
+            'X-RapidAPI-Host' => 'url-shortener-service.p.rapidapi.com'
+            // Back to menu
+        ])->post('https://url-shortener-service.p.rapidapi.com/shorten',[
+           
+            "url" => "https://admin.asknello.com/embanqo/password/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&firstname=".$firstname."&lastname=".$lastname."&email=".$email."&phone=".$phone."&gender=".$gender."&dob=".$dob,
+            
+        ]);
 
 
-            if($generatelink['shortLink']){
+            if($generatelink){
 
             
 
@@ -21764,7 +21906,7 @@ if($password){
             "quick_replies" => [],
             "buttons" => [
                 [
-                    "url" => $generatelink['shortLink'],
+                    "url" => $generatelink['result_url'],
                     "title" => "Create Password"
                 ]
             ],

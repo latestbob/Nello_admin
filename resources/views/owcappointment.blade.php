@@ -91,14 +91,15 @@
                                 <th>DOB</th>
                                 <th>Date</th>
                                 <th>Time</th>
-                                <th>Type</th>
-                                <th>Doctors</th>
+                                <th>Booked At</th>
+                                <!-- <th>Type</th> -->
+                                <!-- <th>Doctors</th>
                                  
-                                <th>Payment_ref </th>
+                                <th>Payment_ref </th> -->
 
 
-                                <th>CreatedAt</th>
-                                <th>Links</th>
+                                <!-- <th>CreatedAt</th> -->
+                                <!-- <th>Links</th> -->
                                 <th>Action</th>
                                
                             </tr>
@@ -119,16 +120,9 @@
                                 <td>{{$list->dob}}</td>
                                 <td>{{$list->date}}</td>
                                 <td>{{$list->time}}</td>
-                                @if($list->type == "Online")
-
-                                <td>{{$list->type}}</td>
-
-                                @else 
-
-                                <td>Visitation</td>
-
-
-                                @endif
+                                
+                                <td>{{$list->created_at->diffForHumans()}}</td>
+                               
 
                                 @if($list->type == "Online")
 
@@ -157,7 +151,7 @@
 
                                         @endif
 
-                                <td>{{$list->created_at->diffForHumans()}}</td>
+                                <!-- <td>{{$list->created_at->diffForHumans()}}</td> -->
 
                                 @if($list->type == "Online")
 
@@ -170,17 +164,242 @@
                                 @endif
                               
                                 <td>
-                                    <form action="{{route('deleteowcappointment',$list->id)}}"method="POST">
-                                        @csrf 
+                                    <a href=""data-id="{{$list->caretype}}" class="btn btn-info text-center my-button"data-toggle="modal" data-target="#userModal{{$list->id}}">Reschedule</a>
+                                  
+                                    
 
-                                        {{method_field('DELETE')}}
-                                        <button type="submit" class="btn btn-danger text-light">Delete</button>
+                                </td>
+
+                                <td>
+                                <a href=""data-toggle="modal" data-target="#updateModal{{$list->id}}" class="btn btn-warning text-center">Edit</a>
+
+                                </td>
 
 
-                                    </form>
+                                <td>
+                                <a href=""data-toggle="modal" data-target="#deleteModal{{$list->id}}" class="btn btn-danger text-center">Delete</a>
+
                                 </td>
                                
                             </tr>
+
+        <div class="modal fade" id="userModal{{$list->id}}" tabindex="-1" role="dialog" aria-labelledby="userModal{{$list->id}}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Reschedule Appointment Ref - {{$list->ref}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+      <div class="card bg-info px-3 py-3 text-center text-light rounded">
+          Previous Appointment Date : {{$list->date}} 
+          
+          <br>
+          
+
+          Previous Appointment Time : {{$list->time}} 
+
+        <br>
+
+        Care type : {{$list->caretype}}
+    
+
+
+
+      </div>
+        
+      <form class="form"action="{{route('owcreschedule')}}"method="POST">
+                          @csrf
+                          {{method_field("PUT")}}
+
+                          <input type="hidden"name="ref"value="{{$list->ref}}">
+                          
+
+                          
+
+                         <div class="form-group">
+                             <label for="">New Date</label>
+                             
+                             <!-- <input type="date"name="date" class="form-control"required> -->
+
+                             <div class="form">
+              <label for="">Select Available Dates</label>
+
+                        <select id="myselect" name="date"class="form-control date-select" required>
+                            <option value="">Select Date</option>
+                        </select>
+          </div>
+                             
+                        
+                
+                         </div>
+
+                         <div class="form-group">
+                         <label for="">New Time</label>
+                             
+                            <select name="time" id="" class="form-control time-select"required>
+                                
+                              
+
+
+
+                            </select>
+                             
+                         </div>
+
+
+                         <br>
+                         
+                         <button type="submit" class="btn btn-info text-center text-light">Reschedule Appointment</button>
+                
+
+
+                </form>
+          
+      </div>
+     
+    </div>
+  </div>
+</div>
+
+<!-- delete  modal -->
+
+<div class="modal fade" id="deleteModal{{$list->id}}" tabindex="-1" role="dialog" aria-labelledby="deleteModal{{$list->id}}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Delete Appointment Ref - {{$list->ref}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+      
+        
+      <form class="form"action="{{route('deleteowcappointment',$list->id)}}"method="POST">
+                          @csrf
+                          {{method_field("DELETE")}}
+
+                          <!-- <input type="hidden"name="ref"value="{{$list->ref}}"> -->
+                          <p class="text-center">Are you sure you want to delete this appointment ? <br> Note details will not be retrievable after delete.</p>
+
+                          
+
+                         
+                         
+                        <div class="text-center">
+                        <button type="submit" class="btn btn-sm btn-danger text-center text-light">Delete Appointment</button>
+                        </div>
+                
+
+
+                </form>
+          
+      </div>
+     
+    </div>
+  </div>
+</div>
+
+
+
+<!-- end of second modal -->
+
+
+<!-- edit customer details modal -->
+
+<div class="modal fade" id="updateModal{{$list->id}}" tabindex="-1" role="dialog" aria-labelledby="updateModal{{$list->id}}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Update Customer Details Ref - {{$list->ref}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+     
+        
+      <form class="form"action="{{route('owcedituserdetails')}}"method="POST">
+                          @csrf
+                          {{method_field("PUT")}}
+
+                          <input type="hidden"name="ref"value="{{$list->ref}}">
+
+                          <div class="form-group">
+                              <label for="">Title</label>
+
+                              <select name="title" class="form-control"id=""required>
+                                  <option value="">Select Preferred Title</option>
+
+                                  <option value="Mr"{{ $list->title == "Mr" ? 'selected' : '' }}>Mr</option>
+                                  <option value="Mrs"{{ $list->title == "Mrs" ? 'selected' : '' }}>Mrs</option>
+                                  <option value="Miss"{{ $list->title == "Miss" ? 'selected' : '' }}>Miss</option>
+                                  <option value="Ms"{{ $list->title == "Ms" ? 'selected' : '' }}>Ms</option>
+                                  <option value="Dr"{{ $list->title == "Dr" ? 'selected' : '' }}>Dr</option>
+                                  <option value="Prof"{{ $list->title == "Prof" ? 'selected' : '' }}>Prof</option>
+                                  <option value="Hon"{{ $list->title == "Hon" ? 'selected' : '' }}>Hon</option>
+                              </select>
+                          </div>
+
+
+                          <div class="form-group">
+                              <label for="">First Name</label>
+
+                              <input type="text"name="firstname"class="form-control"value="{{$list->user_firstname}}"required>
+                          </div>
+
+                          <div class="form-group">
+                              <label for="">Last Name</label>
+
+                              <input type="text"name="lastname"class="form-control"value="{{$list->user_lastname}}"required>
+                          </div>
+
+
+                          <div class="form-group">
+                              <label for="">Email Address</label>
+
+                              <input type="email"name="email"class="form-control"value="{{$list->email}}"required>
+                          </div>
+
+
+                          <div class="form-group">
+                              <label for="">Phone Number</label>
+
+                              <input type="text"name="phone"class="form-control"value="{{$list->phone}}"required>
+                          </div>
+
+
+                          
+
+                         
+
+                        
+
+
+                         <br>
+                         
+                         <button type="submit" class="btn btn-info text-center text-light">Edit Details</button>
+                
+
+
+                </form>
+          
+      </div>
+     
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- end of edit customer details modal -->
 
                           @endforeach
 
@@ -201,6 +420,128 @@
 @endsection
 
 @section('js')
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+
+$(document).ready(function() {
+    // Function to handle the button click
+    $('.my-button').on('click', function() {
+        // Get the data from the custom attribute
+        var dataId = $(this).data('id');
+
+
+
+        $("select[name='date']").change(function (e) {
+
+        let selected_date = $(this).val();
+
+
+
+
+   //Make the GET request using the data
+$.ajax({
+    url: 'https://admin.asknello.com/api/owcadmin/checkavailabletime?date=' + selected_date + '&caretype=' + dataId,
+    method: 'GET',
+    dataType: 'json',
+    success: function(response) {
+        // Handle the response data here
+    
+        console.log(response)
+
+        if(response.length > 0){
+            const times = response;
+            const selectTime = $('.time-select');
+
+            selectTime.empty();
+
+            times.forEach(time => {
+                         
+   
+                        const optionTime = $('<option></option>').attr('value', time).text(time);
+                        selectTime.append(optionTime);
+                    
+            });
+                
+
+        }
+    },
+    error: function(error) {
+        // Handle any errors that occur during the request
+        console.error(error);
+    }
+    });
+    //end of ajax
+    
+
+    });
+
+        //console.log('https://admin.asknello.com/api/owcgetmostdate?specialization=' + dataId);
+
+        //Make the GET request using the data
+        $.ajax({
+            url: 'https://admin.asknello.com/api/owcgetmostdate?specialization=' + dataId, // Replace '/api/data/' with the appropriate API endpoint URL
+            method: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                // Handle the response data here
+                console.log(response[2]);
+                
+
+                if(response.length > 0){
+                   
+
+                    const dates = response;
+                const selectElement = $('.date-select');
+                const currentDate = new Date();
+
+                selectElement.empty();
+                selectElement.append($('<option></option>').attr('value', '').text('Choose Date'));
+
+    
+                    dates.forEach(date => {
+                    //   const optionElement = $('<option></option>').attr('value', date).text(date);
+                    //   selectElement.append(optionElement);
+
+                    const dateParts = date.split('/');
+                    const optionDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
+
+
+                            
+                    if (optionDate >= currentDate || optionDate.toDateString() === currentDate.toDateString()) {
+                        const optionElement = $('<option></option>').attr('value', date).text(date);
+                        selectElement.append(optionElement);
+                    }
+                    });
+
+
+                }
+
+              
+
+   
+               
+
+             
+            },
+            error: function(error) {
+                // Handle any errors that occur during the request
+                console.error(error);
+            }
+        });
+    });
+});
+
+        
+    </script>
+
+    
+
+
+
+
+
+
     <script src="{{ asset('js/net-bridge/net-bridge.js') }}" type="application/javascript"></script>
 
     <script type="application/javascript">
