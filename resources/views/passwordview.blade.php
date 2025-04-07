@@ -20,14 +20,11 @@
         
         <div class="text-center m-auto">
 
-        @if($agent_id == 253)
+ 
                 <img class="text-center" src="https://admin.asknello.com/images/logo.png" alt=""style="width:100px;">
 
         
-        @elseif($agent_id == 329)
-        <img class="text-center" src="https://owcappointment.com/static/media/mainlogo.97dcb8ed6a9966819480.png" alt=""style="width:150px;">
-
-        @endif 
+      
             
         
     
@@ -37,7 +34,7 @@
 
         <h5 id="congrates" style="display:none;" class="alert alert-success font-weight-bold py-2">Congratulations, you have successfully registered, kindly close the tab to continue with the Chatbot.</h5>
     <div id="showme">
-        <h5 class="alert alert-info font-weight-bold py-2">Hi {{$firstname}} , Kindly input your password</h5>
+        <h5 class="alert alert-info font-weight-bold py-2">Hi firstname , Kindly input your password</h5>
 
         <form id="">
            

@@ -37,6 +37,8 @@ Route::get('/onlinedoctors','ChatBotController@getonlinedoctors');
 
 Route::post('/draftbooking','ChatBotController@draftonlinebooking');
 
+Route::get("/getdraft","ChatBotController@getdraft");
+
 
 //complete Online Booking
 
@@ -366,3 +368,7 @@ Route::match(array('GET','POST'),'/facebook', 'FacebookController@webhook');
 // Route::get('/getallmessage',"BotController@getallmessage");
 
 Route::put("/resetall","BotController@resetall");
+
+
+
+Route::post('/nellobotpass','FacebookController@chatbotpass');

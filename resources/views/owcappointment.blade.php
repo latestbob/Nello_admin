@@ -32,9 +32,11 @@
                                 <div class="col-md-4 mb-3">
 
                                     
-                                    <p class="text-muted font-14">
-                                        Here's a list of all appointments on the OWC platform
-                                    </p>
+                                   
+
+                                    <label>Filter by name</label>
+                                    <input class="form-control" name="search" value="{{ $search }}"
+                                           placeholder="Enter Keyword"/>
 
                                 </div>
 

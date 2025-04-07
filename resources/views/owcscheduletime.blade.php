@@ -94,6 +94,17 @@
                             <input type="checkbox"name="time[]"value="12:30 pm">
                         </div>
 
+
+                        <div class="col-md-4">
+                            <label for="">1:00 pm</label>
+                            <input type="checkbox"name="time[]"value="1:00 pm">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="">1:30 pm</label>
+                            <input type="checkbox"name="time[]"value="1:30 pm">
+                        </div>
+
                         <div class="col-md-4">
                             <label for="">2:00 pm</label>
                             <input type="checkbox"name="time[]"value="2:00 pm">

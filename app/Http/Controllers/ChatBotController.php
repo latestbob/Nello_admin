@@ -23,6 +23,10 @@ use Illuminate\Http\Client\Response;
 use App\ChatToken;
 use App\Count;
 use App\MedcenterSchedule;
+use App\Botmessage;
+require_once app_path('Helpers/MessageHelper.php');
+
+use App\Helpers\MessageHelper;
 
 
 class ChatBotController extends Controller
@@ -150,6 +154,14 @@ class ChatBotController extends Controller
     }
 
 
+    //getdraft
+
+    public function getdraft(){
+        $draft = TempAppointment::all();
+
+        return response()->json($draft);
+    }
+
 
     //draftOnline Booking
 
@@ -158,7 +170,7 @@ class ChatBotController extends Controller
        
                'date'=> 'required|date_format:d-m-Y|after_or_equal:today',
                'time' => 'required',
-               'phone' => 'required|exists:users',
+               'phone' => 'required',
                'uuid' =>'required|exists:users',
                'reason' => 'required',
                'fee' => 'required|integer'
@@ -997,11 +1009,11 @@ public function webhook(Request $request){
     $response = json_decode($payment);
 
     // Log::debug($response->event);
-    $Chatoken = ChatToken::first();
+    
 
-        $token = $Chatoken->token;
+    $token = MessageHelper::getToken();
 
-    if($response->event == "charge.success" && $response->data->metadata->method == "chat" && $response->data->metadata->agent_id == 253){
+    if($response->event == "charge.success" && $response->data->metadata->method == "chat"){
         //check if payment is made and method in metadata is chat
 
         $paystack_ref = $response->data->reference;
@@ -1012,6 +1024,7 @@ public function webhook(Request $request){
         $user_code = $response->data->metadata->user_code;
         $action = $response->data->metadata->action;
         $email = $response->data->customer->email;
+        $phone = $response->data->metadata->phone;
         // "platform": "webchat",
         //     "agent_id": "319",
         //     "user_code": "ee999ecf1aba1663163109516",
@@ -1027,7 +1040,9 @@ public function webhook(Request $request){
 
         // Log::debug("Platform is ".$platform);
 
-        if($action == "book.online.consultation"){
+        if($action == "Online Consultation"){
+
+            //action is online consultation,, complete the booking
                 $resbooking = Http::withoutVerifying()->post('https://admin.asknello.com/api/completeonlinebook',[
                 
 
@@ -1040,48 +1055,34 @@ public function webhook(Request $request){
 
                     if($resbooking['status'] == true) {
 
-                        //Send Mail to User and Doctor
+                        // Send the bot message to the user
 
-
-
-                // Call Embandqo
-
-                $responsed = Http::withoutVerifying()->withHeaders([
-                    'token'=> $token,
-                    // Back to menu
-                ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/clearcache',[
-                   
-                    "agent_id" => $agent_id,
-                    "user_code" => $user_code, 
-                    "platform" => $platform
-                ]);
-
-                // Log::debug($responsed);
-
-                if($responsed["status"] == "success"){
-                    $message = "Congratulation, you have successfully scheduled an appointment on Nello, details of the appointment has been sent to ".$email. ". Thanks for choosing Nello.";
-
-                    $responsed = Http::withoutVerifying()->withHeaders([
-                    'token'=> $token,
-                    // Back to menu
-                ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
-                    "platform" => $platform,
-                    "agent_id" => $agent_id,
-                    "message" => $message,
-                    "msg_type" => "quick_reply",
-                    "user_code" => $user_code,
-                    "parent_param" => null,
-                    "quick_replies" => null,
-                    // "buttons" => [],
-                    // "use_cache" => true,
-                    // "reply_internal" => true,
-                    // "action" =>  $response->action,
-                    // "intent_id" => $user['intent_id']
-                ]);
                 
+
+               
+                
+                    $textBody = "Congratulation! 🎉, you have successfully scheduled an appointment on Nello, details of the appointment has been sent to ".$email. ". Thanks for choosing Nello.";
+
+                    //$textBody = "Hi $firstname,\n\nCongratulations! 🎉 You’re now signed up on Nello. You won't need to go through the previous steps again.\n\nWelcome to a simpler, smarter healthcare experience!";
+
+
+          
+
+
+            MessageHelper::sendTextMessage($token, $phone, $textBody);
+
+            $updateAuth = Botmessage::where('wa_id',$request->phoneId)->update([
+                'next_step' => "handle_services",
+                    'parent_param' => null,
+                    'error' => 0,
+                    'action' => null,
+            ]);
+
+
+            //MessageHelper::sendTemplateMessage($token, $phone);
                 
                 // Log::debug($responsed);
-                }
+                
 
                 
                 
@@ -1096,64 +1097,7 @@ public function webhook(Request $request){
 
         //end of check if the action is book.online.consultation
 
-        elseif($action == "book.a.facility.visit"){
-            $link = "https://admin.asknello.com/visitation/".$paystack_ref;
-
-            $resbooking = Http::withoutVerifying()->post('https://admin.asknello.com/api/completefacilitybooking',[
-                
-
-                'temp_id' => $temp_id,
-                'paystack_ref' => $paystack_ref,
-                'cost' => $cost
-
-            ]);
-
-            //call embanqo
-
-            $message = "Congratulation, you have successfully scheduled an appointment on Nello, Kindly click on  ".$link." to download confirmation slip or login to Nello Website to download appointment confirmation slip";
-
-            $responsed = Http::withoutVerifying()->withHeaders([
-                'token'=> $token,
-                // Back to menu
-            ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/clearcache',[
-               
-                "agent_id" => $agent_id,
-                "user_code" => $user_code, 
-                "platform" => $platform
-            ]);
-
-            if($responsed['status'] == "success"){
-
-                $responsed = Http::withoutVerifying()->withHeaders([
-                    'token'=> $token,
-                    // Back to menu
-                ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
-                    "platform" => $platform,
-                    "agent_id" => $agent_id,
-                    "message" => $message,
-                    "msg_type" => "quick_reply",
-                    "user_code" => $user_code,
-                    "parent_param" => null,
-                    "quick_replies" => null,
-                    // "buttons" => [],
-                    // "use_cache" => true,
-                    // "reply_internal" => true,
-                    // "action" =>  $response->action,
-                    // "intent_id" => $user['intent_id']
-                ]);
-    
-                // Log::debug($responsed);
-            }
-                
-           
-
-                
-
-
-
-            
-
-        }
+       
         
         // Complete transaction API
 
@@ -1176,142 +1120,7 @@ public function webhook(Request $request){
     }
 
 
-    elseif($response->event == "charge.success" && $response->data->metadata->method == "chat" && $response->data->metadata->agent_id == 329){
-        //OWC payment webhook
-
-        $paystack_ref = $response->data->reference;
-       
-        $cost = $response->data->amount /100;
-        $platform = $response->data->metadata->platform;
-        $agent_id = $response->data->metadata->agent_id;
-        $user_code = $response->data->metadata->user_code;
-        $action = $response->data->metadata->action;
-
-
-        $email = $response->data->customer->email;
-        $doctor_email = $response->data->metadata->doctor_email;
-        $type = $response->data->metadata->type;
-        $date = $response->data->metadata->date;
-        $time = $response->data->metadata->time;
-        $spec = $response->data->metadata->spec;
-
-        $user_firstname = User::where('email',$email)->value("firstname");
-        $user_lastname = User::where('email',$email)->value("lastname");
-
-        $gender = User::where('email',$email)->value("gender");
-        $dob = User::where('email',$email)->value("dob");
-        $phone = User::where('email',$email)->value("phone");
-        
-        $doctor = User::where('email',$doctor_email)->value("firstname");
-        $link = "https://meet.jit.si/asknello/".$paystack_ref ;
-
-        if($gender == "Male"){
-            $title = "Mr";
-        }
-        else{
-            $title = "Mrs";
-        }
-        ///owc/appointment
-
-        // 'date'=> 'required',
-        // 'time' => 'required',
-        // 'caretype' => 'required',
-        // 'user_firstname' =>'required',
-        // 'user_lastname' => 'required',
-        // 'email' =>'required',
-        // 'title' => 'required',
-        // 'dob' => 'required',
-        // 'phone' => 'required',
-        // 'gender' => 'required',
-
-        // $appointment->type = $request->type;
-        // $appointment->doctor = $request->doctor;
-        // $appointment->link = $request->link;
-        // $appointment->payment_ref = $request->payment_ref;
-
-        $resbooking = Http::withoutVerifying()->post('https://admin.asknello.com/api/owc/appointment',[
-                
-
-            'date' => $date,
-            'time' => $time,
-            'caretype' => $spec,
-            'user_firstname' => $user_firstname,
-            'user_lastname' => $user_lastname,
-            'email' => $email,
-            'title' => $title,
-            'dob' => $dob,
-            'phone' => $phone,
-            'gender' => $gender,
-            'type' => $type,
-            'doctor' => "Dr ".$doctor,
-            'link' => $link,
-            'payment_ref' => $paystack_ref,
-            'doctor_email' => $doctor_email,
-            
-
-        ]);
-
-
-
-        if($resbooking['status'] == "success") {
-
-            //Send Mail to User and Doctor
-
-
-
-    // Call Embandqo
-
-    $responsedcache = Http::withoutVerifying()->withHeaders([
-        'token'=> $token,
-        // Back to menu
-    ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/clearcache',[
-       
-        "agent_id" => $agent_id,
-        "user_code" => $user_code, 
-        "platform" => $platform
-    ]);
-
-    // Log::debug($responsed);
-
-    if($responsedcache["status"] == "success"){
-        $message = "Congratulation, you have successfully scheduled an appointment on OWC, details of the appointment has been sent to ".$email. ". Thanks for choosing OWC.";
-
-        $responsed = Http::withoutVerifying()->withHeaders([
-        'token'=> $token,
-        // Back to menu
-    ])->post('https://i62j4dm741.execute-api.us-east-2.amazonaws.com/prod/message/reply/',[
-        "platform" => $platform,
-        "agent_id" => $agent_id,
-        "message" => $message,
-        "msg_type" => "quick_reply",
-        "user_code" => $user_code,
-        "parent_param" => null,
-        "quick_replies" => null,
-        // "buttons" => [],
-        // "use_cache" => true,
-        // "reply_internal" => true,
-        // "action" =>  $response->action,
-        // "intent_id" => $user['intent_id']
-    ]);
     
-    
-    // Log::debug($responsed);
-    }
-
-    
-    
-   
-  
-
-  
-
-    } // end of if resbooking status
-
-
-       
-
-    
-    }
 
 }
 
@@ -9974,60 +9783,60 @@ public function password(Request $request){
 
    // https://admin.asknello.com/embanqo/password/?platform=".$user['platform']."&agent_id=".$user['agent_id']."&user_code=".$response->user_code."&action=".$response->action."&firstname=".$firstname."&lastname=".$lastname."&email=".$email."&phone=".$phone."&gender=".$gender."&dob=".$dob,
 
-   if ($request->has('platform')) {
-    $platform = $request->input('platform');
- }
+//    if ($request->has('platform')) {
+//     $platform = $request->input('platform');
+//     }  
 
- if ($request->has('agent_id')) {
-    $agent_id = $request->input('agent_id');
- }
+//  if ($request->has('agent_id')) {
+//     $agent_id = $request->input('agent_id');
+//  }
 
- if ($request->has('user_code')) {
-    $user_code = $request->input('user_code');
- }
+//  if ($request->has('user_code')) {
+//     $user_code = $request->input('user_code');
+//  }
 
- if ($request->has('action')) {
-    $action = $request->input('action');
- }
+//  if ($request->has('action')) {
+//     $action = $request->input('action');
+//  }
 
 
 
-    if ($request->has('firstname')) {
-        $firstname = $request->input('firstname');
-     }
+    // if ($request->has('firstname')) {
+    //     $firstname = $request->input('firstname');
+    //  }
 
      //lastname
 
-     if ($request->has('lastname')) {
-        $lastname = $request->input('lastname');
-     }
+    //  if ($request->has('lastname')) {
+    //     $lastname = $request->input('lastname');
+    //  }
 
      //email
-     if ($request->has('email')) {
-        $email = $request->input('email');
-     }
+    //  if ($request->has('email')) {
+    //     $email = $request->input('email');
+    //  }
 
      //phone
 
-     if ($request->has('phone')) {
-        $phone = $request->input('phone');
-     }
+    //  if ($request->has('phone')) {
+    //     $phone = $request->input('phone');
+    //  }
 
      //gender
 
-     if ($request->has('gender')) {
-        $gender = $request->input('gender');
-     }
+    //  if ($request->has('gender')) {
+    //     $gender = $request->input('gender');
+    //  }
 
      //dob
 
-     if ($request->has('dob')) {
-        $dob = $request->input('dob');
-     }
+    //  if ($request->has('dob')) {
+    //     $dob = $request->input('dob');
+    //  }
 
      
 
-   return view('passwordview',compact('firstname','lastname','email','phone','gender','dob','platform','agent_id','user_code','action'));
+   return view('passwordview');
 
    
 }
@@ -10519,7 +10328,7 @@ public function webhookproduction(Request $request){
        
     $Chatoken = ChatToken::first();
 
-        $token = $Chatoken->token;
+    $token = MessageHelper::getToken();
         $variabletype = gettype($token);
     
         // Log::debug($variabletype);
